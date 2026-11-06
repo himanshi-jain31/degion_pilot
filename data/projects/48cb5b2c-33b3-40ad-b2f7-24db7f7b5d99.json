@@ -1,0 +1,57 @@
+{
+  "id": "48cb5b2c-33b3-40ad-b2f7-24db7f7b5d99",
+  "title": "create one leave tracker",
+  "requirement": "create one leave tracker",
+  "createdAt": "2026-11-04T06:50:47.267Z",
+  "files": [],
+  "answers": {
+    "q1": "Both",
+    "q2": "Staff",
+    "q3": "No rush"
+  },
+  "phases": {
+    "Understand": "Not started",
+    "Research": "Not started",
+    "Ideate": "Not started",
+    "Wireframes": "Not started",
+    "Visual design": "Not started",
+    "Testing": "Not started"
+  },
+  "versions": [],
+  "thingsIGuessed": [],
+  "quickQuestions": {
+    "request_summary": "DEMO: you want a simple app. These questions are made up.",
+    "suggested_depth": "Light",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Where will people mostly use this?",
+        "why_it_matters": "Changes the layout",
+        "options": [
+          "Phone",
+          "Laptop",
+          "Both"
+        ]
+      },
+      {
+        "id": "q2",
+        "question": "Who will use it most?",
+        "why_it_matters": "Changes the words and steps",
+        "options": [
+          "Staff",
+          "Customers",
+          "Managers"
+        ]
+      },
+      {
+        "id": "q3",
+        "question": "How soon do you need it?",
+        "options": [
+          "This week",
+          "This month",
+          "No rush"
+        ]
+      }
+    ]
+  }
+}

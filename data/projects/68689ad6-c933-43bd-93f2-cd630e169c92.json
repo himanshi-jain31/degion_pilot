@@ -1,0 +1,872 @@
+{
+  "id": "68689ad6-c933-43bd-93f2-cd630e169c92",
+  "title": "create one leave tracker",
+  "requirement": "create one leave tracker",
+  "createdAt": "2026-11-04T06:45:13.761Z",
+  "files": [],
+  "answers": {
+    "q1": "Both",
+    "q2": "Staff",
+    "q3": "No rush"
+  },
+  "phases": {
+    "Understand": "Approved",
+    "Research": "Approved",
+    "Ideate": "Approved",
+    "Wireframes": "Approved",
+    "Visual design": "Approved",
+    "Testing": "Ready for you"
+  },
+  "versions": [
+    {
+      "id": "5c20b268-3eac-4862-81e5-c55b37f9be79",
+      "phase": 1,
+      "version": 1,
+      "createdAt": "2026-11-04T06:45:31.320Z",
+      "status": "done",
+      "progressChars": 14000,
+      "output": {
+        "plan": {
+          "will_do": [
+            "DEMO: write a short brief",
+            "DEMO: list the people who will use it",
+            "DEMO: write a few requirements"
+          ],
+          "will_skip": [
+            {
+              "item": "Research",
+              "why": "That is the next step, not this one."
+            }
+          ]
+        },
+        "things_i_guessed": [
+          {
+            "guess": "DEMO: most people use phones.",
+            "risk_if_wrong": "The layout may suit the wrong device.",
+            "how_to_check": "Ask five users."
+          }
+        ],
+        "what_i_did": [
+          "DEMO: made up a result to show the screens",
+          "DEMO: no AI was used"
+        ],
+        "checkin": {
+          "what_i_made": "DEMO: a made-up brief, 3 users, 2 profiles and 2 requirements.\nNone of it is real. It only shows how the screens work.",
+          "not_sure_about": [
+            "DEMO: who approves when the manager is away?",
+            "DEMO: which device people use most"
+          ],
+          "another_view": "DEMO: maybe the real problem is seeing who is away."
+        },
+        "brief": {
+          "one_line": "DEMO: Staff can ask for time off and managers can answer.",
+          "full": "This is made-up text so you can see how the screen looks. Nothing here came from your request."
+        },
+        "another_view": "DEMO: Maybe the real problem is that managers cannot see who is away.",
+        "users": [
+          {
+            "name": "Staff",
+            "note": "DEMO: ask for time off.",
+            "label": "Test idea only"
+          },
+          {
+            "name": "Managers",
+            "note": "DEMO: say yes or no.",
+            "label": "Test idea only"
+          },
+          {
+            "name": "Admin (nobody mentioned)",
+            "note": "DEMO: fixes mistakes and sets the rules.",
+            "label": "Test idea only"
+          }
+        ],
+        "user_profiles": [
+          {
+            "name": "Anna, staff member",
+            "goal": "Get time off with little fuss.",
+            "situation": "Usually on her phone.",
+            "frustrations": [
+              "Slow email replies",
+              "Not sure of her days left"
+            ],
+            "label": "Test idea only"
+          },
+          {
+            "name": "Ben, manager",
+            "goal": "Answer quickly and avoid gaps.",
+            "situation": "Between meetings.",
+            "frustrations": [
+              "Cannot see who is away"
+            ],
+            "label": "Test idea only"
+          }
+        ],
+        "requirements": [
+          {
+            "id": "R1",
+            "story": "As staff, I can ask for time off, so that my manager can answer.",
+            "done_checks": [
+              "I can pick dates",
+              "I see my request afterwards"
+            ],
+            "label": "Test idea only"
+          },
+          {
+            "id": "R2",
+            "story": "As a manager, I can say yes or no, so that staff know quickly.",
+            "done_checks": [
+              "I see all waiting requests"
+            ],
+            "label": "Test idea only"
+          }
+        ],
+        "edge_cases": [
+          "DEMO: no days left",
+          "DEMO: dates that overlap",
+          "DEMO: very long reason text"
+        ],
+        "not_asked_about": [
+          {
+            "topic": "Accessibility",
+            "why_it_matters": "DEMO: everyone must be able to use it, including with screen readers."
+          }
+        ],
+        "success_measures": [
+          "DEMO: fewer emails about time off"
+        ],
+        "open_questions": [
+          "DEMO: who approves when the manager is away?"
+        ]
+      },
+      "finishedAt": "2026-11-04T06:45:39.462Z",
+      "approved": true,
+      "approvedAt": "2026-11-04T06:45:54.673Z",
+      "waitingForNotes": false
+    },
+    {
+      "id": "993d1d0d-7b8f-4074-aa56-5f228ab2cba5",
+      "phase": 2,
+      "version": 1,
+      "createdAt": "2026-11-04T06:45:58.039Z",
+      "status": "done",
+      "progressChars": 13300,
+      "output": {
+        "plan": {
+          "will_do": [
+            "DEMO: look at similar apps",
+            "DEMO: check accessibility rules"
+          ],
+          "will_skip": [
+            {
+              "item": "Numbers from data",
+              "why": "No data was uploaded."
+            }
+          ]
+        },
+        "things_i_guessed": [
+          {
+            "guess": "DEMO: staff prefer phones.",
+            "risk_if_wrong": "Wrong device focus.",
+            "how_to_check": "Interview 5 people."
+          }
+        ],
+        "what_i_did": [
+          "DEMO: made up research results",
+          "DEMO: no web search was used"
+        ],
+        "checkin": {
+          "what_i_made": "DEMO: 3 made-up findings, 2 insights and a small research kit.\nNone of it is real.",
+          "not_sure_about": [
+            "DEMO: all sources are made up"
+          ],
+          "another_view": "DEMO: maybe the managers matter more than staff."
+        },
+        "findings": [
+          {
+            "type": "competitors",
+            "finding": "DEMO: other leave apps show days left on the first screen.",
+            "source_title": "Example page (made up)",
+            "source_url": "https://example.com/demo-1",
+            "label": "Test idea only",
+            "confidence": "Low"
+          },
+          {
+            "type": "accessibility",
+            "finding": "DEMO: form fields need clear labels.",
+            "source_title": "Example page (made up)",
+            "source_url": "https://example.com/demo-2",
+            "label": "Test idea only",
+            "confidence": "Low"
+          },
+          {
+            "type": "what people say",
+            "finding": "DEMO: people dislike slow replies.",
+            "source_title": "Example page (made up)",
+            "source_url": "https://example.com/demo-3",
+            "label": "Test idea only",
+            "confidence": "Low"
+          }
+        ],
+        "key_insights": [
+          {
+            "insight": "DEMO: show days left up front.",
+            "based_on": [
+              "1"
+            ]
+          },
+          {
+            "insight": "DEMO: keep forms simple and labelled.",
+            "based_on": [
+              "2",
+              "3"
+            ]
+          }
+        ],
+        "updated_user_profiles": [
+          {
+            "name": "Anna, staff member",
+            "goal": "Get time off with little fuss.",
+            "situation": "Mostly on her phone.",
+            "frustrations": [
+              "Slow replies"
+            ],
+            "label": "Test idea only"
+          }
+        ],
+        "research_kit": {
+          "goals": [
+            "DEMO: learn how people ask for leave today"
+          ],
+          "interview_questions": [
+            "DEMO: Tell me about the last time you asked for time off.",
+            "DEMO: What was hardest about it?"
+          ],
+          "survey_questions": [
+            "DEMO: How often do you ask for leave?"
+          ],
+          "who_to_recruit": "DEMO: 5 staff and 2 managers."
+        },
+        "could_not_find": [
+          "DEMO: no real numbers (this is a demo)"
+        ]
+      },
+      "finishedAt": "2026-11-04T06:46:08.104Z",
+      "approved": true,
+      "approvedAt": "2026-11-04T06:46:26.661Z",
+      "waitingForNotes": false
+    },
+    {
+      "id": "7f5e6960-48bf-4050-b083-753f9775743a",
+      "phase": 3,
+      "version": 1,
+      "createdAt": "2026-11-04T06:46:28.599Z",
+      "status": "done",
+      "progressChars": 14000,
+      "output": {
+        "plan": {
+          "will_do": [
+            "DEMO: product structure",
+            "DEMO: flows",
+            "DEMO: 3 directions"
+          ],
+          "will_skip": [
+            {
+              "item": "Storyboard detail",
+              "why": "Kept short for the demo."
+            }
+          ]
+        },
+        "things_i_guessed": [
+          {
+            "guess": "DEMO: managers answer on phones too.",
+            "risk_if_wrong": "Wrong layout.",
+            "how_to_check": "Ask 3 managers."
+          }
+        ],
+        "what_i_did": [
+          "DEMO: made up a structure, flows and 3 directions",
+          "DEMO: no AI was used"
+        ],
+        "checkin": {
+          "what_i_made": "DEMO: a made-up structure, 2 flows and 3 directions (A, B, C).\nNone of it is real.",
+          "not_sure_about": [
+            "DEMO: which direction fits best"
+          ],
+          "another_view": "DEMO: maybe a calendar-first idea fits better."
+        },
+        "product_structure": [
+          {
+            "page": "Home",
+            "children": [
+              {
+                "page": "My requests",
+                "children": [
+                  {
+                    "page": "Request details",
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "page": "New request",
+                "children": []
+              }
+            ]
+          },
+          {
+            "page": "Manager inbox",
+            "children": [
+              {
+                "page": "Answer a request",
+                "children": []
+              }
+            ]
+          }
+        ],
+        "user_flows": [
+          {
+            "name": "Ask for time off",
+            "type": "main",
+            "steps": [
+              "Open Home",
+              "Tap New request",
+              "Pick dates",
+              "Send"
+            ]
+          },
+          {
+            "name": "No days left",
+            "type": "error",
+            "steps": [
+              "Pick dates",
+              "See a clear message",
+              "Choose other dates"
+            ]
+          }
+        ],
+        "journeys": {
+          "today": [
+            {
+              "step": "Writes an email",
+              "feeling": "Unsure",
+              "pain": "No reply for days"
+            }
+          ],
+          "future": [
+            {
+              "step": "Sends a request in the app",
+              "feeling": "Calm"
+            }
+          ]
+        },
+        "storyboard": [
+          {
+            "frame": 1,
+            "scene": "DEMO: Anna wants a day off."
+          },
+          {
+            "frame": 2,
+            "scene": "DEMO: She sends a request on her phone."
+          },
+          {
+            "frame": 3,
+            "scene": "DEMO: Ben answers between meetings."
+          }
+        ],
+        "directions": [
+          {
+            "id": "A",
+            "name": "Simple form",
+            "core_idea": "One short form and a list.",
+            "key_screens": [
+              "Home",
+              "New request",
+              "Request list"
+            ],
+            "good_at": "DEMO: Simple form is quick to learn.",
+            "gives_up": "Gives up a calendar view.",
+            "effort": "Low",
+            "risk": "DEMO: people may expect more.",
+            "serves": [
+              "R1",
+              "R2"
+            ]
+          },
+          {
+            "id": "B",
+            "name": "Team calendar",
+            "core_idea": "Everything lives on a shared calendar.",
+            "key_screens": [
+              "Home",
+              "New request",
+              "Request list"
+            ],
+            "good_at": "DEMO: Team calendar is quick to learn.",
+            "gives_up": "Gives up speed on small phones.",
+            "effort": "Medium",
+            "risk": "DEMO: people may expect more.",
+            "serves": [
+              "R1",
+              "R2"
+            ]
+          },
+          {
+            "id": "C",
+            "name": "Chat helper (flip the constraint)",
+            "core_idea": "Ask for leave by chatting.",
+            "key_screens": [
+              "Home",
+              "New request",
+              "Request list"
+            ],
+            "good_at": "DEMO: Chat helper (flip the constraint) is quick to learn.",
+            "gives_up": "Gives up a clear overview.",
+            "effort": "High",
+            "risk": "DEMO: people may expect more.",
+            "serves": [
+              "R1",
+              "R2"
+            ]
+          }
+        ],
+        "recommendation": {
+          "direction": "A",
+          "why": "DEMO: it is the quickest way to the main goal."
+        }
+      },
+      "finishedAt": "2026-11-04T06:46:36.667Z",
+      "chosenDirection": "A",
+      "approved": true,
+      "approvedAt": "2026-11-04T06:47:23.096Z",
+      "waitingForNotes": false
+    },
+    {
+      "id": "25ef152d-b056-44f8-9926-033dcdd2ccbb",
+      "phase": 4,
+      "version": 1,
+      "createdAt": "2026-11-04T06:47:25.084Z",
+      "status": "done",
+      "progressChars": 13300,
+      "progressNote": "Drew screen 6 of 6: No permission",
+      "output": {
+        "plan": {
+          "will_do": [
+            "DEMO: list the screens",
+            "DEMO: draw each one in grey and join them"
+          ],
+          "will_skip": [
+            {
+              "item": "Loading screens",
+              "why": "Kept short for the demo."
+            }
+          ]
+        },
+        "things_i_guessed": [
+          {
+            "guess": "DEMO: people start from Home.",
+            "risk_if_wrong": "The first screen may be wrong.",
+            "how_to_check": "Watch 3 people use it."
+          }
+        ],
+        "what_i_did": [
+          "DEMO: made up 6 screens",
+          "DEMO: no AI was used"
+        ],
+        "checkin": {
+          "what_i_made": "DEMO: a made-up clickable wireframe with 6 screens, including empty, error and no-permission.\nNone of it is real.",
+          "not_sure_about": [
+            "DEMO: the order of the screens"
+          ],
+          "another_view": "DEMO: maybe the list should be the first screen."
+        },
+        "screens": [
+          {
+            "id": "home",
+            "name": "Home",
+            "purpose": "See your requests and start a new one",
+            "meets": [
+              "R1"
+            ],
+            "states": [
+              "normal"
+            ]
+          },
+          {
+            "id": "new-request",
+            "name": "New request",
+            "purpose": "Pick dates and send a request",
+            "meets": [
+              "R1"
+            ],
+            "states": [
+              "normal",
+              "error"
+            ]
+          },
+          {
+            "id": "request-list",
+            "name": "My requests",
+            "purpose": "See every request and its answer",
+            "meets": [
+              "R1",
+              "R2"
+            ],
+            "states": [
+              "normal"
+            ]
+          },
+          {
+            "id": "empty-list",
+            "name": "No requests yet",
+            "purpose": "Shown when there are no requests",
+            "meets": [
+              "R1"
+            ],
+            "states": [
+              "empty"
+            ]
+          },
+          {
+            "id": "error",
+            "name": "Something went wrong",
+            "purpose": "Shown when sending fails",
+            "meets": [
+              "R1"
+            ],
+            "states": [
+              "error"
+            ]
+          },
+          {
+            "id": "no-access",
+            "name": "No permission",
+            "purpose": "Shown when someone may not open a page",
+            "meets": [
+              "R2"
+            ],
+            "states": [
+              "no permission"
+            ]
+          }
+        ],
+        "wording": [
+          {
+            "screen": "home",
+            "text": "New request",
+            "where": "button"
+          }
+        ],
+        "accessibility_notes": [
+          "DEMO: every button has a clear label",
+          "DEMO: contrast between text and background is high"
+        ],
+        "html": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Wireframe</title><style>*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:#f2f2f2;color:#333;line-height:1.4}\n.menu{position:sticky;top:0;z-index:5;display:flex;gap:10px;align-items:center;padding:8px 12px;background:#333;color:#f2f2f2;font-size:14px}\n.menu select{flex:1;min-width:0;padding:6px;border-radius:6px;border:1px solid #888;background:#f2f2f2;color:#333}\n.screen{display:none;max-width:1000px;margin:0 auto;padding:16px}.screen.active{display:block}\n.bar{padding:12px 14px;background:#d9d9d9;border:1px solid #aaa;border-radius:8px;font-weight:600;margin-bottom:12px}\n.title{font-size:22px;font-weight:700;margin:8px 0}.sub{font-size:16px;font-weight:600;margin:8px 0}.muted{color:#777;font-size:14px}\n.box,.card,.item,.empty{background:#fff;border:1px solid #bbb;border-radius:8px;padding:12px;margin:8px 0}\n.card[data-go],.item[data-go],[data-go]{cursor:pointer}\n.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.row>*{flex:1 1 200px}.col{display:flex;flex-direction:column;gap:8px}\n.btn{display:inline-block;padding:10px 16px;border:1px solid #666;border-radius:8px;background:#e6e6e6;color:#333;font:inherit;text-decoration:none;cursor:pointer}\n.btn.primary{background:#333;color:#f2f2f2;border-color:#333}.btn:hover{filter:brightness(.95)}\n.input{display:block;width:100%;padding:10px;border:1px solid #999;border-radius:6px;background:#fff;font:inherit;margin:4px 0 10px}\n.label{display:block;font-size:14px;font-weight:600}.list{display:flex;flex-direction:column}.tabs{display:flex;gap:6px;margin:8px 0}\n.tab{padding:8px 14px;border:1px solid #aaa;border-radius:8px 8px 0 0;background:#e6e6e6}\n.banner{padding:10px 12px;border:1px solid #999;border-radius:8px;background:#e0e0e0;margin:8px 0}.banner.error{background:#ddd;border:2px solid #555}\n.img{min-height:90px;background:repeating-linear-gradient(45deg,#e4e4e4,#e4e4e4 10px,#d6d6d6 10px,#d6d6d6 20px);border:1px solid #bbb;border-radius:8px}\n.badge{display:inline-block;padding:2px 8px;border-radius:99px;background:#ccc;font-size:12px}.empty{text-align:center;color:#666;padding:28px}\na{color:#333}</style></head><body>\n<div class=\"menu\"><strong>Wireframe</strong><select id=\"jump\" aria-label=\"Jump to a screen\"><option value=\"home\">Home</option><option value=\"new-request\">New request</option><option value=\"request-list\">My requests</option><option value=\"empty-list\">No requests yet</option><option value=\"error\">Something went wrong</option><option value=\"no-access\">No permission</option></select></div>\n<section class=\"screen\" id=\"screen-home\"><div class=\"bar\">DEMO · Home</div><p class=\"title\">Home</p><p class=\"muted\">See your requests and start a new one</p><div class=\"card\" data-go=\"request-list\"><p class=\"sub\">DEMO: Days left</p><p>12 days</p></div><div class=\"row\"><button class=\"btn primary\" data-go=\"new-request\">New request</button><button class=\"btn\" data-go=\"request-list\">My requests</button><button class=\"btn\" data-go=\"empty-list\">See empty state</button><button class=\"btn\" data-go=\"error\">See error state</button><button class=\"btn\" data-go=\"no-access\">See no-permission state</button></div></section>\n<section class=\"screen\" id=\"screen-new-request\"><div class=\"bar\">DEMO · New request</div><p class=\"title\">New request</p><p class=\"muted\">Pick dates and send a request</p><form data-go=\"request-list\"><label class=\"label\">From</label><input class=\"input\" value=\"12 Dec\"><label class=\"label\">To</label><input class=\"input\" value=\"14 Dec\"><button class=\"btn primary\">Send request</button></form><div class=\"row\"><button class=\"btn\" data-go=\"error\">Pretend sending fails</button><button class=\"btn\" data-go=\"home\">Cancel</button></div></section>\n<section class=\"screen\" id=\"screen-request-list\"><div class=\"bar\">DEMO · My requests</div><p class=\"title\">My requests</p><p class=\"muted\">See every request and its answer</p><div class=\"list\"><div class=\"item\" data-go=\"home\">12–14 Dec · <span class=\"badge\">Waiting</span></div><div class=\"item\" data-go=\"home\">3 Nov · <span class=\"badge\">Approved</span></div></div><button class=\"btn\" data-go=\"home\">Back to Home</button></section>\n<section class=\"screen\" id=\"screen-empty-list\"><div class=\"bar\">DEMO · No requests yet</div><p class=\"title\">No requests yet</p><p class=\"muted\">Shown when there are no requests</p><div class=\"empty\">DEMO: nothing to show here yet.</div><button class=\"btn primary\" data-go=\"home\">Back to Home</button></section>\n<section class=\"screen\" id=\"screen-error\"><div class=\"bar\">DEMO · Something went wrong</div><p class=\"title\">Something went wrong</p><p class=\"muted\">Shown when sending fails</p><div class=\"banner error\">DEMO: We could not send your request. Nothing was lost.</div><button class=\"btn primary\" data-go=\"new-request\">Try again</button> <button class=\"btn\" data-go=\"home\">Back to Home</button></section>\n<section class=\"screen\" id=\"screen-no-access\"><div class=\"bar\">DEMO · No permission</div><p class=\"title\">No permission</p><p class=\"muted\">Shown when someone may not open a page</p><div class=\"empty\">DEMO: nothing to show here yet.</div><button class=\"btn primary\" data-go=\"home\">Back to Home</button></section>\n<script>(function(){var sel=document.getElementById('jump');var screens=[].slice.call(document.querySelectorAll('.screen'));\nfunction show(id){var f=false;screens.forEach(function(s){var on=s.id==='screen-'+id;if(on)f=true;s.classList.toggle('active',on)});\nif(!f)return;sel.value=id;window.scrollTo(0,0);try{history.replaceState(null,'','#'+id)}catch(e){}}\ndocument.addEventListener('click',function(e){var t=e.target.closest('[data-go]');if(t&&t.tagName!=='FORM'){e.preventDefault();show(t.getAttribute('data-go'))}});\ndocument.addEventListener('submit',function(e){e.preventDefault();var g=e.target.getAttribute('data-go');if(g)show(g)});\nsel.addEventListener('change',function(){show(sel.value)});\nvar start=(location.hash||'').slice(1);show(screens.some(function(s){return s.id==='screen-'+start})?start:screens[0].id.replace('screen-',''));})();</script></body></html>",
+        "warnings": []
+      },
+      "finishedAt": "2026-11-04T06:47:34.989Z",
+      "approved": true,
+      "approvedAt": "2026-11-04T06:47:58.221Z",
+      "waitingForNotes": false
+    },
+    {
+      "id": "5cc99b31-8dfd-4088-9ab8-51124b616162",
+      "phase": 5,
+      "version": 1,
+      "createdAt": "2026-11-04T06:48:00.361Z",
+      "status": "done",
+      "progressChars": 13300,
+      "progressNote": "Designed screen 6 of 6: No permission",
+      "output": {
+        "plan": {
+          "will_do": [
+            "DEMO: apply the design style to every screen",
+            "DEMO: check contrast and button sizes"
+          ],
+          "will_skip": [
+            {
+              "item": "Animations",
+              "why": "Not needed for a first prototype."
+            }
+          ]
+        },
+        "things_i_guessed": [
+          {
+            "guess": "DEMO: the main colour suits the brand.",
+            "risk_if_wrong": "The look may feel off.",
+            "how_to_check": "Show it to the brand owner."
+          }
+        ],
+        "what_i_did": [
+          "DEMO: made up a styled prototype",
+          "DEMO: no AI was used"
+        ],
+        "checkin": {
+          "what_i_made": "DEMO: a made-up styled prototype with 6 screens.\nNone of it is real.",
+          "not_sure_about": [
+            "DEMO: how well it matches your brand"
+          ],
+          "another_view": "DEMO: maybe a calmer colour would feel safer."
+        },
+        "design_checks": {
+          "contrast": "DEMO: text and buttons use strong contrast.",
+          "tap_sizes": "DEMO: buttons are at least 44px tall.",
+          "manipulative_design": "DEMO: no hidden costs or pushy wording found.",
+          "style_match": "Not matched to a design system. DEMO: Matches your design style: about 90% (my own estimate)",
+          "off_style_items": [
+            "DEMO: a light blue tint used for banners was added"
+          ]
+        },
+        "computed_checks": [],
+        "cover_note": {
+          "what_was_built": "DEMO: a made-up clickable prototype with the same 6 screens as the wireframe.",
+          "what_was_guessed": [
+            "DEMO: sample names and dates are made up"
+          ],
+          "not_tested_yet": [
+            "DEMO: not tested with real people",
+            "DEMO: not tested with a screen reader"
+          ]
+        },
+        "screens": [
+          {
+            "id": "home",
+            "name": "Home",
+            "purpose": "See your requests and start a new one",
+            "meets": [
+              "R1"
+            ],
+            "states": [
+              "normal"
+            ]
+          },
+          {
+            "id": "new-request",
+            "name": "New request",
+            "purpose": "Pick dates and send a request",
+            "meets": [
+              "R1"
+            ],
+            "states": [
+              "normal",
+              "error"
+            ]
+          },
+          {
+            "id": "request-list",
+            "name": "My requests",
+            "purpose": "See every request and its answer",
+            "meets": [
+              "R1",
+              "R2"
+            ],
+            "states": [
+              "normal"
+            ]
+          },
+          {
+            "id": "empty-list",
+            "name": "No requests yet",
+            "purpose": "Shown when there are no requests",
+            "meets": [
+              "R1"
+            ],
+            "states": [
+              "empty"
+            ]
+          },
+          {
+            "id": "error",
+            "name": "Something went wrong",
+            "purpose": "Shown when sending fails",
+            "meets": [
+              "R1"
+            ],
+            "states": [
+              "error"
+            ]
+          },
+          {
+            "id": "no-access",
+            "name": "No permission",
+            "purpose": "Shown when someone may not open a page",
+            "meets": [
+              "R2"
+            ],
+            "states": [
+              "no permission"
+            ]
+          }
+        ],
+        "html": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Prototype</title><style>:root{--primary:#2f5bd8;--background:#ffffff;--text:#1d2433;--accent:#2f5bd8;--radius:8px}\n.bar{padding:14px;background:var(--primary);color:var(--background);border-radius:var(--radius);font-weight:700;margin-bottom:12px}\n.title{font:700 24px var(--font-heading,system-ui);margin:8px 0}.sub{font:600 17px var(--font-heading,system-ui);margin:8px 0}.muted{opacity:.7;font-size:14px}\n.box,.card,.item,.empty{border:1px solid rgba(0,0,0,.15);border-radius:var(--radius);padding:14px;margin:8px 0;background:#fff}\n.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.row>*{flex:1 1 200px}.col{display:flex;flex-direction:column;gap:8px}\n.btn{padding:10px 18px;border:1px solid var(--primary);border-radius:var(--radius);background:var(--background);color:var(--primary);cursor:pointer}\n.btn.primary{background:var(--primary);color:var(--background)}.input{display:block;width:100%;padding:10px;border:1px solid #999;border-radius:var(--radius);margin:4px 0 10px}\n.label{display:block;font-weight:600;font-size:14px}.list{display:flex;flex-direction:column}.badge{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--accent);color:var(--background);font-size:12px}\n.banner{padding:12px;border-radius:var(--radius);background:#eef2ff;margin:8px 0}.banner.error{background:#fde8e8;border:2px solid #b42318}.empty{text-align:center;opacity:.8;padding:28px}\n.tabs{display:flex;gap:6px}.tab{padding:8px 14px;border-radius:var(--radius);background:#eef2ff}.img{min-height:90px;background:#e8ecf8;border-radius:var(--radius)}a{color:var(--primary)}*{box-sizing:border-box}body{margin:0;font-family:var(--font-body,system-ui,sans-serif);background:var(--background,#fff);color:var(--text,#222);line-height:1.5}\n.screen{display:none;max-width:1000px;margin:0 auto;padding:16px}.screen.active{display:block}\n.proto-bar{position:sticky;top:0;z-index:50;display:flex;gap:10px;align-items:center;padding:6px 12px;background:#222;color:#fff;font:13px system-ui,sans-serif}\n.proto-bar span{flex:1}.proto-bar select{padding:4px;border-radius:6px;max-width:55%}\nbutton,.btn,input,select,textarea{min-height:44px;font:inherit}[data-go]{cursor:pointer}.card[data-go],.item[data-go]{cursor:pointer}\n.row>*{min-width:0}img{max-width:100%}</style></head><body>\n<div class=\"proto-bar\"><span>Prototype. Not the final product.</span><select id=\"jump\" aria-label=\"Jump to a screen\"><option value=\"home\">Home</option><option value=\"new-request\">New request</option><option value=\"request-list\">My requests</option><option value=\"empty-list\">No requests yet</option><option value=\"error\">Something went wrong</option><option value=\"no-access\">No permission</option></select></div>\n<section class=\"screen\" id=\"screen-home\"><div class=\"bar\">DEMO · Home</div><p class=\"title\">Home</p><p class=\"muted\">See your requests and start a new one</p><div class=\"card\" data-go=\"request-list\"><p class=\"sub\">DEMO: Days left</p><p>12 days</p></div><div class=\"row\"><button class=\"btn primary\" data-go=\"new-request\">New request</button><button class=\"btn\" data-go=\"request-list\">My requests</button><button class=\"btn\" data-go=\"empty-list\">See empty state</button><button class=\"btn\" data-go=\"error\">See error state</button><button class=\"btn\" data-go=\"no-access\">See no-permission state</button></div></section>\n<section class=\"screen\" id=\"screen-new-request\"><div class=\"bar\">DEMO · New request</div><p class=\"title\">New request</p><p class=\"muted\">Pick dates and send a request</p><form data-go=\"request-list\"><label class=\"label\">From</label><input class=\"input\" value=\"12 Dec\"><label class=\"label\">To</label><input class=\"input\" value=\"14 Dec\"><button class=\"btn primary\">Send request</button></form><div class=\"row\"><button class=\"btn\" data-go=\"error\">Pretend sending fails</button><button class=\"btn\" data-go=\"home\">Cancel</button></div></section>\n<section class=\"screen\" id=\"screen-request-list\"><div class=\"bar\">DEMO · My requests</div><p class=\"title\">My requests</p><p class=\"muted\">See every request and its answer</p><div class=\"list\"><div class=\"item\" data-go=\"home\">12–14 Dec · <span class=\"badge\">Waiting</span></div><div class=\"item\" data-go=\"home\">3 Nov · <span class=\"badge\">Approved</span></div></div><button class=\"btn\" data-go=\"home\">Back to Home</button></section>\n<section class=\"screen\" id=\"screen-empty-list\"><div class=\"bar\">DEMO · No requests yet</div><p class=\"title\">No requests yet</p><p class=\"muted\">Shown when there are no requests</p><div class=\"empty\">DEMO: nothing to show here yet.</div><button class=\"btn primary\" data-go=\"home\">Back to Home</button></section>\n<section class=\"screen\" id=\"screen-error\"><div class=\"bar\">DEMO · Something went wrong</div><p class=\"title\">Something went wrong</p><p class=\"muted\">Shown when sending fails</p><div class=\"banner error\">DEMO: We could not send your request. Nothing was lost.</div><button class=\"btn primary\" data-go=\"new-request\">Try again</button> <button class=\"btn\" data-go=\"home\">Back to Home</button></section>\n<section class=\"screen\" id=\"screen-no-access\"><div class=\"bar\">DEMO · No permission</div><p class=\"title\">No permission</p><p class=\"muted\">Shown when someone may not open a page</p><div class=\"empty\">DEMO: nothing to show here yet.</div><button class=\"btn primary\" data-go=\"home\">Back to Home</button></section>\n<script>(function(){var sel=document.getElementById('jump');var screens=[].slice.call(document.querySelectorAll('.screen'));\nfunction show(id){var f=false;screens.forEach(function(s){var on=s.id==='screen-'+id;if(on)f=true;s.classList.toggle('active',on)});\nif(!f)return;sel.value=id;window.scrollTo(0,0);try{history.replaceState(null,'','#'+id)}catch(e){}}\ndocument.addEventListener('click',function(e){var t=e.target.closest('[data-go]');if(t&&t.tagName!=='FORM'){e.preventDefault();show(t.getAttribute('data-go'))}});\ndocument.addEventListener('submit',function(e){e.preventDefault();var g=e.target.getAttribute('data-go');if(g)show(g)});\nsel.addEventListener('change',function(){show(sel.value)});\nvar start=(location.hash||'').slice(1);show(screens.some(function(s){return s.id==='screen-'+start})?start:screens[0].id.replace('screen-',''));})();</script></body></html>",
+        "warnings": [],
+        "style_given": false
+      },
+      "finishedAt": "2026-11-04T06:48:10.306Z",
+      "approved": true,
+      "approvedAt": "2026-11-04T06:48:44.642Z",
+      "waitingForNotes": false
+    },
+    {
+      "id": "b4d55be4-79bb-4e88-93f7-eb7693d98ea7",
+      "phase": 6,
+      "version": 1,
+      "createdAt": "2026-11-04T06:48:53.088Z",
+      "status": "done",
+      "progressChars": 14000,
+      "part": "prepare",
+      "output": {
+        "plan": {
+          "will_do": [
+            "DEMO: write a test plan and script",
+            "DEMO: review the prototype"
+          ],
+          "will_skip": [
+            {
+              "item": "Automatic accessibility scan",
+              "why": "Not available in the demo."
+            }
+          ]
+        },
+        "things_i_guessed": [
+          {
+            "guess": "DEMO: 5 people are enough for a first round.",
+            "risk_if_wrong": "Missed problems.",
+            "how_to_check": "Run a second round."
+          }
+        ],
+        "what_i_did": [
+          "DEMO: made up a test plan",
+          "DEMO: no AI was used"
+        ],
+        "checkin": {
+          "what_i_made": "DEMO: a test plan with 2 tasks, a script and an expert check.",
+          "not_sure_about": [
+            "DEMO: the right number of testers"
+          ],
+          "another_view": "DEMO: maybe test the manager side first."
+        },
+        "test_plan": {
+          "goals": [
+            "DEMO: see if people can ask for time off without help"
+          ],
+          "tasks": [
+            {
+              "task": "Ask for 2 days off next month",
+              "success": "Sends the request in under 2 minutes",
+              "tests": [
+                "R1"
+              ]
+            },
+            {
+              "task": "Find the answer to your last request",
+              "success": "Finds it in 2 taps",
+              "tests": [
+                "R2"
+              ]
+            }
+          ]
+        },
+        "script": [
+          "Welcome: thank you for helping. We test the design, not you.",
+          "Task 1: Ask for 2 days off next month.",
+          "Task 2: Find the answer to your last request.",
+          "Follow-up: What was easiest? What was confusing?"
+        ],
+        "expert_check": [
+          {
+            "issue": "DEMO: error message does not say what to do next",
+            "where": "Something went wrong",
+            "severity": "High"
+          },
+          {
+            "issue": "DEMO: the date fields are small on phones",
+            "where": "New request",
+            "severity": "Medium"
+          }
+        ],
+        "cannot_check_automatically": [
+          "DEMO: whether the words make sense to real people",
+          "DEMO: how it feels with a screen reader"
+        ],
+        "not_tested": [
+          "DEMO: R3 (not covered by any task)"
+        ]
+      },
+      "finishedAt": "2026-11-04T06:49:01.235Z"
+    }
+  ],
+  "thingsIGuessed": [
+    {
+      "id": "phase-1-0",
+      "text": "DEMO: most people use phones. (How to check: Ask five users.)",
+      "label": "My guess",
+      "from": "phase-1"
+    },
+    {
+      "id": "phase-2-0",
+      "text": "DEMO: staff prefer phones. (How to check: Interview 5 people.)",
+      "label": "My guess",
+      "from": "phase-2"
+    },
+    {
+      "id": "phase-3-0",
+      "text": "DEMO: managers answer on phones too. (How to check: Ask 3 managers.)",
+      "label": "My guess",
+      "from": "phase-3"
+    },
+    {
+      "id": "phase-4-0",
+      "text": "DEMO: people start from Home. (How to check: Watch 3 people use it.)",
+      "label": "My guess",
+      "from": "phase-4"
+    },
+    {
+      "id": "phase-5-0",
+      "text": "DEMO: the main colour suits the brand. (How to check: Show it to the brand owner.)",
+      "label": "My guess",
+      "from": "phase-5"
+    },
+    {
+      "id": "phase-6-0",
+      "text": "DEMO: 5 people are enough for a first round. (How to check: Run a second round.)",
+      "label": "My guess",
+      "from": "phase-6"
+    }
+  ],
+  "quickQuestions": {
+    "request_summary": "DEMO: you want a simple app. These questions are made up.",
+    "suggested_depth": "Light",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Where will people mostly use this?",
+        "why_it_matters": "Changes the layout",
+        "options": [
+          "Phone",
+          "Laptop",
+          "Both"
+        ]
+      },
+      {
+        "id": "q2",
+        "question": "Who will use it most?",
+        "why_it_matters": "Changes the words and steps",
+        "options": [
+          "Staff",
+          "Customers",
+          "Managers"
+        ]
+      },
+      {
+        "id": "q3",
+        "question": "How soon do you need it?",
+        "options": [
+          "This week",
+          "This month",
+          "No rush"
+        ]
+      }
+    ]
+  },
+  "finalDesignVersionId": "5cc99b31-8dfd-4088-9ab8-51124b616162"
+}
