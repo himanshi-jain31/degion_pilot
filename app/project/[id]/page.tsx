@@ -18,6 +18,8 @@ import { Progress } from "@/components/Progress";
 import { Icon, PHASE_ICON } from "@/components/Icons";
 import { Overview } from "@/components/Overview";
 import { PhaseLine } from "@/components/PhaseLine";
+import { DeleteProject, ProjectName } from "@/components/ProjectName";
+import { capFirst } from "@/lib/names";
 import { ActionBar, BackLink, Loading, Notice, primaryClass, quietClass } from "@/components/ui";
 
 type ProjectView = Omit<Project, "files" | "interviewNotes" | "testNotes"> & {
@@ -80,7 +82,7 @@ function ProjectPage() {
   }, [working, refresh]);
 
   useEffect(() => {
-    if (project) document.title = `${project.title} · DesignPilot`;
+    if (project) document.title = `${capFirst(project.title)} · DesignPilot`;
   }, [project?.title]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sel = selected ?? 1;
@@ -208,7 +210,7 @@ function ProjectPage() {
     <div className="mx-auto w-full max-w-[2200px] px-4 pb-40 pt-2 lg:px-6">
       <header className="mb-8">
         <BackLink />
-        <h1 className="page-title mb-6 mt-3 max-w-3xl">{project.title}</h1>
+        <ProjectName projectId={id} title={project.title} onRenamed={refresh} />
         <PhaseLine phases={project.phases} selected={view === "phase" ? sel : null} onSelect={choosePhase} />
       </header>
 
@@ -268,6 +270,9 @@ function ProjectPage() {
               )}
             </li>
           </ol>
+          <div className="mt-8 px-4">
+            <DeleteProject projectId={id} title={project.title} />
+          </div>
         </nav>
 
         {/* Main area */}

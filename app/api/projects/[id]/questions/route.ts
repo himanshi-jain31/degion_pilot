@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { FriendlyError, MODEL_QUICK, askForJson, buildProjectContent, readRecipe } from "@/lib/ai";
+import { cleanName, suggestName } from "@/lib/names";
 import { QuickQuestions, loadProject, saveProject } from "@/lib/storage";
 
 function validate(data: unknown): QuickQuestions {
@@ -18,6 +19,7 @@ function validate(data: unknown): QuickQuestions {
   return {
     request_summary: typeof d.request_summary === "string" ? d.request_summary : "",
     suggested_depth: typeof d.suggested_depth === "string" ? d.suggested_depth : "Standard",
+    project_name: typeof d.project_name === "string" ? cleanName(d.project_name) || undefined : undefined,
     questions,
   };
 }
@@ -42,6 +44,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
         data: {
           request_summary: "You want a simpler way for staff to ask for time off and for managers to answer.",
           suggested_depth: "Light",
+          project_name: suggestName(project.requirement, project.title),
           questions: [
             { id: "q1", question: "Where will people mostly use this?", why_it_matters: "Changes the layout", options: ["Phone", "Laptop", "Both"] },
             { id: "q2", question: "Who will use it most?", why_it_matters: "Changes the words and steps", options: ["Staff", "Customers", "Managers"] },
@@ -51,6 +54,8 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
       },
     });
     project.quickQuestions = result;
+    // the AI's short name replaces the first guess, unless the designer already renamed the project
+    if (result.project_name && !project.titleEdited) project.title = result.project_name;
     project.answers = {};
     project.thingsIGuessed = project.thingsIGuessed.filter((g) => g.from !== "quick-questions");
     await saveProject(project);

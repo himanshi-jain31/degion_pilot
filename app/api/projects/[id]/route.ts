@@ -3,7 +3,8 @@ import { isDemo } from "@/lib/ai";
 import { settleStuckRuns } from "@/lib/engine";
 import { promises as fs } from "fs";
 import path from "path";
-import { PROJECTS_DIR, UPLOADS_DIR, loadProject, withProjectLock } from "@/lib/storage";
+import { cleanName } from "@/lib/names";
+import { PROJECTS_DIR, UPLOADS_DIR, loadProject, saveProject, withProjectLock } from "@/lib/storage";
 
 // The project, without the long text of the uploaded files
 export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> }) {
@@ -37,4 +38,20 @@ export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string 
     await fs.rm(path.join(UPLOADS_DIR, id), { recursive: true, force: true });
   });
   return NextResponse.json({ ok: true });
+}
+
+// Renames a project. Once renamed, nobody else changes the name.
+export async function PATCH(request: Request, ctx: { params: Promise<{ id: string }> }) {
+  const { id } = await ctx.params;
+  const body = (await request.json().catch(() => ({}))) as { title?: string };
+  const title = cleanName(body.title ?? "");
+  if (!title) return NextResponse.json({ error: "Please give it a name of 1 to 6 words." }, { status: 400 });
+  return withProjectLock(id, async () => {
+    const project = await loadProject(id);
+    if (!project) return NextResponse.json({ error: "I can't find this project." }, { status: 404 });
+    project.title = title;
+    project.titleEdited = true;
+    await saveProject(project);
+    return NextResponse.json({ ok: true, title });
+  });
 }

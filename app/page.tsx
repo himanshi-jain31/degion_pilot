@@ -7,6 +7,7 @@ import { AppShell, Icon } from "@/components/AppShell";
 import { Kbd, Loading, Notice, primaryClass, secondaryClass, useDraft, useKey } from "@/components/ui";
 import { PHASES } from "@/lib/phases";
 import { useName } from "@/lib/name";
+import { capFirst } from "@/lib/names";
 
 type ProjectRow = {
   id: string;
@@ -16,7 +17,7 @@ type ProjectRow = {
   fileCount: number;
   madeInDemo: boolean;
   phases: Record<string, string>;
-  next: { text: string; tone: "waiting" | "working" | "done" | "idle"; phase: string; status: string; step: string };
+  next: { text: string; tone: "waiting" | "working" | "done" | "idle"; phase: string; status: string; badge: string; step: string };
 };
 type Result = { id: string; skipped: string[]; figmaProblem?: string; files: { name: string; kind: string; note: string; characters: number }[] };
 
@@ -27,10 +28,10 @@ const LEAVE_SAMPLE =
 
 // Suggestions fill the box when clicked
 const SUGGESTIONS: { label: string; fill: string }[] = [
-  { label: "Redesign an existing flow", fill: "I want to redesign an existing flow: " },
-  { label: "Start from a one-line idea", fill: "My idea in one line: " },
-  { label: "Improve my current screens", fill: "I want to improve my current screens: " },
-  { label: "Try a sample: leave request", fill: LEAVE_SAMPLE },
+  { label: "Redesign a flow", fill: "I want to redesign an existing flow: " },
+  { label: "Start from one line", fill: "My idea in one line: " },
+  { label: "Improve my screens", fill: "I want to improve my current screens: " },
+  { label: "Try a sample", fill: LEAVE_SAMPLE },
 ];
 
 // The tiny line of six steps on each card
@@ -58,8 +59,6 @@ export default function Home() {
   const [projects, setProjects] = useState<ProjectRow[] | null>(null); // null = still loading
   const [listError, setListError] = useState("");
   const [status, setStatus] = useState<{ keySet: boolean; demo: boolean } | null>(null);
-  const [confirmId, setConfirmId] = useState("");
-  const [deleteError, setDeleteError] = useState("");
   const [dragging, setDragging] = useState(false);
   const [page, setPage] = useState(0);
   const [name, , nameLoaded] = useName();
@@ -181,22 +180,8 @@ export default function Home() {
     }
   }
 
-  async function removeProject(id: string) {
-    setDeleteError("");
-    try {
-      const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setConfirmId("");
-      await loadProjects();
-    } catch (e) {
-      setDeleteError(e instanceof Error ? e.message : "I couldn't delete that. Please try again.");
-    }
-  }
-
   useKey((e) => {
     if (e.key === "Escape") {
-      setConfirmId("");
       setDragging(false);
       setMenuOpen(false);
     }
@@ -212,7 +197,7 @@ export default function Home() {
     }, 0);
   }
 
-  const waiting = (projects ?? []).filter((p) => p.next.tone === "waiting");
+  const needYou = (projects ?? []).filter((p) => p.next.status === "Ready for you" && p.next.badge === "Ready for you");
   const pageSize = 3;
   const recent = (projects ?? []).slice(0, 9);
   const pages = Math.max(1, Math.ceil(recent.length / pageSize));
@@ -227,7 +212,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* Greeting */}
+        {/* 1. Greeting */}
         <header className="text-center">
           <h1 className="text-[40px] font-medium leading-tight tracking-tight">
             Hello,{" "}
@@ -236,11 +221,21 @@ export default function Home() {
             </span>
           </h1>
           <p className="text-soft mt-2 text-xl">What would you like to design today?</p>
-          {waiting.length > 0 && (
+
+          {/* 2. Status line: only when something is ready for you. It scrolls to the cards. */}
+          {needYou.length > 0 && (
             <p className="mt-4">
-              <Link href={waiting.length === 1 ? `/project/${waiting[0].id}` : "/#projects"} className="pill pill-wait underline-offset-4 hover:underline">
-                {waiting.length === 1 ? "1 check-in is waiting for you" : `${waiting.length} check-ins are waiting for you`}
-              </Link>
+              <a
+                href="#projects"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                  document.getElementById("projects")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+                }}
+                className="pill pill-wait underline-offset-4 hover:underline"
+              >
+                {needYou.length === 1 ? "1 project needs you" : `${needYou.length} projects need you`}
+              </a>
             </p>
           )}
         </header>
@@ -254,70 +249,8 @@ export default function Home() {
           </div>
         )}
 
-        {/* Recent projects */}
-        <section className="mt-10" aria-label="Recent projects">
-          {listError ? (
-            <Notice tone="error" action={<button onClick={loadProjects} className={secondaryClass}>Try again</button>}>
-              {listError}
-            </Notice>
-          ) : projects === null ? (
-            <Loading onReload={loadProjects}>Loading your projects...</Loading>
-          ) : recent.length === 0 ? (
-            <div className="shell-card mx-auto max-w-md p-6 text-center">
-              <p className="text-lg font-medium">Your first design will show up here</p>
-              <p className="text-soft mt-1 text-[15px]">Tell me what you need below. I do the design steps with you and stop for your Go ahead after each one.</p>
-            </div>
-          ) : (
-            <>
-              <ul key={page} className="fade-in grid gap-4 sm:grid-cols-3">
-                {shownCards.map((p) => (
-                  <li key={p.id}>
-                    <Link
-                      href={`/project/${p.id}`}
-                      aria-label={`Open ${p.title}. ${p.next.phase}: ${p.next.status}.`}
-                      className="shell-card flex h-full flex-col gap-3 p-5 transition-shadow duration-150 hover:shadow-[0_2px_4px_rgba(40,40,80,0.05),0_12px_28px_rgba(60,60,120,0.10)]"
-                    >
-                      <span className="line-clamp-2 text-base font-medium leading-snug">{p.title}</span>
-                      <MiniProgress phases={p.phases} />
-                      <span className="flex flex-wrap items-center gap-2 text-sm">
-                        <span className="font-medium">{p.next.phase}</span>
-                        <span className={`${TONE[p.next.tone]} !text-[13px]`}>{p.next.status}</span>
-                      </span>
-                      <span className="text-soft mt-auto text-sm leading-snug">{p.next.step}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              {pages > 1 && (
-                <div className="mt-4 flex justify-center gap-2" role="group" aria-label="More recent projects">
-                  {Array.from({ length: pages }, (_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setPage(i)}
-                      aria-label={`Show projects ${i * pageSize + 1} to ${Math.min(recent.length, (i + 1) * pageSize)}`}
-                      aria-current={i === page ? "true" : undefined}
-                      className="flex !min-h-6 h-6 w-6 items-center justify-center rounded-full"
-                    >
-                      <span className={`block h-2 w-2 rounded-full transition-colors duration-150 ${i === page ? "bg-accent" : "bg-[#cfd0dc]"}`} />
-                    </button>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-        </section>
-
-        {/* Suggestions */}
-        <div className="mt-8 flex flex-wrap justify-center gap-2" role="group" aria-label="Ideas to start from">
-          {SUGGESTIONS.map((s) => (
-            <button key={s.label} type="button" onClick={() => fillWith(s.fill)} className="chip">
-              {s.label}
-            </button>
-          ))}
-        </div>
-
-        {/* The main box */}
-        <div className="shell-card card-focus mt-4 p-4">
+        {/* 3. The text box */}
+        <div className="shell-card card-focus mt-10 p-4">
           {(files.length > 0 || figmaOpen) && (
             <div className="mb-3 space-y-3">
               {files.length > 0 && (
@@ -396,8 +329,9 @@ export default function Home() {
               >
                 <Icon name="plus" />
               </button>
+              {/* The menu opens below the box */}
               {menuOpen && (
-                <div role="menu" className="shell-card fade-in absolute bottom-full left-0 z-20 mb-2 w-64 p-2">
+                <div role="menu" className="shell-card fade-in absolute left-0 top-full z-20 mt-2 w-64 p-2">
                   <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); fileInput.current?.click(); }} className="block w-full rounded-lg px-3 py-2 text-left hover:bg-[#f4f4fa]">
                     Attach documents
                     <span className="text-soft block text-sm">PDF, Word, Excel, CSV, text, pictures</span>
@@ -432,6 +366,15 @@ export default function Home() {
         </div>
         <p className="text-soft mt-2 text-center text-sm sm:hidden">Your words are kept as you type.</p>
 
+        {/* 4. Suggestions, one row below the box */}
+        <div className="mt-4 flex flex-wrap justify-center gap-2 lg:flex-nowrap" role="group" aria-label="Ideas to start from">
+          {SUGGESTIONS.map((s) => (
+            <button key={s.label} type="button" onClick={() => fillWith(s.fill)} className="chip whitespace-nowrap">
+              {s.label}
+            </button>
+          ))}
+        </div>
+
         {error && (
           <div className="mt-4">
             <Notice tone="error">{error}</Notice>
@@ -460,50 +403,79 @@ export default function Home() {
           </div>
         )}
 
-        {/* All projects */}
-        <section id="projects" className="mt-20 scroll-mt-8" aria-labelledby="my-projects">
-          <h2 id="my-projects" className="section-title">
-            My projects
+        {/* 5. Your projects */}
+        <section id="projects" className="mt-14 scroll-mt-8" aria-labelledby="your-projects">
+          <h2 id="your-projects" className="section-title">
+            Your projects
           </h2>
-          {projects && projects.length === 0 && (
-            <p className="text-soft mt-2">Nothing here yet. Your projects will be listed here.</p>
-          )}
-          {deleteError && <p role="alert" className="mt-2 text-[var(--bad-ink)]">{deleteError}</p>}
-          {projects && projects.length > 0 && (
-            <ul className="mt-4 space-y-3">
-              {projects.map((p) => (
-                <li key={p.id} className="shell-card p-5">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <Link href={`/project/${p.id}`} className="text-base font-medium underline-offset-4 hover:underline">
-                      {p.title}
-                    </Link>
-                    <span className={TONE[p.next.tone]}>{p.next.text}</span>
+          <div className="mt-4">
+            {listError ? (
+              <Notice tone="error" action={<button onClick={loadProjects} className={secondaryClass}>Try again</button>}>
+                {listError}
+              </Notice>
+            ) : projects === null ? (
+              <Loading onReload={loadProjects}>Loading your projects...</Loading>
+            ) : recent.length === 0 ? (
+              <div className="shell-card mx-auto max-w-md p-6 text-center">
+                <p className="text-lg font-medium">Your first design will show up here</p>
+                <p className="text-soft mt-1 text-[15px]">Tell me what you need above. I do the design steps with you and stop for your Go ahead after each one.</p>
+              </div>
+            ) : (
+              <>
+                <ul key={page} className="fade-in grid gap-4 sm:grid-cols-3">
+                  {shownCards.map((p) => {
+                    const n = PHASES.find((ph) => ph.name === p.next.phase)?.n ?? 1;
+                    return (
+                      <li key={p.id}>
+                        <Link
+                          href={`/project/${p.id}`}
+                          aria-label={`Open ${capFirst(p.title)}. ${p.next.phase}, step ${n} of 6: ${p.next.badge}. ${p.next.step}`}
+                          className="shell-card flex h-full flex-col gap-3 p-5 transition-shadow duration-150 hover:shadow-[0_2px_4px_rgba(40,40,80,0.05),0_12px_28px_rgba(60,60,120,0.10)]"
+                        >
+                          <span className="flex items-start justify-between gap-3">
+                            <span className="line-clamp-2 min-w-0 flex-1 text-base font-medium leading-snug [overflow-wrap:anywhere]">{capFirst(p.title)}</span>
+                            <span className={`${TONE[p.next.tone]} shrink-0 !px-2.5 !text-[13px]`}>{p.next.badge}</span>
+                          </span>
+                          <MiniProgress phases={p.phases} />
+                          <span className="text-soft text-sm">
+                            {p.next.phase}, step {n} of 6
+                          </span>
+                          <span className="mt-auto flex items-start gap-2 text-sm leading-snug">
+                            <svg aria-hidden="true" className="mt-0.5 shrink-0 text-accent" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M5 12h14M13 6l6 6-6 6" />
+                            </svg>
+                            <span>{p.next.step}</span>
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+                {/* Dots only when there are more than 3 projects */}
+                {projects.length > 3 && pages > 1 && (
+                  <div className="mt-4 flex justify-center gap-2" role="group" aria-label="More projects">
+                    {Array.from({ length: pages }, (_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setPage(i)}
+                        aria-label={`Show projects ${i * pageSize + 1} to ${Math.min(recent.length, (i + 1) * pageSize)}`}
+                        aria-current={i === page ? "true" : undefined}
+                        className="flex !min-h-6 h-6 w-6 items-center justify-center rounded-full"
+                      >
+                        <span className={`block h-2 w-2 rounded-full transition-colors duration-150 ${i === page ? "bg-accent" : "bg-[#cfd0dc]"}`} />
+                      </button>
+                    ))}
                   </div>
-                  <p className="text-soft mt-1 text-sm">
-                    {new Date(p.createdAt).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })} · {p.fileCount} {p.fileCount === 1 ? "document" : "documents"}
-                  </p>
-                  {confirmId === p.id ? (
-                    <div className="mt-3 flex flex-wrap items-center gap-3 text-[15px]" role="group" aria-label={`Delete ${p.title}?`}>
-                      <span>Delete this project and its files for good?</span>
-                      <button onClick={() => removeProject(p.id)} className="btn !min-h-10 !px-4 text-white" style={{ background: "var(--bad-ink)" }}>
-                        Yes, delete
-                      </button>
-                      <button onClick={() => setConfirmId("")} className={`${secondaryClass} !min-h-10 !px-4`}>
-                        Keep it <Kbd>Esc</Kbd>
-                      </button>
-                    </div>
-                  ) : (
-                    <button onClick={() => { setConfirmId(p.id); setDeleteError(""); }} className="text-soft mt-2 text-sm underline underline-offset-4 hover:text-ink" aria-label={`Delete ${p.title}`}>
-                      Delete
-                    </button>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
+                )}
+              </>
+            )}
+          </div>
         </section>
-      </main>
 
+        <p className="text-soft mt-auto pt-16 text-center text-xs">
+          DesignPilot can make mistakes. Check important details before sharing.
+        </p>
+      </main>
     </AppShell>
   );
 }

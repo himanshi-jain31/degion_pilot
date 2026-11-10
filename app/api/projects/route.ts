@@ -5,25 +5,36 @@ import { NextResponse } from "next/server";
 import { isDemo } from "@/lib/ai";
 import { ALLOWED_EXTENSIONS, MAX_FILE_BYTES, extractText } from "@/lib/extract";
 import { PHASES } from "@/lib/phases";
+import { suggestName } from "@/lib/names";
 import { PHASE_NAMES, Project, ProjectFile, UPLOADS_DIR, listProjects, saveProject } from "@/lib/storage";
 
 // Where a project is up to, in plain words, for the Home cards and list
 function whereItIsUpTo(p: Project) {
   const phase = PHASES.find((ph) => p.phases[ph.name] !== "Approved");
   const failed = p.versions.some((v, i, all) => v.status === "failed" && all.filter((x) => x.phase === v.phase).at(-1) === v);
-  if (!phase) return { text: "All six steps are done", tone: "done" as const, phase: "Testing", status: "Approved", step: "All six steps are done. Open the final result." };
+  if (!phase) return { text: "All six steps are done", tone: "done" as const, phase: "Testing", status: "Approved", badge: "Done", step: "All six steps are done. Open the final result." };
   const status = p.phases[phase.name] ?? "Not started";
   const questionsDone = !!p.quickQuestions && p.quickQuestions.questions.every((q) => p.answers[q.id]);
-  if (failed) return { text: `${phase.name}: needs another try`, tone: "waiting" as const, phase: phase.name, status, step: "That did not work. Open it to try again." };
-  if (status === "Working on it") return { text: `${phase.name}: working on it`, tone: "working" as const, phase: phase.name, status, step: "I am working on it. You can leave and come back." };
-  if (status === "Ready for you") return { text: `${phase.name}: ready for you to check`, tone: "waiting" as const, phase: phase.name, status, step: "Check what I made, then say Go ahead." };
-  if (status === "Changes asked") return { text: `${phase.name}: changes asked`, tone: "waiting" as const, phase: phase.name, status, step: "Open it to see where I am with your changes." };
-  if (!questionsDone) return { text: "Quick questions to answer", tone: "idle" as const, phase: phase.name, status, step: "Answer a few quick questions to begin." };
-  return { text: `Next: ${phase.name}`, tone: "idle" as const, phase: phase.name, status, step: `Open it to start ${phase.name}.` };
+  if (failed) return { text: `${phase.name}: needs another try`, tone: "waiting" as const, phase: phase.name, status, badge: "Needs another try", step: "That did not work. Open it to try again." };
+  if (status === "Working on it") return { text: `${phase.name}: working on it`, tone: "working" as const, phase: phase.name, status, badge: status, step: "I am working on it. You can leave and come back." };
+  if (status === "Ready for you") return { text: `${phase.name}: ready for you to check`, tone: "waiting" as const, phase: phase.name, status, badge: status, step: "Check what I made, then say Go ahead." };
+  if (status === "Changes asked") return { text: `${phase.name}: changes asked`, tone: "waiting" as const, phase: phase.name, status, badge: status, step: "Open it to see where I am with your changes." };
+  if (!questionsDone) return { text: "Quick questions to answer", tone: "idle" as const, phase: phase.name, status, badge: status, step: "Answer a few quick questions to begin." };
+  return { text: `Next: ${phase.name}`, tone: "idle" as const, phase: phase.name, status, badge: status, step: `Open it to start ${phase.name}.` };
 }
 
 export async function GET() {
   const projects = await listProjects();
+  // Older projects got a long first-words title. Give them a short topic name once (never touches a name the designer chose).
+  for (const p of projects) {
+    if (!p.titleEdited && p.requirement && p.title.split(/\s+/).length > 5) {
+      const short = suggestName(p.requirement, p.title);
+      if (short && short !== p.title) {
+        p.title = short;
+        await saveProject(p);
+      }
+    }
+  }
   const rows = projects.map((p) => ({
     id: p.id,
     title: p.title,
@@ -72,10 +83,8 @@ export async function POST(request: Request) {
     files.push({ name: file.name, savedAs, size: file.size, ...extracted });
   }
 
-  // A short title: the first sentence, cut at a whole word if it is long
-  const firstLine = (requirement.split("\n")[0] || files[0]?.name || "New project").trim();
-  const sentence = (firstLine.match(/^.+?[.!?](\s|$)/)?.[0] ?? firstLine).trim();
-  const title = sentence.length > 60 ? sentence.slice(0, 60).replace(/\s+\S*$/, "") + "…" : sentence;
+  // A short name of 2 to 4 words from the main topic of the request (not the first words)
+  const title = suggestName(requirement, files[0]?.name.replace(/\.[^.]+$/, "") || "New project");
   const project: Project = {
     id,
     title,

@@ -30,6 +30,7 @@ export type Question = {
 export type QuickQuestions = {
   request_summary: string;
   suggested_depth: string;
+  project_name?: string; // a short name (2 to 4 words) for the project
   questions: Question[];
 };
 
@@ -216,6 +217,7 @@ export type FigmaFile = {
 export type Project = {
   id: string;
   madeInDemo?: boolean; // true if any part was made in demo mode
+  titleEdited?: boolean; // true once the designer renamed the project (then nobody else renames it)
   title: string;
   requirement: string;
   createdAt: string;
