@@ -1,18 +1,6 @@
-import type { IdeateOutput, StructureNode } from "@/lib/storage";
+import type { IdeateOutput } from "@/lib/storage";
+import { FlowDiagram, JourneyMap, StructureMap } from "@/components/Diagrams";
 import { Section } from "@/components/UnderstandView";
-
-function Tree({ nodes }: { nodes: StructureNode[] }) {
-  return (
-    <ul className="ml-5 list-disc space-y-1">
-      {nodes.map((n, i) => (
-        <li key={i}>
-          {n.page}
-          {n.children && n.children.length > 0 && <Tree nodes={n.children} />}
-        </li>
-      ))}
-    </ul>
-  );
-}
 
 // One direction as a card (used in the Work tab and in the Check-in)
 export function DirectionCard({ d, recommended }: { d: IdeateOutput["directions"][number]; recommended?: boolean }) {
@@ -39,50 +27,20 @@ export function IdeateWork({ out }: { out: IdeateOutput }) {
   return (
     <div>
       <Section title="Product structure">
-        <Tree nodes={out.product_structure} />
+        <StructureMap nodes={out.product_structure} />
       </Section>
 
       <Section title="User flows">
         <div className="space-y-3">
           {out.user_flows.map((f, i) => (
-            <div key={i} className="rounded-lg border border-neutral-200 p-3">
-              <p className="font-medium">
-                {f.name} <span className="ml-1 text-xs font-normal text-neutral-600">({f.type})</span>
-              </p>
-              <ol className="mt-1 list-decimal space-y-1 pl-5 text-sm">
-                {f.steps.map((s, j) => (
-                  <li key={j}>{s}</li>
-                ))}
-              </ol>
-            </div>
+            <FlowDiagram key={i} flow={f} />
           ))}
         </div>
       </Section>
 
       {(out.journeys.today.length > 0 || out.journeys.future.length > 0) && (
         <Section title="User journeys">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-lg border border-neutral-200 p-3">
-              <p className="font-medium">Today</p>
-              <ol className="mt-1 list-decimal space-y-1 pl-5 text-sm">
-                {out.journeys.today.map((j, i) => (
-                  <li key={i}>
-                    {j.step} <span className="text-neutral-600">· feels {j.feeling}{j.pain && ` · problem: ${j.pain}`}</span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <div className="rounded-lg border border-neutral-200 p-3">
-              <p className="font-medium">In the future</p>
-              <ol className="mt-1 list-decimal space-y-1 pl-5 text-sm">
-                {out.journeys.future.map((j, i) => (
-                  <li key={i}>
-                    {j.step} <span className="text-neutral-600">· feels {j.feeling}</span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          </div>
+          <JourneyMap journeys={out.journeys} />
         </Section>
       )}
 
