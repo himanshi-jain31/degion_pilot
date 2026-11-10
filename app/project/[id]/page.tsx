@@ -205,7 +205,7 @@ function ProjectPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-6 pb-40 pt-2">
+    <div className="mx-auto w-full max-w-[2200px] px-4 pb-40 pt-2 lg:px-6">
       <header className="mb-8">
         <BackLink />
         <h1 className="page-title mb-6 mt-3 max-w-3xl">{project.title}</h1>
@@ -214,7 +214,7 @@ function ProjectPage() {
 
       <div className="flex flex-col gap-6 lg:flex-row">
         {/* Phase rail */}
-        <nav aria-label="Steps" className="lg:w-60 lg:shrink-0">
+        <nav aria-label="Steps" className="lg:w-52 lg:shrink-0 xl:w-56">
           <ol className="space-y-1">
             <li>
               <button
@@ -454,7 +454,7 @@ function ProjectPage() {
         </main>
 
         {/* Things I guessed */}
-        <aside aria-label="Things I guessed" className="lg:w-80 lg:shrink-0">
+        <aside aria-label="Things I guessed" className="lg:w-64 lg:shrink-0 xl:w-72">
           <div className="card !p-6">
             <h2 className="section-title">Things I guessed</h2>
             {project.thingsIGuessed.length === 0 ? (
