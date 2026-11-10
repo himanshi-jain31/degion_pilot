@@ -125,7 +125,14 @@ export type IdeateOutput = PhaseOutput & {
 };
 
 // recipes/4-wireframes.md. The html is built screen by screen and joined, so it is not part of the first AI answer.
-export type Screen = { id: string; name: string; purpose: string; meets: string[]; states: string[] };
+export type Screen = {
+  id: string;
+  name: string;
+  purpose: string;
+  meets: string[];
+  states: string[];
+  group?: string; // menu group, for example "Employee", "Manager" or "Edge cases and states"
+};
 export type WireframeOutput = PhaseOutput & {
   screens: Screen[];
   user_coverage: { user: string; screens: string[] }[]; // which screens each user profile gets

@@ -6,49 +6,148 @@ import { esc } from "@/lib/wireframes";
 import type { FigmaFile, Screen } from "@/lib/storage";
 
 
+const EMP = "Employee";
+const MGR = "Manager";
+const EDGE = "Edge cases and states";
+
+// A sample leave tracker for two kinds of users. The three groups appear as headings in the prototype menu.
 export const DEMO_SCREENS: Screen[] = [
-  { id: "home", name: "Home", purpose: "See your requests and start a new one", meets: ["R1"], states: ["normal"] },
-  { id: "new-request", name: "New request", purpose: "Pick dates and send a request", meets: ["R1"], states: ["normal", "error"] },
-  { id: "request-list", name: "My requests", purpose: "See every request and its answer", meets: ["R1", "R2"], states: ["normal"] },
-  { id: "manager-inbox", name: "Manager inbox", purpose: "A manager sees requests waiting for an answer", meets: ["R2"], states: ["normal"] },
-  { id: "answer-request", name: "Answer a request", purpose: "A manager says yes or no", meets: ["R2"], states: ["normal"] },
-  { id: "empty-list", name: "No requests yet", purpose: "Shown when there are no requests", meets: ["R1"], states: ["empty"] },
-  { id: "error", name: "Something went wrong", purpose: "Shown when sending fails", meets: ["R1"], states: ["error"] },
-  { id: "no-access", name: "No permission", purpose: "Shown when someone may not open a page", meets: ["R2"], states: ["no permission"] },
+  { id: "home", name: "Home", purpose: "Employee: days left by type and the next step", meets: ["R1"], states: ["normal"], group: EMP },
+  { id: "request-leave", name: "Request leave", purpose: "Employee: choose a type, pick dates, send", meets: ["R1"], states: ["normal"], group: EMP },
+  { id: "sent", name: "Request sent", purpose: "Employee: confirmation after sending", meets: ["R1"], states: ["normal"], group: EMP },
+  { id: "my-requests", name: "My requests", purpose: "Employee: every request and its status", meets: ["R1"], states: ["normal"], group: EMP },
+  { id: "detail-waiting", name: "Request details (waiting)", purpose: "Employee: one request that is waiting, with cancel", meets: ["R1"], states: ["normal"], group: EMP },
+  { id: "detail-approved", name: "Request details (approved)", purpose: "Employee: one approved request", meets: ["R1"], states: ["normal"], group: EMP },
+  { id: "detail-declined", name: "Request details (declined)", purpose: "Employee: one declined request with the reason", meets: ["R1"], states: ["normal"], group: EMP },
+  { id: "cancel-confirm", name: "Cancel this request?", purpose: "Employee: confirm before cancelling", meets: ["R1"], states: ["normal"], group: EMP },
+  { id: "cancelled", name: "Request cancelled", purpose: "Employee: confirmation after cancelling", meets: ["R1"], states: ["normal"], group: EMP },
+  { id: "manager-waiting", name: "Requests waiting", purpose: "Manager: requests that need an answer", meets: ["R2"], states: ["normal"], group: MGR },
+  { id: "review-anna", name: "Review: Anna", purpose: "Manager: approve or decline Anna's request", meets: ["R2"], states: ["normal"], group: MGR },
+  { id: "review-ben", name: "Review: Ben", purpose: "Manager: approve or decline Ben's request", meets: ["R2"], states: ["normal"], group: MGR },
+  { id: "approved-done", name: "Request approved", purpose: "Manager: confirmation after approving", meets: ["R2"], states: ["normal"], group: MGR },
+  { id: "declined-done", name: "Request declined", purpose: "Manager: confirmation after declining", meets: ["R2"], states: ["normal"], group: MGR },
+  { id: "team-calendar", name: "Team calendar", purpose: "Manager: who is away and when", meets: ["R2"], states: ["normal"], group: MGR },
+  { id: "no-days-left", name: "No days left", purpose: "The form when a leave type has no days left", meets: ["R1"], states: ["error"], group: EDGE },
+  { id: "overlap", name: "Dates overlap", purpose: "The form when dates overlap another request", meets: ["R1"], states: ["error"], group: EDGE },
+  { id: "sent-backup", name: "Request sent (manager on leave)", purpose: "Confirmation when the manager is away", meets: ["R1", "R2"], states: ["normal"], group: EDGE },
+  { id: "empty-requests", name: "My requests (none yet)", purpose: "Employee list with no requests", meets: ["R1"], states: ["empty"], group: EDGE },
+  { id: "manager-empty", name: "Requests waiting (none)", purpose: "Manager list with nothing waiting", meets: ["R2"], states: ["empty"], group: EDGE },
+  { id: "send-error", name: "Could not send", purpose: "Sending failed", meets: ["R1"], states: ["error"], group: EDGE },
+  { id: "no-permission", name: "No permission", purpose: "An employee opens a manager page", meets: ["R2"], states: ["no permission"], group: EDGE },
 ];
 
-// A fixed sample screen. It is only used in demo mode.
+// ---- small building blocks for the sample screens ----
+const btn = (go: string, text: string, kind = "") => `<button type="button" class="btn${kind ? " " + kind : ""}" data-go="${go}">${text}</button>`;
+const status = (k: "waiting" | "approved" | "declined") => `<span class="status ${k}">${k === "waiting" ? "● Waiting" : k === "approved" ? "✓ Approved" : "✕ Declined"}</span>`;
+const empNav = (cur: string) =>
+  `<nav class="appnav" aria-label="Main"><span class="brand">Leave</span>${[["home", "Home"], ["request-leave", "Request leave"], ["my-requests", "My requests"]]
+    .map(([id, t]) => `<button type="button" class="navitem" data-go="${id}"${id === cur ? ' aria-current="page"' : ""}>${t}</button>`).join("")}</nav>`;
+const mgrNav = (cur: string) =>
+  `<nav class="appnav" aria-label="Main"><span class="brand">Leave</span>${[["manager-waiting", "Waiting"], ["team-calendar", "Team calendar"]]
+    .map(([id, t]) => `<button type="button" class="navitem" data-go="${id}"${id === cur ? ' aria-current="page"' : ""}>${t}</button>`).join("")}</nav>`;
+const item = (go: string, left: string, right: string) => `<div class="item" data-go="${go}" role="link" tabindex="0"><span>${left}</span>${right}</div>`;
+
+// The leave form. Used for the normal form and for the two "problem" versions of it.
+function leaveForm(opts: { banner?: string; days?: string; disabled?: boolean; type?: string; from?: string; to?: string }) {
+  const sel = (v: string) => (opts.type === v ? " selected" : "");
+  return `${empNav("request-leave")}<h1 class="title">Request leave</h1>${opts.banner ?? ""}
+<form data-go="sent"><label class="label" for="lt">Leave type</label>
+<select class="input" id="lt"><option${sel("Annual leave")}>Annual leave (12 days left)</option><option${sel("Sick leave")}>Sick leave (5 days left)</option><option${sel("Personal leave")}>Personal leave (0 days left)</option></select>
+<div class="row"><div><label class="label" for="from">From</label><input class="input" id="from" type="date" value="${opts.from ?? "2026-12-12"}"></div>
+<div><label class="label" for="to">To</label><input class="input" id="to" type="date" value="${opts.to ?? "2026-12-14"}"></div></div>
+<p class="muted">${opts.days ?? "3 days. Priya will reply within 2 days."}</p>
+<label class="label" for="note">Note for Priya (optional)</label><textarea class="input" id="note" rows="3"></textarea>
+<button class="btn primary"${opts.disabled ? " disabled" : ""}>Send request</button></form>`;
+}
+
+// A fixed sample screen. It is only used in demo mode. Product screens never contain buttons to the edge-case screens.
 export function demoFragment(s: Screen): string {
-  const go = (id: string, text: string, primary = false) => `<button class="btn${primary ? " primary" : ""}" data-go="${id}">${text}</button>`;
-  const head = `<div class="bar">${esc(s.name)}</div><p class="title">${esc(s.name)}</p>`;
   switch (s.id) {
     case "home":
-      return `${head}<div class="card" data-go="request-list"><p class="sub">Days left</p><p>12 days</p></div><div class="row">${go("new-request", "New request", true)}${go("request-list", "My requests")}${go("manager-inbox", "I am a manager")}${go("empty-list", "See empty state")}${go("error", "See error state")}${go("no-access", "See no-permission state")}</div>`;
-    case "new-request":
-      return `${head}<form data-go="request-list"><label class="label">From</label><input class="input" value="12 Dec"><label class="label">To</label><input class="input" value="14 Dec"><button class="btn primary">Send request</button></form><div class="row">${go("error", "See what happens if sending fails")}${go("home", "Cancel")}</div>`;
-    case "request-list":
-      return `${head}<div class="list"><div class="item" data-go="home">12–14 Dec · <span class="badge">Waiting</span></div><div class="item" data-go="home">3 Nov · <span class="badge">Approved</span></div></div>${go("home", "Back to Home")}`;
-    case "manager-inbox":
-      return `${head}<div class="list"><div class="item" data-go="answer-request">Anna · 12–14 Dec · <span class="badge">Waiting</span></div><div class="item" data-go="answer-request">Ben · 20 Dec · <span class="badge">Waiting</span></div></div>${go("home", "Back to Home")}`;
-    case "answer-request":
-      return `${head}<div class="box">Anna asks for 12–14 Dec (2 days). She has 12 days left.</div><div class="row">${go("manager-inbox", "Say yes", true)}${go("manager-inbox", "Say no")}</div>`;
-    case "error":
-      return `${head}<div class="banner error">We could not send your request. Nothing was lost.</div>${go("new-request", "Try again", true)} ${go("home", "Back to Home")}`;
+      return `${empNav("home")}<h1 class="title">Hi Anna</h1><p class="sub">Days left</p>
+<div class="row"><div class="card"><p class="muted">Annual leave</p><p class="big">12 days</p></div><div class="card"><p class="muted">Sick leave</p><p class="big">5 days</p></div><div class="card"><p class="muted">Personal leave</p><p class="big">0 days</p></div></div>
+<p class="sub">Next request</p>${item("detail-waiting", "12–14 Dec · Annual leave", status("waiting"))}
+${btn("request-leave", "Request leave", "primary")}`;
+    case "request-leave":
+      return leaveForm({});
+    case "sent":
+      return `${empNav("request-leave")}<h1 class="title">Request sent</h1><div class="banner">Request sent. Priya will reply within 2 days.</div>
+<p class="muted">12–14 Dec · Annual leave · 3 days</p><div class="row">${btn("my-requests", "View my requests", "primary")}${btn("home", "Back to Home")}</div>`;
+    case "my-requests":
+      return `${empNav("my-requests")}<h1 class="title">My requests</h1><div class="list">
+${item("detail-waiting", "12–14 Dec · Annual leave", status("waiting"))}${item("detail-approved", "3 Nov · Sick leave", status("approved"))}${item("detail-declined", "20 Oct · Personal leave", status("declined"))}</div>`;
+    case "detail-waiting":
+      return `${empNav("my-requests")}<h1 class="title">Annual leave</h1><p>${status("waiting")}</p>
+<div class="box"><p><strong>Dates:</strong> 12–14 Dec (3 days)</p><p><strong>Sent to:</strong> Priya Shah</p><p><strong>Sent on:</strong> 5 Dec</p></div>
+<div class="row">${btn("cancel-confirm", "Cancel request")}${btn("my-requests", "Back to my requests")}</div>`;
+    case "detail-approved":
+      return `${empNav("my-requests")}<h1 class="title">Sick leave</h1><p>${status("approved")}</p>
+<div class="box"><p><strong>Dates:</strong> 3 Nov (1 day)</p><p><strong>Answered by:</strong> Priya Shah</p><p><strong>Note:</strong> Get well soon.</p></div>${btn("my-requests", "Back to my requests")}`;
+    case "detail-declined":
+      return `${empNav("my-requests")}<h1 class="title">Personal leave</h1><p>${status("declined")}</p>
+<div class="box"><p><strong>Dates:</strong> 20 Oct (1 day)</p><p><strong>Answered by:</strong> Priya Shah</p><p><strong>Note:</strong> The team has a deadline that day. Could you move it to the 22nd?</p></div>
+<div class="row">${btn("request-leave", "Ask for new dates", "primary")}${btn("my-requests", "Back to my requests")}</div>`;
+    case "cancel-confirm":
+      return `${empNav("my-requests")}<h1 class="title">Cancel this request?</h1><div class="box">Annual leave, 12–14 Dec. Priya will be told you cancelled it.</div>
+<div class="row">${btn("cancelled", "Yes, cancel request", "primary")}${btn("detail-waiting", "Keep my request")}</div>`;
+    case "cancelled":
+      return `${empNav("my-requests")}<h1 class="title">Request cancelled</h1><div class="banner">Your request for 12–14 Dec was cancelled. Your 3 days are back in your balance.</div>${btn("my-requests", "Back to my requests", "primary")}`;
+    case "manager-waiting":
+      return `${mgrNav("manager-waiting")}<h1 class="title">Requests waiting</h1><p class="muted">2 people need an answer.</p><div class="list">
+${item("review-anna", "Anna · 12–14 Dec · Annual leave", status("waiting"))}${item("review-ben", "Ben · 20 Dec · Personal leave", status("waiting"))}</div>`;
+    case "review-anna":
+    case "review-ben": {
+      const anna = s.id === "review-anna";
+      return `${mgrNav("manager-waiting")}<h1 class="title">${anna ? "Anna" : "Ben"} asks for leave</h1><p>${status("waiting")}</p>
+<div class="box"><p><strong>Type:</strong> ${anna ? "Annual leave" : "Personal leave"}</p><p><strong>Dates:</strong> ${anna ? "12–14 Dec (3 days)" : "20 Dec (1 day)"}</p><p><strong>Days left after this:</strong> ${anna ? "9" : "0"}</p></div>
+<form data-go="approved-done"><label class="label" for="mnote">Note to ${anna ? "Anna" : "Ben"} (optional)</label><textarea class="input" id="mnote" rows="3"></textarea>
+<div class="row"><button class="btn primary">Approve</button>${btn("declined-done", "Decline")}</div></form>${btn("manager-waiting", "Back to requests waiting")}`;
+    }
+    case "approved-done":
+      return `${mgrNav("manager-waiting")}<h1 class="title">Request approved</h1><div class="banner">Approved. Anna has been told and her days are booked.</div>${btn("manager-waiting", "Back to requests waiting", "primary")}`;
+    case "declined-done":
+      return `${mgrNav("manager-waiting")}<h1 class="title">Request declined</h1><div class="banner">Declined. Your note was sent to the employee.</div>${btn("manager-waiting", "Back to requests waiting", "primary")}`;
+    case "team-calendar":
+      return `${mgrNav("team-calendar")}<h1 class="title">Team calendar</h1><p class="muted">December</p>
+<table class="cal"><thead><tr><th>Person</th><th>8–12 Dec</th><th>15–19 Dec</th><th>22–26 Dec</th></tr></thead><tbody>
+<tr><th>Anna</th><td data-go="review-anna" role="link" tabindex="0">${status("waiting")} 12–14</td><td></td><td></td></tr>
+<tr><th>Ben</th><td></td><td></td><td data-go="review-ben" role="link" tabindex="0">${status("waiting")} 20</td></tr>
+<tr><th>Sam</th><td></td><td>${status("approved")} 15–16</td><td></td></tr></tbody></table>`;
+    case "no-days-left":
+      return leaveForm({ banner: `<div class="banner warn" role="alert">You have no personal leave days left. Choose another leave type, or ask Priya about unpaid leave.</div>`, type: "Personal leave", days: "0 days left for this type.", disabled: true });
+    case "overlap":
+      return leaveForm({ banner: `<div class="banner warn" role="alert">These dates overlap your request for 12–14 Dec. Pick other dates, or cancel that request first.</div>`, from: "2026-12-13", to: "2026-12-15", days: "3 days. Overlaps another request." });
+    case "sent-backup":
+      return `${empNav("request-leave")}<h1 class="title">Request sent</h1><div class="banner">Request sent. Priya is on leave, so Marcus Lee will reply within 2 days.</div>
+<p class="muted">Marcus is the backup approver while Priya is away.</p><div class="row">${btn("my-requests", "View my requests", "primary")}${btn("home", "Back to Home")}</div>`;
+    case "empty-requests":
+      return `${empNav("my-requests")}<h1 class="title">My requests</h1><div class="empty"><p class="sub">No requests yet</p><p>When you ask for leave, your requests and their answers will show here.</p>${btn("request-leave", "Request leave", "primary")}</div>`;
+    case "manager-empty":
+      return `${mgrNav("manager-waiting")}<h1 class="title">Requests waiting</h1><div class="empty"><p class="sub">You are all caught up</p><p>Nobody is waiting for an answer.</p>${btn("team-calendar", "See the team calendar", "primary")}</div>`;
+    case "send-error":
+      return `${empNav("request-leave")}<h1 class="title">Could not send</h1><div class="banner error" role="alert">We could not send your request. Nothing was lost. Check your connection and try again.</div><div class="row">${btn("sent", "Try again", "primary")}${btn("home", "Back to Home")}</div>`;
+    case "no-permission":
+      return `${empNav("home")}<h1 class="title">You can't open this page</h1><div class="banner error" role="alert">Only managers can answer requests. If you need access, ask your manager.</div>${btn("home", "Back to Home", "primary")}`;
     default:
-      return `${head}<div class="empty">nothing to show here yet.</div>${go("home", "Back to Home", true)}`;
+      return `<h1 class="title">${esc(s.name)}</h1>${btn("home", "Back to Home", "primary")}`;
   }
 }
 
-export const DEMO_CSS = `:root{--primary:#2f5bd8;--background:#ffffff;--text:#1d2433;--accent:#2f5bd8;--radius:8px}
-.bar{padding:14px;background:var(--primary);color:var(--background);border-radius:var(--radius);font-weight:700;margin-bottom:12px}
-.title{font:700 24px var(--font-heading,system-ui);margin:8px 0}.sub{font:600 17px var(--font-heading,system-ui);margin:8px 0}.muted{opacity:.7;font-size:14px}
-.box,.card,.item,.empty{border:1px solid rgba(0,0,0,.15);border-radius:var(--radius);padding:14px;margin:8px 0;background:#fff}
-.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.row>*{flex:1 1 200px}.col{display:flex;flex-direction:column;gap:8px}
-.btn{padding:10px 18px;border:1px solid var(--primary);border-radius:var(--radius);background:var(--background);color:var(--primary);cursor:pointer}
-.btn.primary{background:var(--primary);color:var(--background)}.input{display:block;width:100%;padding:10px;border:1px solid #999;border-radius:var(--radius);margin:4px 0 10px}
-.label{display:block;font-weight:600;font-size:14px}.list{display:flex;flex-direction:column}.badge{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--accent);color:var(--background);font-size:12px}
-.banner{padding:12px;border-radius:var(--radius);background:#eef2ff;margin:8px 0}.banner.error{background:#fde8e8;border:2px solid #b42318}.empty{text-align:center;opacity:.8;padding:28px}
-.tabs{display:flex;gap:6px}.tab{padding:8px 14px;border-radius:var(--radius);background:#eef2ff}.img{min-height:90px;background:#e8ecf8;border-radius:var(--radius)}a{color:var(--primary)}`;
+// The sample look: plain white, one blue accent, status colours that always come with a word
+export const DEMO_CSS = `:root{--primary:#2f5bd8;--background:#ffffff;--text:#1d2433;--accent:#2f5bd8;--radius:8px;--nav-bg:#f7f8fb}
+body{font-size:16px}.title{font:700 26px var(--font-heading,system-ui);margin:4px 0 12px}.sub{font:600 17px var(--font-heading,system-ui);margin:16px 0 8px}.muted{color:#4b5563;font-size:14px}
+.box,.card,.item,.empty{border:1px solid #d7dbe5;border-radius:var(--radius);padding:14px;margin:8px 0;background:#fff}
+.item{display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer}.item:hover,.item:focus-visible{background:#f2f5ff}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}.row>*{flex:1 1 180px}.col{display:flex;flex-direction:column;gap:8px}
+.btn{padding:10px 18px;border:1px solid var(--primary);border-radius:var(--radius);background:#fff;color:var(--primary);cursor:pointer;font-weight:600}
+.btn.primary{background:var(--primary);color:#fff}.btn:disabled{opacity:.5;cursor:not-allowed}
+.input{display:block;width:100%;padding:10px;border:1px solid #6b7280;border-radius:var(--radius);margin:4px 0 12px;background:#fff;color:var(--text)}
+.label{display:block;font-weight:600;font-size:14px}.list{display:flex;flex-direction:column}.big{font-size:30px;font-weight:700;margin:2px 0}
+.status{display:inline-block;white-space:nowrap;padding:2px 10px;border-radius:99px;font-size:13px;font-weight:700}
+.status.waiting{background:#fff1cc;color:#6b4200}.status.approved{background:#d9f5e1;color:#10502a}.status.declined{background:#fde3e3;color:#7d1414}
+.banner{padding:12px 14px;border-radius:var(--radius);background:#eaf0ff;margin:8px 0}.banner.warn{background:#fff1cc;color:#6b4200}.banner.error{background:#fde3e3;color:#7d1414;border:1px solid #c53030}
+.empty{text-align:center;padding:28px}.cal{border-collapse:collapse;width:100%;font-size:14px}.cal th,.cal td{border:1px solid #d7dbe5;padding:8px;text-align:left;vertical-align:top}.cal td[data-go]{cursor:pointer}
+.appnav{box-shadow:0 -1px 0 #d7dbe5}.appnav .navitem{color:#374151}.appnav .navitem[aria-current="page"]{color:var(--primary)}a{color:var(--primary)}`;
 
 export function demoUnderstand(feedback?: string) {
   const T = "Test idea only";
@@ -65,8 +164,8 @@ export function demoUnderstand(feedback?: string) {
       { name: "Admin (nobody mentioned)", note: "fixes mistakes and sets the rules.", label: T },
     ],
     user_profiles: [
-      { name: "Anna, staff member", goal: "Get time off with little fuss.", situation: "Usually on her phone.", frustrations: ["Slow email replies", "Not sure of her days left"], label: T },
-      { name: "Ben, manager", goal: "Answer quickly and avoid gaps.", situation: "Between meetings.", frustrations: ["Cannot see who is away"], label: T },
+      { name: "Anna, employee", goal: "Get time off with little fuss.", situation: "Usually on her phone.", frustrations: ["Slow email replies", "Not sure of her days left"], label: T },
+      { name: "Priya, manager", goal: "Answer quickly and avoid gaps.", situation: "Between meetings.", frustrations: ["Cannot see who is away"], label: T },
     ],
     requirements: [
       { id: "R1", story: "As staff, I can ask for time off, so that my manager can answer.", done_checks: ["I can pick dates", "I see my request afterwards"], label: T },
@@ -97,7 +196,7 @@ export function demoResearch(feedback?: string) {
       { type: "what people say", finding: "people dislike slow replies.", source_title: "Example source page", source_url: "https://example.com/demo-3", label: T, confidence: "Low" },
     ],
     key_insights: [{ insight: "show days left up front.", based_on: ["1"] }, { insight: "keep forms simple and labelled.", based_on: ["2", "3"] }],
-    updated_user_profiles: [{ name: "Anna, staff member", goal: "Get time off with little fuss.", situation: "Mostly on her phone.", frustrations: ["Slow replies"], label: T }],
+    updated_user_profiles: [{ name: "Anna, employee", goal: "Get time off with little fuss.", situation: "Mostly on her phone.", frustrations: ["Slow replies"], label: T }],
     research_kit: {
       goals: ["learn how people ask for leave today"],
       interview_questions: ["Tell me about the last time you asked for time off.", "What was hardest about it?"],
@@ -158,15 +257,15 @@ export function demoWireframes(feedback?: string) {
     plan: { will_do: ["list the screens", "draw each one in grey and join them"], will_skip: [{ item: "Loading screens", why: "Not needed for a first pass." }] },
     screens: DEMO_SCREENS,
     user_coverage: [
-      { user: "Anna, staff member", screens: ["home", "new-request", "request-list", "empty-list", "error"] },
-      { user: "Ben, manager", screens: ["manager-inbox", "answer-request", "no-access"] },
+      { user: "Anna, employee", screens: ["home", "request-leave", "sent", "my-requests", "detail-waiting", "cancel-confirm", "no-days-left"] },
+      { user: "Priya, manager", screens: ["manager-waiting", "review-anna", "approved-done", "team-calendar"] },
     ],
     wording: [{ screen: "home", text: "New request", where: "button" }],
     accessibility_notes: ["every button has a clear label", "contrast between text and background is high"],
     things_i_guessed: [{ guess: "people start from Home.", risk_if_wrong: "The first screen may be wrong.", how_to_check: "Watch 3 people use it." }],
-    what_i_did: ["Listed the screens for staff and for managers", feedback ? "Applied your feedback to the screens" : "Drew each screen in grey and joined them"],
+    what_i_did: ["Listed the screens for employees and for managers", feedback ? "Applied your feedback to the screens" : "Drew each screen in grey and joined them"],
     checkin: {
-      what_i_made: "A clickable wireframe with 8 screens, including the manager flow and the empty, error and no-permission screens.",
+      what_i_made: "A clickable wireframe with 22 screens: the employee flow, the manager flow, and the empty, error, overlap and no-permission screens.",
       not_sure_about: ["the order of the screens"],
       another_view: "maybe the list should be the first screen.",
     },
@@ -186,14 +285,14 @@ export function demoDesign(feedback?: string) {
       off_style_items: ["a light blue tint used for banners was added"],
     },
     cover_note: {
-      what_was_built: "A clickable prototype with the same 8 screens as the wireframe, for staff and for managers.",
+      what_was_built: "A clickable prototype with the same 22 screens as the wireframe, for employees and for managers.",
       what_was_guessed: ["The names, dates and day counts shown are sample content"],
       not_tested_yet: ["not tested with real people", "not tested with a screen reader"],
     },
     things_i_guessed: [{ guess: "the main colour suits the brand.", risk_if_wrong: "The look may feel off.", how_to_check: "Show it to the brand owner." }],
     what_i_did: ["Applied the design style to every screen", feedback ? "Applied your feedback to the look" : "Checked contrast and button sizes"],
     checkin: {
-      what_i_made: "A styled, working prototype with 8 screens.",
+      what_i_made: "A styled, working prototype with 22 screens.",
       not_sure_about: ["how well it matches your brand"],
       another_view: "maybe a calmer colour would feel safer.",
     },
