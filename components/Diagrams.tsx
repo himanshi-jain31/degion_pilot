@@ -5,111 +5,114 @@ import type { IdeateOutput, StructureNode } from "@/lib/storage";
 
 // ---------- Product structure map ----------
 
-type Placed = { node: StructureNode; id: string; depth: number; y: number; parent?: string; hasKids: boolean };
+type Placed = { node: StructureNode; id: string; depth: number; y: number; parent?: string; kids: number };
 
-const NODE_W = 168;
-const NODE_H = 40;
-const GAP_X = 56;
-const GAP_Y = 14;
+const NODE_H = 52;
+const GAP_X = 72;
+const GAP_Y = 18;
+const CHAR_W = 9; // roughly how wide one letter is at the text size used
+const PAD = 16;
 
-// Lays the pages out left to right. Collapsed pages hide what is under them.
-function layout(roots: StructureNode[], collapsed: Set<string>) {
+// Lays every page out left to right. Pages with children sit in the middle of them.
+function layout(roots: StructureNode[]) {
   const placed: Placed[] = [];
   let row = 0;
   function walk(n: StructureNode, depth: number, id: string, parent: string) {
     const kids = n.children ?? [];
-    const open = kids.length > 0 && !collapsed.has(id);
-    const start = row;
-    const me: Placed = { node: n, id, depth, y: 0, parent, hasKids: kids.length > 0 };
+    const me: Placed = { node: n, id, depth, y: 0, parent, kids: kids.length };
     placed.push(me);
-    if (open) kids.forEach((k, i) => walk(k, depth + 1, `${id}.${i}`, id));
-    else row += 1;
-    // sit in the middle of the pages under it
-    me.y = open ? (start + row - 1) / 2 : start;
+    if (kids.length === 0) {
+      me.y = row;
+      row += 1;
+    } else {
+      const start = row;
+      kids.forEach((k, i) => walk(k, depth + 1, `${id}.${i}`, id));
+      me.y = (start + row - 1) / 2;
+    }
   }
   roots.forEach((r, i) => walk(r, 1, String(i), "root"));
-  const root: Placed = { node: { page: "Your product" }, id: "root", depth: 0, y: Math.max(0, (row - 1) / 2), hasKids: roots.length > 0 };
+  const root: Placed = { node: { page: "Your product" }, id: "root", depth: 0, y: Math.max(0, (row - 1) / 2), kids: roots.length };
   return { placed: [root, ...placed], rows: Math.max(row, 1) };
 }
 
 export function StructureMap({ nodes }: { nodes: StructureNode[] }) {
-  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<string | null>(null);
-  const [zoom, setZoom] = useState(1);
-  const { placed, rows } = useMemo(() => layout(nodes, collapsed), [nodes, collapsed]);
+  const { placed, rows } = useMemo(() => layout(nodes), [nodes]);
   const byId = new Map(placed.map((p) => [p.id, p]));
   const maxDepth = Math.max(...placed.map((p) => p.depth));
-  const width = (maxDepth + 1) * (NODE_W + GAP_X) - GAP_X + 8;
-  const height = rows * (NODE_H + GAP_Y) + 8;
-  const px = (p: Placed) => 4 + p.depth * (NODE_W + GAP_X);
-  const py = (p: Placed) => 4 + p.y * (NODE_H + GAP_Y);
-  const sel = selected ? byId.get(selected) : undefined;
 
-  const toggle = (id: string) =>
-    setCollapsed((c) => {
-      const n = new Set(c);
-      if (n.has(id)) n.delete(id);
-      else n.add(id);
-      return n;
-    });
+  // each column is as wide as its longest page name, so no name is ever cut off
+  const colW: number[] = [];
+  for (let d = 0; d <= maxDepth; d++) {
+    const longest = Math.max(...placed.filter((p) => p.depth === d).map((p) => p.node.page.length));
+    colW[d] = Math.max(130, longest * CHAR_W + 36);
+  }
+  const colX = colW.map((_, d) => PAD + colW.slice(0, d).reduce((a, w) => a + w + GAP_X, 0));
+  const width = colX[maxDepth] + colW[maxDepth] + PAD;
+  const height = rows * (NODE_H + GAP_Y) - GAP_Y + PAD * 2;
+  const px = (p: Placed) => colX[p.depth];
+  const py = (p: Placed) => PAD + p.y * (NODE_H + GAP_Y);
+
+  // the chain from the chosen page back to the top lights up
+  const trail = new Set<string>();
+  for (let c = selected ? byId.get(selected) : undefined; c; c = c.parent ? byId.get(c.parent) : undefined) trail.add(c.id);
+  const sel = selected ? byId.get(selected) : undefined;
+  const pathNames: string[] = [];
+  for (let c = sel; c && c.id !== "root"; c = c.parent ? byId.get(c.parent) : undefined) pathNames.unshift(c.node.page);
 
   return (
     <div>
-      <div className="mb-2 flex flex-wrap items-center gap-2">
-        <button className="btn btn-secondary !min-h-9 !px-3" onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.2).toFixed(1)))} aria-label="Zoom out">−</button>
-        <button className="btn btn-secondary !min-h-9 !px-3" onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.2).toFixed(1)))} aria-label="Zoom in">+</button>
-        <button className="btn btn-quiet !min-h-9 !px-3" onClick={() => setCollapsed(new Set())}>Open all</button>
-        <span className="note">Click a page to see where it sits. Click the small arrow to fold or open what is under it. Scroll to move around.</span>
+      <div className="overflow-x-auto rounded-2xl border border-line bg-card p-2">
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
+          style={{ width: "100%", minWidth: Math.min(width, 640), maxWidth: width * 1.3, display: "block", margin: "0 auto" }}
+          role="group"
+          aria-label="Product structure map"
+        >
+          {placed.filter((p) => p.parent).map((p) => {
+            const a = byId.get(p.parent!)!;
+            const x1 = px(a) + colW[a.depth], y1 = py(a) + NODE_H / 2, x2 = px(p), y2 = py(p) + NODE_H / 2, mx = (x1 + x2) / 2;
+            const lit = trail.has(p.id);
+            return <path key={p.id} d={`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`} fill="none" stroke={lit ? "#4f46e5" : "#cfcfc8"} strokeWidth={lit ? 2.5 : 1.75} />;
+          })}
+          {placed.map((p) => {
+            const on = selected === p.id;
+            const lit = trail.has(p.id);
+            const isRoot = p.id === "root";
+            const top = p.depth === 1;
+            return (
+              <g key={p.id} transform={`translate(${px(p)},${py(p)})`}>
+                <rect
+                  width={colW[p.depth]} height={NODE_H} rx={14}
+                  fill={isRoot ? "#1c1c1e" : on ? "#4f46e5" : top ? "#eef0ff" : "#fff"}
+                  stroke={lit && !isRoot ? "#4f46e5" : isRoot ? "#1c1c1e" : top ? "#c9ceff" : "#d6d6cf"} strokeWidth={lit && !isRoot ? 2 : 1.25}
+                  tabIndex={0} role="button" aria-pressed={on} aria-label={p.node.page}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setSelected(on ? null : p.id)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelected(on ? null : p.id); } }}
+                />
+                <text x={colW[p.depth] / 2} y={NODE_H / 2 + 6} textAnchor="middle" fontSize={17} fontWeight={isRoot || top ? 600 : 500} fill={isRoot || on ? "#fff" : "#1c1c1e"} style={{ pointerEvents: "none" }}>
+                  {p.node.page}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
       </div>
-      <div className="overflow-auto rounded-xl border border-line bg-card p-3" style={{ maxHeight: 520 }}>
-        <div style={{ width: width * zoom, height: height * zoom }}>
-          <svg width={width * zoom} height={height * zoom} viewBox={`0 0 ${width} ${height}`} role="group" aria-label="Product structure map">
-            {placed.filter((p) => p.parent).map((p) => {
-              const a = byId.get(p.parent!)!;
-              const x1 = px(a) + NODE_W, y1 = py(a) + NODE_H / 2, x2 = px(p), y2 = py(p) + NODE_H / 2, mx = (x1 + x2) / 2;
-              return <path key={p.id} d={`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`} fill="none" stroke="#c9c9c2" strokeWidth={1.5} />;
-            })}
-            {placed.map((p) => {
-              const on = selected === p.id;
-              const isRoot = p.id === "root";
-              return (
-                <g key={p.id} transform={`translate(${px(p)},${py(p)})`}>
-                  <rect
-                    width={NODE_W} height={NODE_H} rx={10}
-                    fill={isRoot ? "#1c1c1e" : on ? "#eef0ff" : "#fff"}
-                    stroke={on ? "#4f46e5" : "#d6d6cf"} strokeWidth={on ? 2 : 1}
-                    tabIndex={0} role="button" aria-label={`${p.node.page}${p.hasKids ? (collapsed.has(p.id) ? ", folded" : ", open") : ""}`}
-                    style={{ cursor: "pointer", outline: "none" }}
-                    onClick={() => setSelected(p.id)}
-                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelected(p.id); } }}
-                  />
-                  <text x={12} y={NODE_H / 2 + 5} fontSize={14} fill={isRoot ? "#fff" : "#1c1c1e"} style={{ pointerEvents: "none" }}>
-                    {p.node.page.length > 20 ? p.node.page.slice(0, 19) + "…" : p.node.page}
-                  </text>
-                  {p.hasKids && !isRoot && (
-                    <g
-                      transform={`translate(${NODE_W - 22},${NODE_H / 2 - 9})`} style={{ cursor: "pointer" }} role="button" tabIndex={0}
-                      aria-label={collapsed.has(p.id) ? `Open pages under ${p.node.page}` : `Fold pages under ${p.node.page}`}
-                      onClick={(e) => { e.stopPropagation(); toggle(p.id); }}
-                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(p.id); } }}
-                    >
-                      <rect width={18} height={18} rx={5} fill="#f1f1ed" />
-                      <text x={9} y={13} fontSize={12} textAnchor="middle" fill="#6b6b70">{collapsed.has(p.id) ? "+" : "−"}</text>
-                    </g>
-                  )}
-                </g>
-              );
-            })}
-          </svg>
-        </div>
+      <div className="mt-3 rounded-xl border border-line bg-card p-4 text-[15px]" role="status">
+        {sel && sel.id !== "root" ? (
+          <>
+            <p className="note">{["Your product", ...pathNames].join("  ›  ")}</p>
+            <p className="mt-1">
+              <strong className="font-medium">{sel.node.page}</strong>
+              {sel.depth === 1 ? " is in the main menu" : ` sits ${sel.depth - 1} level${sel.depth - 1 === 1 ? "" : "s"} down`}
+              {sel.kids > 0 ? `, and has ${sel.kids} page${sel.kids === 1 ? "" : "s"} under it.` : ", and has no pages under it."}
+            </p>
+          </>
+        ) : (
+          <p className="note">The whole product is shown above. Click any page to see where it sits.</p>
+        )}
       </div>
-      {sel && sel.id !== "root" && (
-        <p className="note mt-2" role="status">
-          <strong className="font-medium text-ink">{sel.node.page}</strong>: level {sel.depth} of the product
-          {sel.parent && sel.parent !== "root" ? `, under ${byId.get(sel.parent)?.node.page}` : ", in the main menu"}
-          {sel.hasKids ? `, with ${sel.node.children!.length} page${sel.node.children!.length === 1 ? "" : "s"} under it.` : ", with nothing under it."}
-        </p>
-      )}
     </div>
   );
 }
