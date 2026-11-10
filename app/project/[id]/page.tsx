@@ -299,14 +299,18 @@ function ProjectPage() {
           {view === "phase" && (
             <>
               <div className="relative overflow-hidden rounded-3xl border border-line bg-card p-6 shadow-[0_1px_2px_rgba(28,28,30,0.04),0_8px_28px_rgba(79,70,229,0.06)] sm:p-8">
-                <span aria-hidden="true" className="pointer-events-none absolute -right-4 -top-10 select-none text-[180px] font-semibold leading-none text-accent-soft">{info.n}</span>
                 <div className="relative">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <p className="label-small">Step {info.n} of 6</p>
-                    <span className={STATUS_COLOUR[status]}>{status}</span>
+                  <div className="flex items-start gap-4">
+                    <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent text-[22px] font-medium text-white">{info.n}</span>
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <h2 className="text-[30px] font-medium leading-tight tracking-tight">{info.name}</h2>
+                        <span className={STATUS_COLOUR[status]}>{status}</span>
+                      </div>
+                      <p className="label-small mt-0.5">Step {info.n} of 6</p>
+                      <p className="mt-2 max-w-xl text-[17px] text-muted">{PHASE_INFO[info.n].goal}</p>
+                    </div>
                   </div>
-                  <h2 className="mt-2 text-[34px] font-medium leading-tight tracking-tight">{info.name}</h2>
-                  <p className="mt-1 max-w-xl text-[17px] text-muted">{PHASE_INFO[info.n].goal}</p>
                   <ol className="mt-6 flex flex-wrap items-center gap-2 text-[14px]" aria-label="Where this step is">
                     {[
                       ["Plan", !!shown?.output || latest?.status === "working"],
