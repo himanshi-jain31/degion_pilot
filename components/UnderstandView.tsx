@@ -9,7 +9,7 @@ export function Pill({ label }: { label: string }) {
 
 export function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="mt-8">
+    <section className="mt-8 border-t border-line pt-8 first:mt-0 first:border-0 first:pt-0">
       <h3 className="flex items-center gap-2 text-[17px] font-medium">
         <span aria-hidden="true" className="h-4 w-1 rounded-full bg-accent" />
         {title}

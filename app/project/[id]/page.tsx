@@ -330,7 +330,7 @@ function ProjectPage() {
                 </div>
               </div>
 
-              <div key={sel} className="fade-in mt-8 space-y-12">
+              <div key={sel} className="fade-in mt-6 space-y-6">
                 {!built ? (
                   <Notice>This step is not built yet. It comes after the earlier steps are working.</Notice>
                 ) : (
@@ -383,15 +383,15 @@ function ProjectPage() {
                           </p>
                         )}
 
-                        <details open={!shown.approved} className="group">
+                        <details open={!shown.approved} className="group rounded-3xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,30,0.03)] sm:p-8">
                           <summary className="flex cursor-pointer select-none list-none items-center gap-3 [&::-webkit-details-marker]:hidden"><span className="step-badge">1</span><span className="section-title">My plan</span><span className="note ml-auto group-open:hidden">Show</span></summary>
-                          <div className="mt-5">
+                          <div className="mt-6 border-t border-line pt-6">
                           <PlanView out={shown.output} />
                           </div>
                         </details>
 
-                        <section id="made" aria-label="What I made" className="scroll-mt-6">
-                          <h3 className="mb-2 flex items-center gap-3"><span className="step-badge">2</span><span className="section-title">What I made</span></h3>
+                        <section id="made" aria-label="What I made" className="scroll-mt-6 rounded-3xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,30,0.03)] sm:p-8">
+                          <h3 className="mb-6 flex items-center gap-3 border-b border-line pb-5"><span className="step-badge">2</span><span className="section-title">What I made</span></h3>
                           {sel === 1 && <WorkView out={shown.output as UnderstandOutput} />}
                           {sel === 2 && <ResearchWork out={shown.output as ResearchOutput} />}
                           {sel === 3 && (
@@ -411,8 +411,8 @@ function ProjectPage() {
                           )}
                         </section>
 
-                        <section id="checkin" ref={setCheckinEl} aria-label="Check-in" className="scroll-mt-6">
-                          <h3 className="mb-3 flex items-center gap-3"><span className="step-badge">3</span><span className="section-title">Your decision: Check-in</span></h3>
+                        <section id="checkin" ref={setCheckinEl} aria-label="Check-in" className="scroll-mt-6 rounded-3xl border border-[#dfe2ff] bg-[#fbfbff] p-5 shadow-[0_1px_2px_rgba(79,70,229,0.05)] sm:p-8">
+                          <h3 className="mb-6 flex items-center gap-3 border-b border-[#e6e8ff] pb-5"><span className="step-badge">3</span><span className="section-title">Your decision: Check-in</span></h3>
                           {sel === 6 && !(shown.output as TestingOutput).results_analysis ? (
                             <Notice>The check-in comes after the testing. Download the test kit above, run your sessions, then add your notes.</Notice>
                           ) : (
@@ -441,9 +441,9 @@ function ProjectPage() {
                     )}
 
                     {latest && latest.status !== "working" && (
-                      <details>
+                      <details className="group rounded-3xl border border-dashed border-[#d6d6cf] p-5 sm:px-8 sm:py-6">
                         <summary className="flex cursor-pointer select-none list-none items-center gap-3 rounded-xl py-1 [&::-webkit-details-marker]:hidden"><span aria-hidden="true" className="step-badge !bg-[#f1f1ed] !text-muted">↺</span><span className="section-title">What I did</span><span className="note ml-auto">History</span></summary>
-                        <div className="mt-5"><WhatIDid versions={versions} /></div>
+                        <div className="mt-5 border-t border-line pt-6"><WhatIDid versions={versions} /></div>
                       </details>
                     )}
                   </>
