@@ -218,7 +218,7 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
                     <div className={`${STATUS_PILL[s]} shrink-0 whitespace-nowrap !text-[13px]`}>{s}</div>
                   </div>
                   <p className="mt-3 text-[15px] leading-snug">{info.goal}</p>
-                  <div className="mt-4 flex flex-wrap gap-1.5" aria-label="You get">
+                  <div className="mb-4 mt-4 flex flex-wrap gap-1.5" aria-label="You get">
                     {info.makes.map((m) => (
                       <span key={m} className="rounded-full bg-[#f4f4f0] px-2.5 py-1 text-[13px] leading-none text-muted">{m}</span>
                     ))}
