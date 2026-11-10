@@ -176,7 +176,7 @@ export default function Home() {
         Tell me what you need to design
       </label>
 
-      <div className="card mt-6 transition-shadow focus-within:shadow-[0_0_0_3px_rgba(79,70,229,0.25)]">
+      <div className="card card-focus mt-6">
         <textarea
           id="requirement"
           ref={box}
@@ -185,7 +185,7 @@ export default function Home() {
           onChange={(e) => setRequirement(e.target.value)}
           rows={7}
           placeholder="For example: A simple app where staff can ask for leave and managers can say yes or no."
-          className="block w-full resize-none border-0 bg-transparent p-0 text-lg leading-relaxed text-ink placeholder:text-muted focus:outline-none"
+          className="bare block w-full resize-none border-0 bg-transparent p-0 text-lg leading-relaxed text-ink placeholder:text-muted"
           style={{ minHeight: 168 }}
         />
 

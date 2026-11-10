@@ -195,6 +195,21 @@ body {
   border-radius: 8px;
 }
 
+/* A big writing box inside a card: no ring around the box itself; the whole card glows softly instead.
+   (These rules are not inside a Tailwind layer on purpose, so they win over the general focus ring above.) */
+.bare:focus,
+.bare:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.card-focus {
+  transition: box-shadow 0.16s ease;
+}
+.card-focus:focus-within {
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.28), 0 4px 16px rgba(28, 28, 30, 0.04);
+  border-color: var(--accent);
+}
+
 /* ---- Small, smooth moves between steps (about 180ms). It fades and slides up a little. It must not use "transform",
    because that would pull the bottom action bar out of place. ---- */
 .fade-in {
