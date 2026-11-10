@@ -174,59 +174,110 @@ export function FlowDiagram({ flow }: { flow: IdeateOutput["user_flows"][number]
 const GOOD = ["happy", "calm", "confident", "relieved", "pleased", "satisfied", "reassured", "delighted", "in control", "easy", "clear", "good", "relaxed", "positive", "comfortable", "sure", "trust", "fine", "great"];
 const BAD = ["frustrat", "confus", "anxious", "worried", "annoy", "unsure", "stuck", "stress", "uncertain", "lost", "angry", "overwhelm", "nervous", "doubt", "tired", "bored", "upset", "uneasy", "hesitant", "irritat"];
 
-// A rough score from the feeling words: -1 low, 0 neutral or unknown, 1 high
-function mood(feeling: string) {
-  const f = feeling.toLowerCase();
-  if (BAD.some((w) => f.includes(w))) return -1;
-  if (/\bnot (sure|clear|confident|happy)/.test(f)) return -1;
-  if (GOOD.some((w) => f.includes(w))) return 1;
-  return 0;
+type Stage = { stage?: string; step: string; thought?: string; feeling: string; score?: number; pain?: string; improves?: string; opportunity?: string };
+
+// The feeling score (1 to 5). Older results have none, so a rough one is worked out from the words.
+function scoreOf(s: Stage) {
+  if (s.score) return { value: s.score, guessed: false };
+  const f = s.feeling.toLowerCase();
+  const bad = BAD.some((w) => f.includes(w)) || /\bnot (sure|clear|confident|happy)/.test(f);
+  return { value: bad ? 2 : GOOD.some((w) => f.includes(w)) ? 4 : 3, guessed: true };
 }
+const topPct = (v: number) => 10 + ((5 - v) / 4) * 80; // 5 is high on the chart, 1 is low
 
-type Stage = { step: string; feeling: string; pain?: string };
-
-function JourneyRow({ title, stages, tone }: { title: string; stages: Stage[]; tone: string }) {
-  const colW = 150;
-  const w = stages.length * colW;
-  const h = 70;
-  const ys = stages.map((s) => h / 2 - mood(s.feeling) * 22);
-  const pts = stages.map((_, i) => `${i * colW + colW / 2},${ys[i]}`).join(" ");
+// The feeling curve: positions are percentages so it always fills the width and never scrolls
+function Curve({ lines }: { lines: { stages: Stage[]; colour: string; name: string }[] }) {
+  const n = Math.max(...lines.map((l) => l.stages.length));
+  const xPct = (i: number, len: number) => ((i + 0.5) / len) * 100;
   return (
-    <div>
-      <p className="mb-2 font-medium">{title}</p>
-      <div className="overflow-x-auto rounded-xl border border-line bg-card p-3">
-        <div style={{ width: w }}>
-          <svg width={w} height={h} role="img" aria-label={`How the person feels through ${title.toLowerCase()}: ${stages.map((s) => s.feeling).join(", ")}`}>
-            <line x1={0} x2={w} y1={h / 2} y2={h / 2} stroke="#ecece8" strokeDasharray="4 4" />
-            <polyline points={pts} fill="none" stroke={tone} strokeWidth={2.5} strokeLinejoin="round" />
-            {stages.map((s, i) => (
-              <circle key={i} cx={i * colW + colW / 2} cy={ys[i]} r={6} fill={mood(s.feeling) < 0 ? "#dc2626" : mood(s.feeling) > 0 ? "#16a34a" : "#fff"} stroke={tone} strokeWidth={2} />
-            ))}
-          </svg>
-          <ol className="flex">
-            {stages.map((s, i) => (
-              <li key={i} style={{ width: colW }} className="px-2 text-[14px] leading-snug">
-                <p className="text-muted">{i + 1}</p>
-                <p>{s.step}</p>
-                <p className="mt-2"><span className="pill pill-idle !text-[13px]">{s.feeling}</span></p>
-                {s.pain && <p className="mt-2 rounded-lg bg-[var(--bad-soft)] p-2 text-[13px] text-[var(--bad-ink)]">Problem: {s.pain}</p>}
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
+    <div className="relative h-36 rounded-xl bg-[#fafaf7]" role="img" aria-label={lines.map((l) => `${l.name}: ${l.stages.map((s) => `${s.stage ?? s.step} ${s.feeling}`).join(", ")}`).join(". ")}>
+      <span className="absolute left-2 top-1 text-[12px] text-muted">Good</span>
+      <span className="absolute bottom-1 left-2 text-[12px] text-muted">Low</span>
+      <div aria-hidden="true" className="absolute inset-x-0 top-1/2 border-t border-dashed border-line" />
+      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        {lines.map((l) => (
+          <polyline key={l.name} points={l.stages.map((s, i) => `${xPct(i, l.stages.length)},${topPct(scoreOf(s).value)}`).join(" ")} fill="none" stroke={l.colour} strokeWidth={2.5} vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
+        ))}
+      </svg>
+      {lines.map((l) =>
+        l.stages.map((s, i) => (
+          <span key={l.name + i} aria-hidden="true" className="absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 bg-white" style={{ left: `${xPct(i, l.stages.length)}%`, top: `${topPct(scoreOf(s).value)}%`, borderColor: l.colour }} />
+        ))
+      )}
+      <span className="sr-only">{n} stages</span>
     </div>
   );
 }
 
-export function JourneyMap({ journeys }: { journeys: IdeateOutput["journeys"] }) {
+function Row({ label, cols, children }: { label: string; cols: number; children: (i: number) => React.ReactNode }) {
   return (
-    <div className="space-y-4">
-      {journeys.today.length > 0 && <JourneyRow title="Today" stages={journeys.today} tone="#6b6b70" />}
-      {journeys.future.length > 0 && <JourneyRow title="In the future" stages={journeys.future} tone="#4f46e5" />}
-      <p className="note">
-        The line is drawn roughly from the feeling words: higher is more positive, lower is more negative, and words I don&apos;t recognise sit in the middle. It is a guide, not a measurement.
-      </p>
+    <div className="grid items-start gap-3 border-t border-line py-3" style={{ gridTemplateColumns: `76px repeat(${cols}, minmax(0, 1fr))` }}>
+      <p className="label-small pt-0.5 !text-[13px]">{label}</p>
+      {Array.from({ length: cols }, (_, i) => <div key={i} className="min-w-0 text-[14px] leading-snug">{children(i)}</div>)}
+    </div>
+  );
+}
+
+function JourneyGrid({ title, stages, future, colour }: { title: string; stages: Stage[]; future?: boolean; colour: string }) {
+  const n = stages.length;
+  return (
+    <section className="rounded-2xl border border-line bg-card p-4 sm:p-5" aria-label={title}>
+      <div className="mb-3 flex items-center gap-2">
+        <span aria-hidden="true" className="h-3 w-3 rounded-full" style={{ background: colour }} />
+        <h4 className="text-[17px] font-medium">{title}</h4>
+      </div>
+      <div className="grid gap-3 pb-3" style={{ gridTemplateColumns: `76px repeat(${n}, minmax(0, 1fr))` }}>
+        <span />
+        {stages.map((s, i) => (
+          <div key={i} className="min-w-0 rounded-lg px-2 py-1.5 text-center text-[13px] font-medium leading-tight" style={{ background: future ? "#eef0ff" : "#f4f4f0", color: future ? "#4338ca" : "#1c1c1e" }}>
+            <span className="block text-[11px] font-normal opacity-70">{i + 1}</span>{s.stage || `Step ${i + 1}`}
+          </div>
+        ))}
+      </div>
+      <Row label="Does" cols={n}>{(i) => stages[i].step}</Row>
+      {stages.some((s) => s.thought) && <Row label="Thinks" cols={n}>{(i) => stages[i].thought ? <span className="italic text-muted">&ldquo;{stages[i].thought}&rdquo;</span> : null}</Row>}
+      <Row label="Feels" cols={n}>
+        {(i) => <span className={`pill ${scoreOf(stages[i]).value >= 4 ? "pill-ok" : scoreOf(stages[i]).value <= 2 ? "pill-bad" : "pill-idle"} !text-[13px]`}>{stages[i].feeling}</span>}
+      </Row>
+      {future ? (
+        stages.some((s) => s.improves) && <Row label="Fixes" cols={n}>{(i) => stages[i].improves ? <span className="rounded-lg bg-[var(--ok-soft)] px-2 py-1 text-[13px] text-[var(--ok-ink)]">{stages[i].improves}</span> : null}</Row>
+      ) : (
+        <>
+          <Row label="Problem" cols={n}>{(i) => stages[i].pain ? <span className="block rounded-lg bg-[var(--bad-soft)] px-2 py-1 text-[13px] text-[var(--bad-ink)]">{stages[i].pain}</span> : <span className="text-muted">·</span>}</Row>
+          {stages.some((s) => s.opportunity) && <Row label="Chance" cols={n}>{(i) => stages[i].opportunity ? <span className="text-[13px]">💡 {stages[i].opportunity}</span> : null}</Row>}
+        </>
+      )}
+    </section>
+  );
+}
+
+export function JourneyMap({ journeys }: { journeys: IdeateOutput["journeys"] }) {
+  const { today, future } = journeys;
+  const guessed = [...today, ...future].some((s) => scoreOf(s).guessed);
+  const thin = (today.length > 0 && today.length < 3) || (future.length > 0 && future.length < 3);
+  return (
+    <div className="space-y-5">
+      {thin && (
+        <p className="rounded-xl border border-[var(--wait)]/40 bg-[var(--wait-soft)] p-4 text-[15px] text-[var(--wait-ink)]" role="status">
+          This journey only has {Math.min(today.length || 99, future.length || 99)} step. It was made before I was asked for a full journey. Choose <strong>Not yet</strong> in the Check-in and write &ldquo;Make the journeys longer, 5 to 7 stages&rdquo; to get a complete one.
+        </p>
+      )}
+      {today.length > 0 && future.length > 0 && (
+        <div className="rounded-2xl border border-line bg-card p-4 sm:p-5">
+          <div className="mb-3 flex flex-wrap items-center gap-x-5 gap-y-1">
+            <h4 className="text-[17px] font-medium">How it feels: today and in the future</h4>
+            <span className="flex items-center gap-1.5 text-[14px] text-muted"><span aria-hidden="true" className="h-0.5 w-5 bg-[#6b6b70]" />Today</span>
+            <span className="flex items-center gap-1.5 text-[14px] text-muted"><span aria-hidden="true" className="h-0.5 w-5 bg-[#4f46e5]" />In the future</span>
+          </div>
+          <div className="grid gap-3" style={{ gridTemplateColumns: "76px 1fr" }}>
+            <span />
+            <Curve lines={[{ stages: today, colour: "#6b6b70", name: "Today" }, { stages: future, colour: "#4f46e5", name: "In the future" }]} />
+          </div>
+        </div>
+      )}
+      {today.length > 0 && <JourneyGrid title="Today" stages={today} colour="#6b6b70" />}
+      {future.length > 0 && <JourneyGrid title="In the future" stages={future} colour="#4f46e5" future />}
+      {guessed && <p className="note">Some feeling scores are my rough reading of the feeling words, because none were given.</p>}
     </div>
   );
 }

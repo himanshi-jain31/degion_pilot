@@ -231,8 +231,20 @@ export function demoIdeate(feedback?: string) {
       { name: "No days left", type: "error", steps: ["Pick dates", "See a clear message", "Choose other dates"] },
     ],
     journeys: {
-      today: [{ step: "Writes an email", feeling: "Unsure", pain: "No reply for days" }],
-      future: [{ step: "Sends a request in the app", feeling: "Calm" }],
+      today: [
+        { stage: "Need", step: "Decides to take a day off", thought: "Do I have days left?", feeling: "Unsure", score: 2, pain: "Cannot see how many days are left", opportunity: "Show days left up front" },
+        { stage: "Ask", step: "Writes an email to the manager", thought: "I hope this is the right way to ask.", feeling: "Unsure", score: 2, pain: "No set way to ask", opportunity: "One short form" },
+        { stage: "Wait", step: "Waits for an answer", thought: "Did they even see it?", feeling: "Anxious", score: 1, pain: "No reply for days", opportunity: "Show the request status" },
+        { stage: "Answer", step: "Gets a yes or no in a reply", thought: "Good, now I can plan.", feeling: "Relieved", score: 4, pain: "", opportunity: "Tell the person straight away" },
+        { stage: "Record", step: "Asks HR to note the day", thought: "One more thing to chase.", feeling: "Annoyed", score: 2, pain: "The same news is passed on twice", opportunity: "Update the record automatically" },
+      ],
+      future: [
+        { stage: "Need", step: "Opens the app and sees days left", thought: "Great, I have 6 days.", feeling: "Calm", score: 4, improves: "Cannot see how many days are left" },
+        { stage: "Ask", step: "Picks dates and sends the request", thought: "That was quick.", feeling: "Confident", score: 5, improves: "No set way to ask" },
+        { stage: "Wait", step: "Sees the request marked Waiting", thought: "It has reached my manager.", feeling: "Reassured", score: 4, improves: "No reply for days" },
+        { stage: "Answer", step: "Gets a notification with the answer", thought: "Done. I can plan now.", feeling: "Happy", score: 5 },
+        { stage: "Record", step: "Sees the day added to the calendar", thought: "Nothing more to do.", feeling: "Relaxed", score: 5, improves: "The same news is passed on twice" },
+      ],
     },
     storyboard: [{ frame: 1, scene: "Anna wants a day off." }, { frame: 2, scene: "She sends a request on her phone." }, { frame: 3, scene: "Ben answers between meetings." }],
     directions: [

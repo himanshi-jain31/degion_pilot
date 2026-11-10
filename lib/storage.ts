@@ -118,7 +118,10 @@ export type Direction = {
 export type IdeateOutput = PhaseOutput & {
   product_structure: StructureNode[];
   user_flows: { name: string; type: string; steps: string[] }[];
-  journeys: { today: { step: string; feeling: string; pain: string }[]; future: { step: string; feeling: string }[] };
+  journeys: {
+    today: { stage?: string; step: string; thought?: string; feeling: string; score?: number; pain: string; opportunity?: string }[];
+    future: { stage?: string; step: string; thought?: string; feeling: string; score?: number; improves?: string }[];
+  };
   storyboard: { frame: number; scene: string }[];
   directions: Direction[];
   recommendation: { direction: string; why: string };

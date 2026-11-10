@@ -103,6 +103,25 @@ function structure(v: unknown, depth = 0): StructureNode[] {
   return arr<any>(v).map((n) => ({ page: str(n?.page), children: structure(n?.children, depth + 1) }));
 }
 
+// A journey is never a single step: if it is there at all it needs at least 3 stages (the AI is then asked once more)
+const score = (v: unknown) => {
+  const n = Math.round(Number(v));
+  return n >= 1 && n <= 5 ? n : undefined;
+};
+function journeys(j: any): IdeateOutput["journeys"] {
+  const today = arr<any>(j?.today).map((x) => ({
+    stage: str(x?.stage) || undefined, step: str(x?.step), thought: str(x?.thought) || undefined, feeling: str(x?.feeling),
+    score: score(x?.score), pain: str(x?.pain), opportunity: str(x?.opportunity) || undefined,
+  }));
+  const future = arr<any>(j?.future).map((x) => ({
+    stage: str(x?.stage) || undefined, step: str(x?.step), thought: str(x?.thought) || undefined, feeling: str(x?.feeling),
+    score: score(x?.score), improves: str(x?.improves) || undefined,
+  }));
+  if ((today.length > 0 && today.length < 3) || (future.length > 0 && future.length < 3))
+    throw new Error("each user journey needs at least 3 stages (5 to 7 is best)");
+  return { today, future };
+}
+
 export function validateIdeate(data: unknown): IdeateOutput {
   const d = data as Record<string, any>;
   if (!d || typeof d !== "object") throw new Error("not an object");
@@ -120,10 +139,7 @@ export function validateIdeate(data: unknown): IdeateOutput {
     ...common(d),
     product_structure: structureTree,
     user_flows: arr<any>(d.user_flows).map((f) => ({ name: str(f?.name), type: str(f?.type), steps: strs(f?.steps) })),
-    journeys: {
-      today: arr<any>(d.journeys?.today).map((j) => ({ step: str(j?.step), feeling: str(j?.feeling), pain: str(j?.pain) })),
-      future: arr<any>(d.journeys?.future).map((j) => ({ step: str(j?.step), feeling: str(j?.feeling) })),
-    },
+    journeys: journeys(d.journeys),
     storyboard: arr<any>(d.storyboard).map((f, i) => ({ frame: Number(f?.frame) || i + 1, scene: str(f?.scene) })),
     directions,
     recommendation: { direction: str(d.recommendation?.direction), why: str(d.recommendation?.why) },
