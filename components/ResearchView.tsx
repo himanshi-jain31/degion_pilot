@@ -68,7 +68,7 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
   const types = [...new Set(visible.map((x) => x.f.type || "Other"))];
   return (
     <div>
-      <Section title="What I found">
+      <Section title="What I found" icon="search" tone="sky">
         <EvidenceBar findings={out.findings} />
         <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Show findings">
           {["All", ...LABELS].map((l) => (
@@ -93,7 +93,7 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
       </Section>
 
       {out.key_insights.length > 0 && (
-        <Section title="Key insights">
+        <Section title="Key insights" icon="lightbulb" tone="amber">
           <ul className="space-y-3">
             {out.key_insights.map((k, i) => (
               <li key={i} className="rounded-xl border border-line bg-card p-4">
@@ -123,12 +123,12 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
       )}
 
       {out.updated_user_profiles.length > 0 && (
-        <Section title="User profiles, updated with what I found">
+        <Section title="User profiles, updated with what I found" icon="users" tone="indigo">
           <ProfileGrid profiles={out.updated_user_profiles} />
         </Section>
       )}
 
-      <Section title="Kit for talking to real users">
+      <Section title="Kit for talking to real users" icon="clipboard" tone="green">
         <p className="text-sm"><strong>What we want to learn</strong></p>
         <List items={out.research_kit.goals} />
         <p className="mt-3 text-sm"><strong>Interview questions</strong></p>
@@ -149,7 +149,7 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
       </Section>
 
       {out.could_not_find.length > 0 && (
-        <Section title="What I could not find">
+        <Section title="What I could not find" icon="help" tone="rose">
           <List items={out.could_not_find} />
         </Section>
       )}

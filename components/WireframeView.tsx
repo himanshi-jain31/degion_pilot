@@ -111,23 +111,23 @@ export function WireframeWork({ out, projectId, versionId }: { out: WireframeOut
       </Section>
 
       {out.warnings.length > 0 && (
-        <Section title="Things to check in the wireframe">
+        <Section title="Things to check in the wireframe" icon="alert" tone="amber">
           <List items={out.warnings} />
         </Section>
       )}
 
-      <Section title={`Screen map (${out.screens.length} screens)`}>
+      <Section title="Screen map" icon="layout" tone="indigo" hint={`${out.screens.length} screens`}>
         <ScreenMap out={out} />
       </Section>
 
       {out.accessibility_notes.length > 0 && (
-        <Section title="Accessibility notes">
+        <Section title="Accessibility notes" icon="eye" tone="sky">
           <List items={out.accessibility_notes} />
         </Section>
       )}
 
       {out.wording.length > 0 && (
-        <Section title="Words used on the screens">
+        <Section title="Words used on the screens" icon="message" tone="green">
           <ul className="space-y-1 text-sm">
             {out.wording.map((w, i) => (
               <li key={i}>

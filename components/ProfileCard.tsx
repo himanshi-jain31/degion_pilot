@@ -10,7 +10,7 @@ const TONES = [
   ["#fdf2f8", "#9d174d"],
   ["#ecfeff", "#155e75"],
 ];
-function tone(name: string) {
+export function tone(name: string) {
   let h = 0;
   for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   return TONES[h % TONES.length];

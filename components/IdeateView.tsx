@@ -68,11 +68,11 @@ export function DirectionCard({ d, recommended, selected, pick }: { d: IdeateOut
 export function IdeateWork({ out, onMakeJourneysFuller }: { out: IdeateOutput; onMakeJourneysFuller?: () => void }) {
   return (
     <div>
-      <Section title="Product structure">
+      <Section title="Product structure" icon="network" tone="indigo">
         <StructureMap nodes={out.product_structure} />
       </Section>
 
-      <Section title="User flows">
+      <Section title="User flows" icon="route" tone="sky">
         <div className="space-y-3">
           {out.user_flows.map((f, i) => (
             <FlowDiagram key={i} flow={f} />
@@ -81,13 +81,13 @@ export function IdeateWork({ out, onMakeJourneysFuller }: { out: IdeateOutput; o
       </Section>
 
       {(out.journeys.today.length > 0 || out.journeys.future.length > 0) && (
-        <Section title="User journeys">
+        <Section title="User journeys" icon="activity" tone="green">
           <JourneyMap journeys={out.journeys} onMakeFuller={onMakeJourneysFuller} />
         </Section>
       )}
 
       {out.storyboard.length > 0 && (
-        <Section title="Storyboard">
+        <Section title="Storyboard" icon="file-text" tone="amber">
           <div className="grid gap-3 sm:grid-cols-3">
             {out.storyboard.map((f) => (
               <div key={f.frame} className="rounded-lg border border-neutral-200 p-3 text-sm">
@@ -99,7 +99,7 @@ export function IdeateWork({ out, onMakeJourneysFuller }: { out: IdeateOutput; o
         </Section>
       )}
 
-      <Section title="Directions">
+      <Section title="Directions" icon="compass" tone="indigo">
         <div className="grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">
           {out.directions.map((d) => (
             <DirectionCard key={d.id} d={d} recommended={d.id === out.recommendation.direction} />
