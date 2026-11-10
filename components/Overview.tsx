@@ -200,25 +200,32 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
       {/* D + E. Roadmap and what each step gives you */}
       <section aria-label="The 6 steps">
         <h2 className="section-title">The 6 steps</h2>
-        <ol className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <ol className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {PHASES.map((ph) => {
             const s = project.phases[ph.name] ?? "Not started";
             const info = PHASE_INFO[ph.n];
             const made = project.versions.some((v) => v.phase === ph.n && v.status === "done");
             const prevOk = ph.n === 1 || project.phases[PHASES[ph.n - 2].name] === "Approved";
             return (
-              <li key={ph.n}>
-                <button onClick={() => onOpenPhase(ph.n)} className="card h-full w-full text-left transition-shadow duration-150 hover:shadow-md">
-                  <span className="flex items-center justify-between gap-2">
-                    <span className="text-[15px] font-medium">{ph.n}. {ph.name}</span>
-                    <span className={`${STATUS_PILL[s]} !text-[13px]`}>{s}</span>
-                  </span>
-                  <span className="note mt-2 block">{info.goal}</span>
-                  <span className="mt-3 block text-[14px] text-muted">You get:</span>
-                  <span className="block text-[15px]">{info.makes.join(" · ")}</span>
-                  <span className="note mt-3 block">
-                    {s === "Approved" ? "You said Go ahead." : made ? "Made. Waiting for your Go ahead." : prevOk ? "Waiting to start." : `Opens after you approve ${PHASES[ph.n - 2].name}.`}
-                  </span>
+              <li key={ph.n} className="flex">
+                <button
+                  onClick={() => onOpenPhase(ph.n)}
+                  className="card flex w-full flex-col items-stretch justify-start gap-0 !p-5 text-left transition-shadow duration-150 hover:shadow-md"
+                >
+                  <div className="flex items-start gap-3">
+                    <div aria-hidden="true" className="step-badge !h-8 !w-8">{ph.n}</div>
+                    <div className="min-w-0 flex-1 pt-0.5 text-[16px] font-medium leading-snug">{ph.name}</div>
+                    <div className={`${STATUS_PILL[s]} shrink-0 whitespace-nowrap !text-[13px]`}>{s}</div>
+                  </div>
+                  <p className="mt-3 text-[15px] leading-snug">{info.goal}</p>
+                  <div className="mt-4 flex flex-wrap gap-1.5" aria-label="You get">
+                    {info.makes.map((m) => (
+                      <span key={m} className="rounded-full bg-[#f4f4f0] px-2.5 py-1 text-[13px] leading-none text-muted">{m}</span>
+                    ))}
+                  </div>
+                  <p className="note mt-auto border-t border-line pt-3">
+                    {s === "Approved" ? "✓ You said Go ahead." : made ? "Made. Waiting for your Go ahead." : prevOk ? "Waiting to start." : `Opens after you approve ${PHASES[ph.n - 2].name}.`}
+                  </p>
                 </button>
               </li>
             );
