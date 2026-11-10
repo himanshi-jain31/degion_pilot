@@ -15,6 +15,7 @@ import { DesignStylePanel } from "@/components/DesignStylePanel";
 import { IdeateWork } from "@/components/IdeateView";
 import { CheckIn } from "@/components/CheckIn";
 import { Progress } from "@/components/Progress";
+import { Overview } from "@/components/Overview";
 import { PhaseLine } from "@/components/PhaseLine";
 import { ActionBar, BackLink, Loading, Notice, primaryClass, quietClass } from "@/components/ui";
 
@@ -51,7 +52,7 @@ function ProjectPage() {
   const [loadError, setLoadError] = useState<{ text: string; missing: boolean } | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [tab, setTab] = useState<Tab>("Plan");
-  const [view, setView] = useState<"phase" | "style" | "figma" | "final">("phase");
+  const [view, setView] = useState<"overview" | "phase" | "style" | "figma" | "final">("overview");
   const [actionError, setActionError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -221,6 +222,16 @@ function ProjectPage() {
         {/* Phase rail */}
         <nav aria-label="Steps" className="lg:w-60 lg:shrink-0">
           <ol className="space-y-1">
+            <li>
+              <button
+                aria-current={view === "overview" ? "page" : undefined}
+                onClick={() => setView("overview")}
+                className={`w-full rounded-xl border px-4 py-3 text-left transition-colors duration-150 ${view === "overview" ? "border-line bg-card shadow-[0_1px_2px_rgba(28,28,30,0.04)]" : "border-transparent text-muted hover:bg-card/70 hover:text-ink"}`}
+              >
+                <span className={`block text-[15px] ${view === "overview" ? "font-medium text-ink" : ""}`}>Overview</span>
+                <span className="text-[13px]">{PHASES.filter((p) => project.phases[p.name] === "Approved").length} of 6 approved</span>
+              </button>
+            </li>
             {PHASES.map((p) => {
               const s = project.phases[p.name] ?? "Not started";
               const active = view === "phase" && sel === p.n;
@@ -267,6 +278,7 @@ function ProjectPage() {
 
         {/* Main area */}
         <main id="main" tabIndex={-1} className="min-w-0 flex-1">
+          {view === "overview" && <Overview project={project} onOpenPhase={choosePhase} />}
           {view === "style" && (
             <div>
               <h2 className="section-title">Design style</h2>
