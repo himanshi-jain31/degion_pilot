@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { startPhase } from "@/lib/engine";
-import { phaseByNumber } from "@/lib/phases";
+import { BUILT_PHASES, phaseByNumber } from "@/lib/phases";
 import { IdeateOutput, TestingOutput, loadProject, saveProject } from "@/lib/storage";
 
 // Go ahead = approve the latest version. Not yet = redo the phase using the feedback.
@@ -86,7 +86,11 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
       goTo = 6;
     }
     await saveProject(project);
-    return NextResponse.json({ ok: true, goTo });
+    // Go ahead also starts the next step (unless this was a fix sent back from testing)
+    const nextPhase = phase + 1;
+    const startNext = goTo === undefined && BUILT_PHASES.includes(nextPhase);
+    if (startNext) await startPhase(id, nextPhase);
+    return NextResponse.json({ ok: true, goTo, started: startNext ? nextPhase : undefined });
   }
 
   if (body.decision === "not_yet") {

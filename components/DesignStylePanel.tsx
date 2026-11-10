@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { DesignStyle } from "@/lib/storage";
 
 type StyleView = (Omit<DesignStyle, "files"> & { files: { name: string; kind: string; note: string }[] }) | null;
@@ -25,7 +25,6 @@ export function DesignStylePanel({ projectId, style, onSaved }: { projectId: str
   const [otherFont, setOtherFont] = useState(style?.otherFont ?? "");
   const [corners, setCorners] = useState<string>(style?.corners ?? "slight");
   const [notes, setNotes] = useState(style?.notes ?? "");
-  const [files, setFiles] = useState<File[]>([]);
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -36,28 +35,44 @@ export function DesignStylePanel({ projectId, style, onSaved }: { projectId: str
     return data;
   }
 
-  async function save() {
-    setBusy(true);
-    setMsg("");
-    try {
-      await call(`/api/projects/${projectId}/style`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          colours: useColours ? { primary, background, text, ...(useAccent ? { accent } : {}) } : undefined,
-          headingFont, bodyFont, otherFont, corners, notes,
-        }),
-      });
-      if (files.length > 0) {
-        const form = new FormData();
-        files.forEach((f) => form.append("files", f));
-        const data = await call(`/api/projects/${projectId}/style/files`, { method: "POST", body: form });
-        setFiles([]);
-        if (data.skipped.length) setMsg(`Saved. I skipped: ${data.skipped.join("; ")}`);
-        else setMsg("Saved.");
-      } else {
-        setMsg("Saved.");
+  // Everything saves by itself a moment after you change it. There is no Save button.
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    setMsg("Saving...");
+    const timer = setTimeout(async () => {
+      try {
+        await call(`/api/projects/${projectId}/style`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            colours: useColours ? { primary, background, text, ...(useAccent ? { accent } : {}) } : undefined,
+            headingFont, bodyFont, otherFont, corners, notes,
+          }),
+        });
+        setMsg("Saved");
+        await onSaved();
+      } catch (e) {
+        setMsg(e instanceof Error ? e.message : "I couldn't save that. Please try again.");
       }
+    }, 700);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [useColours, primary, background, text, accent, useAccent, headingFont, bodyFont, otherFont, corners, notes]);
+
+  // Brand guide files are saved the moment you choose them
+  async function uploadFiles(chosen: File[]) {
+    if (chosen.length === 0) return;
+    setBusy(true);
+    setMsg("Saving...");
+    try {
+      const form = new FormData();
+      chosen.forEach((f) => form.append("files", f));
+      const data = await call(`/api/projects/${projectId}/style/files`, { method: "POST", body: form });
+      setMsg(data.skipped.length ? `Saved. I skipped: ${data.skipped.join("; ")}` : "Saved");
       await onSaved();
     } catch (e) {
       setMsg(e instanceof Error ? e.message : "I couldn't save that. Please try again.");
@@ -139,7 +154,7 @@ export function DesignStylePanel({ projectId, style, onSaved }: { projectId: str
 
       <fieldset className="mt-4 rounded-lg border border-neutral-200 p-4">
         <legend className="px-1 font-medium">Brand guide or screenshots</legend>
-        <input type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.webp" onChange={(e) => setFiles(Array.from(e.target.files ?? []))} className="text-sm" />
+        <input type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.webp" onChange={(e) => { void uploadFiles(Array.from(e.target.files ?? [])); e.target.value = ""; }} className="text-sm" />
         {style && style.files.length > 0 && (
           <ul className="mt-2 list-disc pl-5 text-sm">
             {style.files.map((f, i) => <li key={i}>{f.name} ({f.kind}) saved</li>)}
@@ -151,13 +166,10 @@ export function DesignStylePanel({ projectId, style, onSaved }: { projectId: str
       </fieldset>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <button disabled={busy} onClick={save} className="rounded-lg bg-black px-6 py-3 font-medium text-white hover:bg-neutral-800 disabled:opacity-50">
-          Save my design style
+        <button disabled={busy} onClick={clear} className="text-neutral-800 underline">
+          Clear my style
         </button>
-        <button disabled={busy} onClick={clear} className="rounded-lg border border-neutral-500 px-4 py-3 hover:bg-neutral-100 disabled:opacity-50">
-          Clear style
-        </button>
-        {msg && <span className="text-sm">{msg}</span>}
+        <span role="status" aria-live="polite" className="text-sm text-neutral-800">{msg || "Everything saves by itself."}</span>
       </div>
     </div>
   );

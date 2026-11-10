@@ -3,6 +3,7 @@
 import type { DesignOutput } from "@/lib/storage";
 import { FramePreview } from "@/components/WireframeView";
 import { List, Section } from "@/components/UnderstandView";
+import { ActionBar, primaryClass } from "@/components/ui";
 
 const urls = (id: string, key: "version" | "final", value = "1") => {
   const q = `${key}=${value}`;
@@ -114,8 +115,13 @@ export function FinalResult({ out, projectId, versionId, testingDone, onNext }: 
         )}
       </div>
       <Section title="Your working prototype">
-        <FramePreview url={u.view} downloadUrl={u.download} title="Final prototype" />
+        <FramePreview url={u.view} title="Final prototype" />
       </Section>
+      <ActionBar>
+        <a href={u.download} className={`${primaryClass} button-link`}>
+          Download the prototype
+        </a>
+      </ActionBar>
       <CoverNote out={out} />
       <Checks out={out} />
     </div>

@@ -4,7 +4,19 @@ import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 import { isDemo } from "@/lib/ai";
 import { ALLOWED_EXTENSIONS, MAX_FILE_BYTES, extractText } from "@/lib/extract";
+import { PHASES } from "@/lib/phases";
 import { PHASE_NAMES, Project, ProjectFile, UPLOADS_DIR, listProjects, saveProject } from "@/lib/storage";
+
+// A plain sentence about where a project is up to ("Understand: ready for you")
+function whereItIsUpTo(p: Project): { text: string; tone: "waiting" | "working" | "done" | "idle" } {
+  const phase = PHASES.find((ph) => p.phases[ph.name] !== "Approved");
+  if (!phase) return { text: "All six steps are done", tone: "done" };
+  const s = p.phases[phase.name] ?? "Not started";
+  if (s === "Working on it") return { text: `${phase.name}: working on it`, tone: "working" };
+  if (s === "Ready for you") return { text: `${phase.name}: ready for you to check`, tone: "waiting" };
+  if (s === "Changes asked") return { text: `${phase.name}: changes asked`, tone: "waiting" };
+  return { text: p.quickQuestions ? `Next: ${phase.name}` : "Quick questions to answer", tone: "idle" };
+}
 
 export async function GET() {
   const projects = await listProjects();
@@ -15,6 +27,7 @@ export async function GET() {
       createdAt: p.createdAt,
       fileCount: p.files.length,
       madeInDemo: !!p.madeInDemo,
+      next: whereItIsUpTo(p),
     }))
   );
 }

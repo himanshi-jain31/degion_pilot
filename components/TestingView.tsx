@@ -14,14 +14,13 @@ function Sev({ s }: { s: Severity }) {
   return <span className={`mr-2 rounded-full px-2 py-0.5 text-xs font-medium ${SEV_COLOUR[s]}`}>{s}</span>;
 }
 
-// The upload box for test notes, and the button that starts the analysis
-function NotesUpload(props: { projectId: string; notesCount: number; round: number; onRefresh: () => Promise<void>; onAnalyse: () => Promise<unknown>; busy: boolean }) {
-  const [files, setFiles] = useState<File[]>([]);
+// The upload box for test notes. Notes are saved the moment you choose them. "Analyse my notes" is the main button at the bottom.
+function NotesUpload(props: { projectId: string; notesCount: number; round: number; onRefresh: () => Promise<void> }) {
   const [msg, setMsg] = useState("");
   const [working, setWorking] = useState(false);
 
-  async function save() {
-    if (files.length === 0) return setMsg("Please choose at least one file first.");
+  async function save(files: File[]) {
+    if (files.length === 0) return;
     setWorking(true);
     setMsg("");
     try {
@@ -31,7 +30,6 @@ function NotesUpload(props: { projectId: string; notesCount: number; round: numb
       const res = await fetch(`/api/projects/${props.projectId}/notes`, { method: "POST", body: form });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      setFiles([]);
       setMsg(data.skipped.length ? `Saved. I skipped: ${data.skipped.join("; ")}` : "Saved. Your notes are ready.");
       await props.onRefresh();
     } catch (e) {
@@ -43,25 +41,16 @@ function NotesUpload(props: { projectId: string; notesCount: number; round: numb
 
   return (
     <section className="mt-6 rounded-lg border border-amber-300 bg-amber-50 p-4">
-      <h3 className="font-medium">Round {props.round}: upload your test notes</h3>
+      <h3 className="font-medium">Round {props.round}: add your test notes</h3>
       <p className="mt-1 text-sm">
-        Run your sessions with the test kit. Then upload what you wrote down: text, Word, Excel or PDF. I only use what is in your notes. I will not invent numbers or quotes.
+        Run your sessions with the test kit. Then add what you wrote down: text, Word, Excel or PDF. They are saved as soon as you choose them. I only use what is in your notes. I will not invent numbers or quotes.
       </p>
-      <input type="file" multiple accept=".txt,.md,.docx,.xlsx,.csv,.pdf" onChange={(e) => setFiles(Array.from(e.target.files ?? []))} className="mt-3 block text-sm" />
-      <div className="mt-3 flex flex-wrap gap-3">
-        <button disabled={working} onClick={save} className="rounded-lg border border-neutral-500 px-4 py-2 hover:bg-white disabled:opacity-50">
-          Save my notes
-        </button>
-        <button
-          disabled={working || props.busy || props.notesCount === 0}
-          onClick={() => props.onAnalyse()}
-          className="rounded-lg bg-black px-4 py-2 text-white hover:bg-neutral-800 disabled:opacity-50"
-        >
-          Analyse my notes
-        </button>
-      </div>
-      <p className="mt-2 text-sm text-neutral-700">Notes saved for this round: {props.notesCount}</p>
-      {msg && <p className="mt-2 text-sm">{msg}</p>}
+      <label className="mt-3 block">
+        <span className="sr-only">Choose your test notes</span>
+        <input type="file" multiple disabled={working} accept=".txt,.md,.docx,.xlsx,.csv,.pdf" onChange={(e) => { void save(Array.from(e.target.files ?? [])); e.target.value = ""; }} className="block text-sm" />
+      </label>
+      <p className="mt-2 text-sm text-neutral-800">Notes saved for this round: {props.notesCount}</p>
+      {msg && <p role="status" className="mt-2 text-sm">{msg}</p>}
     </section>
   );
 }
@@ -73,8 +62,6 @@ export function TestingWork(props: {
   notesCount: number;
   round: number;
   onRefresh: () => Promise<void>;
-  onAnalyse: () => Promise<unknown>;
-  busy: boolean;
 }) {
   const { out } = props;
   const r = out.results_analysis;
@@ -139,7 +126,7 @@ export function TestingWork(props: {
         </a>
       </Section>
 
-      {!r && <NotesUpload projectId={props.projectId} notesCount={props.notesCount} round={props.round} onRefresh={props.onRefresh} onAnalyse={props.onAnalyse} busy={props.busy} />}
+      {!r && <NotesUpload projectId={props.projectId} notesCount={props.notesCount} round={props.round} onRefresh={props.onRefresh} />}
 
       <Section title="Test plan">
         <List items={out.test_plan.goals} />
@@ -158,7 +145,7 @@ export function TestingWork(props: {
         <ol className="list-decimal space-y-1 pl-5">
           {out.script.map((t, i) => <li key={i}>{t}</li>)}
         </ol>
-        <p className="mt-2 text-sm text-neutral-600">The 10 standard usability questions (SUS) are added at the end of the downloaded kit.</p>
+        <p className="mt-2 text-sm text-neutral-600">The 10 standard usability questions are added at the end of the downloaded kit.</p>
       </Section>
 
       <Section title="Expert check">

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { FigmaFile, FigmaRole } from "@/lib/storage";
+import { ActionBar, Notice, primaryClass } from "@/components/ui";
 import { plainSummary } from "@/lib/figma-text";
 
 const ROLES: { value: FigmaRole; label: string; help: string }[] = [
@@ -87,12 +88,15 @@ export function FigmaPanel({ projectId, files, onChanged }: { projectId: string;
           className="mt-2 w-full rounded-lg border border-neutral-500 p-3 focus:border-black focus:outline-none"
         />
         <p className="mt-1 text-xs text-neutral-600">In Figma, click Share, then Copy link. A link to one frame works too: I will read only that part.</p>
-        <button disabled={busy || !url.trim()} onClick={read} className="mt-3 rounded-lg bg-black px-6 py-3 font-medium text-white hover:bg-neutral-800 disabled:opacity-50">
-          {busy ? "Working on it..." : "Read this file"}
-        </button>
-        {error && <p role="alert" className="mt-3 rounded-lg border border-red-300 bg-red-50 p-3 text-red-800">{error}</p>}
-        {msg && <p className="mt-3 rounded-lg border border-green-300 bg-green-50 p-3">{msg} Now tell me what it is, below.</p>}
+        {error && <div className="mt-3"><Notice tone="error">{error}</Notice></div>}
+        {msg && <p role="status" className="mt-3 rounded-lg border border-green-300 bg-green-50 p-3">{msg} Now tell me what it is, below.</p>}
       </section>
+
+      {files.length === 0 && (
+        <div className="mt-8">
+          <Notice>No Figma files yet. Paste a link above and I will read it.</Notice>
+        </div>
+      )}
 
       {files.length > 0 && (
         <section className="mt-8">
@@ -136,6 +140,11 @@ export function FigmaPanel({ projectId, files, onChanged }: { projectId: string;
           </ul>
         </section>
       )}
+      <ActionBar>
+        <button disabled={busy || !url.trim()} onClick={read} className={primaryClass}>
+          {busy ? "Working on it..." : "Read this file"}
+        </button>
+      </ActionBar>
     </div>
   );
 }
