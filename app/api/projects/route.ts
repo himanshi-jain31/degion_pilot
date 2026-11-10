@@ -7,29 +7,36 @@ import { ALLOWED_EXTENSIONS, MAX_FILE_BYTES, extractText } from "@/lib/extract";
 import { PHASES } from "@/lib/phases";
 import { PHASE_NAMES, Project, ProjectFile, UPLOADS_DIR, listProjects, saveProject } from "@/lib/storage";
 
-// A plain sentence about where a project is up to ("Understand: ready for you")
-function whereItIsUpTo(p: Project): { text: string; tone: "waiting" | "working" | "done" | "idle" } {
+// Where a project is up to, in plain words, for the Home cards and list
+function whereItIsUpTo(p: Project) {
   const phase = PHASES.find((ph) => p.phases[ph.name] !== "Approved");
-  if (!phase) return { text: "All six steps are done", tone: "done" };
-  const s = p.phases[phase.name] ?? "Not started";
-  if (s === "Working on it") return { text: `${phase.name}: working on it`, tone: "working" };
-  if (s === "Ready for you") return { text: `${phase.name}: ready for you to check`, tone: "waiting" };
-  if (s === "Changes asked") return { text: `${phase.name}: changes asked`, tone: "waiting" };
-  return { text: p.quickQuestions ? `Next: ${phase.name}` : "Quick questions to answer", tone: "idle" };
+  const failed = p.versions.some((v, i, all) => v.status === "failed" && all.filter((x) => x.phase === v.phase).at(-1) === v);
+  if (!phase) return { text: "All six steps are done", tone: "done" as const, phase: "Testing", status: "Approved", step: "All six steps are done. Open the final result." };
+  const status = p.phases[phase.name] ?? "Not started";
+  const questionsDone = !!p.quickQuestions && p.quickQuestions.questions.every((q) => p.answers[q.id]);
+  if (failed) return { text: `${phase.name}: needs another try`, tone: "waiting" as const, phase: phase.name, status, step: "That did not work. Open it to try again." };
+  if (status === "Working on it") return { text: `${phase.name}: working on it`, tone: "working" as const, phase: phase.name, status, step: "I am working on it. You can leave and come back." };
+  if (status === "Ready for you") return { text: `${phase.name}: ready for you to check`, tone: "waiting" as const, phase: phase.name, status, step: "Check what I made, then say Go ahead." };
+  if (status === "Changes asked") return { text: `${phase.name}: changes asked`, tone: "waiting" as const, phase: phase.name, status, step: "Open it to see where I am with your changes." };
+  if (!questionsDone) return { text: "Quick questions to answer", tone: "idle" as const, phase: phase.name, status, step: "Answer a few quick questions to begin." };
+  return { text: `Next: ${phase.name}`, tone: "idle" as const, phase: phase.name, status, step: `Open it to start ${phase.name}.` };
 }
 
 export async function GET() {
   const projects = await listProjects();
-  return NextResponse.json(
-    projects.map((p) => ({
-      id: p.id,
-      title: p.title,
-      createdAt: p.createdAt,
-      fileCount: p.files.length,
-      madeInDemo: !!p.madeInDemo,
-      next: whereItIsUpTo(p),
-    }))
-  );
+  const rows = projects.map((p) => ({
+    id: p.id,
+    title: p.title,
+    createdAt: p.createdAt,
+    updatedAt: [p.createdAt, ...p.versions.flatMap((v) => [v.createdAt, v.finishedAt ?? ""])].sort().at(-1),
+    fileCount: p.files.length,
+    madeInDemo: !!p.madeInDemo,
+    phases: p.phases,
+    next: whereItIsUpTo(p),
+  }));
+  // newest activity first
+  rows.sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
+  return NextResponse.json(rows);
 }
 
 export async function POST(request: Request) {

@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { SHELL_PATHS } from "@/components/AppShell";
 
 // The slim bar at the top of every screen. It shows one calm "Demo mode" badge while sample results are in use.
 // It checks again every few seconds and when you come back to the window, so adding a key switches it off by itself.
 export function TopBar() {
   const [demo, setDemo] = useState(false);
+  const onShellPage = SHELL_PATHS.includes(usePathname()); // these pages have the icon bar, so only the badge shows, top right
 
   useEffect(() => {
     let alive = true;
@@ -27,10 +30,12 @@ export function TopBar() {
 
   const tip = "Showing sample results. Add an API key to get real designs.";
   return (
-    <header className="flex items-center justify-between px-6 py-4">
-      <Link href="/" className="text-base font-medium tracking-tight">
-        DesignPilot
-      </Link>
+    <header className={onShellPage ? "absolute right-0 top-0 z-30 px-6 py-4" : "flex items-center justify-between px-6 py-4"}>
+      {!onShellPage && (
+        <Link href="/" className="text-base font-medium tracking-tight">
+          DesignPilot
+        </Link>
+      )}
       {demo && (
         <span className="group relative">
           <span
