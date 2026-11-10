@@ -62,10 +62,10 @@ export function StructureMap({ nodes }: { nodes: StructureNode[] }) {
 
   return (
     <div>
-      <div className="overflow-x-auto rounded-2xl border border-line bg-card p-2">
+      <div className="rounded-2xl border border-line bg-card p-2">
         <svg
           viewBox={`0 0 ${width} ${height}`}
-          style={{ width: "100%", minWidth: Math.min(width, 640), maxWidth: width * 1.3, display: "block", margin: "0 auto" }}
+          style={{ width: "100%", maxWidth: width * 1.3, height: "auto", display: "block", margin: "0 auto" }}
           role="group"
           aria-label="Product structure map"
         >
