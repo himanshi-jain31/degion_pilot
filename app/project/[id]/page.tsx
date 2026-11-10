@@ -26,8 +26,6 @@ type ProjectView = Omit<Project, "files" | "interviewNotes" | "testNotes"> & {
   interviewNotes: { name: string; uploadedAt: string }[];
   files: { name: string; kind: string; note: string }[];
 };
-type Tab = "Plan" | "Work" | "What I did" | "Check-in";
-const TABS: Tab[] = ["Plan", "Work", "What I did", "Check-in"];
 
 const STATUS_COLOUR: Record<string, string> = {
   "Not started": "pill pill-idle",
@@ -37,21 +35,13 @@ const STATUS_COLOUR: Record<string, string> = {
   Approved: "pill pill-ok",
 };
 
-// Which tab to open for a step: the check-in when something is waiting for you, otherwise the plan
-function defaultTab(project: ProjectView, phase: number): Tab {
-  const vs = project.versions.filter((v) => v.phase === phase);
-  const shown = [...vs].reverse().find((v) => v.status === "done" && v.output);
-  if (!shown?.output) return "Plan";
-  if (phase === 6 && !(shown.output as TestingOutput).results_analysis) return "Work";
-  return shown.approved ? "Work" : "Check-in";
-}
-
 function ProjectPage() {
   const { id } = useParams<{ id: string }>();
   const [project, setProject] = useState<ProjectView | null>(null);
   const [loadError, setLoadError] = useState<{ text: string; missing: boolean } | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
-  const [tab, setTab] = useState<Tab>("Plan");
+  const [checkinEl, setCheckinEl] = useState<HTMLElement | null>(null);
+  const [checkinSeen, setCheckinSeen] = useState(false);
   const [view, setView] = useState<"overview" | "phase" | "style" | "figma" | "final">("overview");
   const [actionError, setActionError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -78,7 +68,6 @@ function ProjectPage() {
       const next = PHASES.find((p) => project.phases[p.name] !== "Approved" && BUILT_PHASES.includes(p.n));
       const n = next?.n ?? BUILT_PHASES[BUILT_PHASES.length - 1];
       setSelected(n);
-      setTab(defaultTab(project, n));
     }
   }, [project, selected]);
 
@@ -93,18 +82,20 @@ function ProjectPage() {
     if (project) document.title = `${project.title} · DesignPilot`;
   }, [project?.title]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // When a step finishes, show what it made: the check-in comes first
   const sel = selected ?? 1;
-  const latestId = project?.versions.filter((v) => v.phase === sel).at(-1)?.id;
-  const latestStatus = project?.versions.filter((v) => v.phase === sel).at(-1)?.status;
+
+  // Knows when the Check-in is on screen, so the bottom button only shows when it is needed
   useEffect(() => {
-    if (project && latestStatus === "done") setTab(defaultTab(project, sel));
-  }, [latestId, latestStatus]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!checkinEl) return;
+    const o = new IntersectionObserver(([e]) => setCheckinSeen(e.isIntersecting), { threshold: 0.2 });
+    o.observe(checkinEl);
+    return () => o.disconnect();
+  }, [checkinEl]);
 
   function choosePhase(n: number) {
     setSelected(n);
     setView("phase");
-    if (project) setTab(defaultTab(project, n));
+    window.scrollTo({ top: 0 });
   }
 
   async function post(url: string, body: object) {
@@ -205,7 +196,7 @@ function ProjectPage() {
         if (nextPhase) return <ActionBar><button onClick={() => choosePhase(nextPhase.n)} className={primaryClass}>Next: {nextPhase.name}</button></ActionBar>;
         return null;
       }
-      if (tab !== "Check-in") return <ActionBar><button onClick={() => setTab("Check-in")} className={primaryClass}>Go to the check-in</button></ActionBar>;
+      if (!(checkinEl && checkinSeen)) return <ActionBar><button onClick={() => document.getElementById("checkin")?.scrollIntoView({ behavior: "smooth" })} className={primaryClass}>Go to the check-in</button></ActionBar>;
     }
     return null; // the check-in shows its own buttons
   }
@@ -310,32 +301,7 @@ function ProjectPage() {
                 <span className={STATUS_COLOUR[status]}>{status}</span>
               </div>
 
-              <div role="tablist" aria-label="Parts of this step" className="mt-6 flex gap-2 overflow-x-auto border-b border-line">
-                {TABS.map((t, i) => (
-                  <button
-                    key={t}
-                    id={`tab-${t}`}
-                    role="tab"
-                    aria-selected={tab === t}
-                    aria-controls="tab-panel"
-                    tabIndex={tab === t ? 0 : -1}
-                    onClick={() => setTab(t)}
-                    onKeyDown={(e) => {
-                      const move = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : e.key === "Home" ? -TABS.length : e.key === "End" ? TABS.length : 0;
-                      if (!move) return;
-                      e.preventDefault();
-                      const next = TABS[e.key === "Home" ? 0 : e.key === "End" ? TABS.length - 1 : (i + move + TABS.length) % TABS.length];
-                      setTab(next);
-                      document.getElementById(`tab-${next}`)?.focus();
-                    }}
-                    className={`-mb-px whitespace-nowrap border-b-2 px-4 py-3 text-[15px] transition-colors duration-150 ${tab === t ? "border-accent font-medium text-ink" : "border-transparent text-muted hover:text-ink"}`}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-
-              <div key={`${sel}-${tab}`} id="tab-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} className="fade-in mt-8">
+              <div key={sel} className="fade-in mt-6 space-y-10">
                 {!built ? (
                   <Notice>This step is not built yet. It comes after the earlier steps are working.</Notice>
                 ) : (
@@ -343,25 +309,23 @@ function ProjectPage() {
                     {latest?.status === "working" && <Progress v={latest} phase={sel} />}
 
                     {latest?.status === "failed" && (
-                      <div className="mb-4">
-                        <Notice tone="error">{latest.error} Use the Try again button at the bottom right.</Notice>
-                      </div>
+                      <Notice tone="error">{latest.error} Use the Try again button at the bottom right.</Notice>
                     )}
 
                     {sel === 6 && latest?.approved && (
-                      <p className="mb-4 rounded-lg border border-green-300 bg-green-50 p-3">All six steps are done. Your final design is on the Final result page.</p>
+                      <p className="rounded-lg border border-green-300 bg-green-50 p-3">All six steps are done. Your final design is on the Final result page.</p>
                     )}
                     {project.fixLoop && (sel === 6 || (sel === 4 && project.fixLoop.target === "wireframes" && !project.fixLoop.needsDesign) || sel === 5) && (
-                      <p className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm">
+                      <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm">
                         {sel === 6
                           ? `Fixes from testing are being made in ${fixWhere}. When you say Go ahead there, you come back here for another round.`
                           : "These changes are fixes from testing. When you say Go ahead, " + (sel === 4 ? "the design will be redone next, then you come back to Testing." : "you come back to Testing.")}
                       </p>
                     )}
-                    {needsDesignRedo && <div className="mb-4"><Notice>The wireframe changed after testing, so the design has to be redone from it.</Notice></div>}
-                    {needsNewRound && <div className="mb-4"><Notice>Your fixes are done. Start round {round} to test the updated prototype.</Notice></div>}
+                    {needsDesignRedo && <Notice>The wireframe changed after testing, so the design has to be redone from it.</Notice>}
+                    {needsNewRound && <Notice>Your fixes are done. Start round {round} to test the updated prototype.</Notice>}
                     {sel === 5 && !latest && previousApproved && (
-                      <p className="mb-4 text-sm text-neutral-800">
+                      <p className="text-sm text-neutral-800">
                         {(project.figmaFiles ?? []).some((f) => f.role === "design-system")
                           ? "I will use your Figma design system as the design style."
                           : project.designStyle
@@ -380,58 +344,68 @@ function ProjectPage() {
                       </Notice>
                     )}
 
-                    {actionError && <div className="mb-3"><Notice tone="error">{actionError}</Notice></div>}
+                    {actionError && <Notice tone="error">{actionError}</Notice>}
 
                     {shown?.output && latest?.status !== "working" && (
                       <>
-                        {shown.version > 1 && shown.feedback && tab !== "Check-in" && (
-                          <p className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
+                        {shown.version > 1 && shown.feedback && (
+                          <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
                             <strong>Version {shown.version}: updated using your feedback.</strong> You asked: &quot;{shown.feedback.length > 200 ? shown.feedback.slice(0, 200) + "…" : shown.feedback}&quot;
                           </p>
                         )}
-                        {tab === "Plan" && <PlanView out={shown.output} />}
-                        {tab === "Work" && sel === 1 && <WorkView out={shown.output as UnderstandOutput} />}
-                        {tab === "Work" && sel === 2 && <ResearchWork out={shown.output as ResearchOutput} />}
-                        {tab === "Work" && sel === 3 && <IdeateWork out={shown.output as IdeateOutput} />}
-                        {tab === "Work" && sel === 4 && <WireframeWork out={shown.output as WireframeOutput} projectId={id} versionId={shown.id} />}
-                        {tab === "Work" && sel === 5 && <PrototypeWork out={shown.output as DesignOutput} projectId={id} versionId={shown.id} />}
-                        {tab === "Work" && sel === 6 && (
-                          <TestingWork out={shown.output as TestingOutput} projectId={id} notesCount={roundNotes} round={round} onRefresh={refresh} />
-                        )}
-                        {tab === "What I did" && <WhatIDid versions={versions} />}
-                        {tab === "Check-in" && sel === 6 && !(shown.output as TestingOutput).results_analysis && (
-                          <Notice>The check-in comes after the testing. Open Work, download the test kit, run your sessions, then add your notes.</Notice>
-                        )}
-                        {tab === "Check-in" && !(sel === 6 && !(shown.output as TestingOutput).results_analysis) && (
-                          <CheckIn
-                            key={shown.id}
-                            version={shown}
-                            projectId={id}
-                            notesCount={project.interviewNotes.length}
-                            onRefresh={refresh}
-                            onOpenWork={() => setTab("Work")}
-                            isLatest={latest?.id === shown.id}
-                            busy={busy}
-                            onGo={async (note, extra) => {
-                              const data = await post(`/api/projects/${id}/phases/${sel}/checkin`, { decision: "go", note, ...extra });
-                              if (!data) return false;
-                              if (data.goTo) choosePhase(data.goTo); // sent back for fixes, or back to Testing
-                              else if (data.started) choosePhase(data.started); // the next step is already working
-                              else if (sel === 5) setView("final");
-                              return true;
-                            }}
-                            onNotYet={(note) => post(`/api/projects/${id}/phases/${sel}/checkin`, { decision: "not_yet", note })}
-                          />
-                        )}
+
+                        <details open={!shown.approved} className="group">
+                          <summary className="section-title cursor-pointer select-none">What I will do</summary>
+                          <PlanView out={shown.output} />
+                        </details>
+
+                        <section id="made" aria-label="What I made" className="scroll-mt-6">
+                          <h3 className="section-title">What I made</h3>
+                          {sel === 1 && <WorkView out={shown.output as UnderstandOutput} />}
+                          {sel === 2 && <ResearchWork out={shown.output as ResearchOutput} />}
+                          {sel === 3 && <IdeateWork out={shown.output as IdeateOutput} />}
+                          {sel === 4 && <WireframeWork out={shown.output as WireframeOutput} projectId={id} versionId={shown.id} />}
+                          {sel === 5 && <PrototypeWork out={shown.output as DesignOutput} projectId={id} versionId={shown.id} />}
+                          {sel === 6 && (
+                            <TestingWork out={shown.output as TestingOutput} projectId={id} notesCount={roundNotes} round={round} onRefresh={refresh} />
+                          )}
+                        </section>
+
+                        <section id="checkin" ref={setCheckinEl} aria-label="Check-in" className="scroll-mt-6">
+                          <h3 className="section-title">Check-in</h3>
+                          {sel === 6 && !(shown.output as TestingOutput).results_analysis ? (
+                            <Notice>The check-in comes after the testing. Download the test kit above, run your sessions, then add your notes.</Notice>
+                          ) : (
+                            <CheckIn
+                              key={shown.id}
+                              version={shown}
+                              projectId={id}
+                              notesCount={project.interviewNotes.length}
+                              onRefresh={refresh}
+                              onOpenWork={() => document.getElementById("made")?.scrollIntoView({ behavior: "smooth" })}
+                              isLatest={latest?.id === shown.id}
+                              busy={busy}
+                              onGo={async (note, extra) => {
+                                const data = await post(`/api/projects/${id}/phases/${sel}/checkin`, { decision: "go", note, ...extra });
+                                if (!data) return false;
+                                if (data.goTo) choosePhase(data.goTo); // sent back for fixes, or back to Testing
+                                else if (data.started) choosePhase(data.started); // the next step is already working
+                                else if (sel === 5) setView("final");
+                                return true;
+                              }}
+                              onNotYet={(note) => post(`/api/projects/${id}/phases/${sel}/checkin`, { decision: "not_yet", note })}
+                            />
+                          )}
+                        </section>
                       </>
                     )}
-                    {!shown?.output && latest && tab === "What I did" && <WhatIDid versions={versions} />}
-                    {!shown?.output && latest?.status !== "working" && tab !== "What I did" && tab !== "Plan" && (
-                      <Notice>
-                        Nothing here yet. This fills in after I finish the step.
-                      </Notice>
+
+                    {latest && latest.status !== "working" && (
+                      <details>
+                        <summary className="section-title cursor-pointer select-none">What I did</summary>
+                        <WhatIDid versions={versions} />
+                      </details>
                     )}
-                    {!shown?.output && tab === "Plan" && latest && latest.status === "failed" && <Notice>My plan will show here as soon as the step works.</Notice>}
                   </>
                 )}
               </div>
