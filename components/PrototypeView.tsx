@@ -1,6 +1,6 @@
 "use client";
 
-import type { DesignOutput } from "@/lib/storage";
+import type { DesignOutput, DesignStyle } from "@/lib/storage";
 import { FramePreview } from "@/components/WireframeView";
 import { List, Section } from "@/components/UnderstandView";
 import { ActionBar, primaryClass } from "@/components/ui";
@@ -69,7 +69,31 @@ function CoverNote({ out }: { out: DesignOutput }) {
 }
 
 // The Work tab for Phase 5
-export function PrototypeWork({ out, projectId, versionId }: { out: DesignOutput; projectId: string; versionId: string }) {
+type StyleLite = Pick<DesignStyle, "colours" | "headingFont" | "bodyFont" | "otherFont" | "corners">;
+
+// The colours and fonts the team saved as the design style (only shown when one was saved)
+function StyleStrip({ style }: { style: StyleLite | null }) {
+  if (!style) return null;
+  const c = style.colours;
+  const swatches = c ? [["Main", c.primary], ["Background", c.background], ["Text", c.text], ...(c.accent ? [["Accent", c.accent]] : [])] : [];
+  return (
+    <Section title="Design style used">
+      {swatches.length > 0 && (
+        <ul className="flex flex-wrap gap-3">
+          {swatches.map(([n, hex]) => (
+            <li key={n} className="flex items-center gap-2 text-[14px]">
+              <span aria-hidden="true" className="h-9 w-9 rounded-lg border border-line" style={{ background: hex }} />
+              <span>{n}<span className="note block">{hex}</span></span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="note mt-3">Fonts: {style.otherFont ?? `${style.headingFont} for headings, ${style.bodyFont} for text`} · Corners: {style.corners}</p>
+    </Section>
+  );
+}
+
+export function PrototypeWork({ out, projectId, versionId, style = null }: { out: DesignOutput; projectId: string; versionId: string; style?: StyleLite | null }) {
   const u = urls(projectId, "version", versionId);
   return (
     <div>
@@ -89,6 +113,7 @@ export function PrototypeWork({ out, projectId, versionId }: { out: DesignOutput
           <List items={out.warnings} />
         </Section>
       )}
+      {out.style_given && <StyleStrip style={style} />}
       <Checks out={out} />
       <CoverNote out={out} />
     </div>

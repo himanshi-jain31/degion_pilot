@@ -43,6 +43,60 @@ export function FramePreview({ url, downloadUrl, title }: { url: string; downloa
   );
 }
 
+// All screens as small tiles, grouped by menu group. Pick a user to light up the screens they get.
+function ScreenMap({ out }: { out: WireframeOutput }) {
+  const [user, setUser] = useState<string | null>(null);
+  const [open, setOpen] = useState<string | null>(null);
+  const groups = [...new Set(out.screens.map((s) => s.group || "Screens"))];
+  const mine = new Set(user ? out.user_coverage.find((c) => c.user === user)?.screens ?? [] : []);
+  const chosen = out.screens.find((x) => x.id === open);
+  return (
+    <div>
+      {out.user_coverage.length > 0 && (
+        <div className="mb-4 flex flex-wrap items-center gap-2" role="group" aria-label="Show screens for a user">
+          <span className="note">Show screens for:</span>
+          {out.user_coverage.map((c) => (
+            <button key={c.user} onClick={() => setUser(user === c.user ? null : c.user)} aria-pressed={user === c.user} className={`rounded-full border px-3 py-1 text-[14px] ${user === c.user ? "border-[var(--accent)] bg-accent-soft text-[var(--accent-ink)]" : "border-line bg-card text-muted hover:text-ink"}`}>
+              {c.user}
+            </button>
+          ))}
+        </div>
+      )}
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {groups.map((g) => (
+          <div key={g}>
+            <p className="label-small mb-2">{g}</p>
+            <ul className="space-y-2">
+              {out.screens.map((x, i) => ({ x, i })).filter(({ x }) => (x.group || "Screens") === g).map(({ x, i }) => {
+                const dim = user && !mine.has(x.id);
+                return (
+                  <li key={x.id}>
+                    <button onClick={() => setOpen(open === x.id ? null : x.id)} aria-pressed={open === x.id} className={`flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-opacity ${open === x.id ? "border-[var(--accent)] bg-accent-soft" : "border-line bg-card"} ${dim ? "opacity-40" : ""}`}>
+                      <span aria-hidden="true" className="mt-0.5 flex h-14 w-10 shrink-0 flex-col gap-1 rounded-md border border-[#d6d6cf] bg-[#f3f3ee] p-1"><span className="h-1.5 rounded-sm bg-[#d6d6cf]" /><span className="h-3 rounded-sm bg-[#e4e4de]" /><span className="h-1.5 w-2/3 rounded-sm bg-[#d6d6cf]" /></span>
+                      <span className="min-w-0 text-[15px]">
+                        <span className="block font-medium">{i + 1}. {x.name}</span>
+                        {x.states.length > 0 && <span className="mt-1 flex flex-wrap gap-1">{x.states.map((st) => <span key={st} className="pill pill-idle !text-[12px]">{st}</span>)}</span>}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+      {chosen && (
+        <div className="mt-4 rounded-xl border border-line bg-card p-4" role="status">
+          <p className="font-medium">{chosen.name}</p>
+          <p className="mt-1 text-[15px]">{chosen.purpose}</p>
+          {chosen.meets.length > 0 && <p className="note mt-1">Meets: {chosen.meets.join(", ")}</p>}
+        </div>
+      )}
+      <p className="note mt-3">Use the wireframe above to click from screen to screen. The arrows between screens are not drawn here because I am not given which screen leads to which.</p>
+    </div>
+  );
+}
+
 // The Work tab for Phase 4: screen list, then the wireframe in a frame
 export function WireframeWork({ out, projectId, versionId }: { out: WireframeOutput; projectId: string; versionId: string }) {
   const url = `/api/projects/${projectId}/wireframe?version=${versionId}`;
@@ -62,35 +116,9 @@ export function WireframeWork({ out, projectId, versionId }: { out: WireframeOut
         </Section>
       )}
 
-      <Section title={`Screens (${out.screens.length})`}>
-        <ul className="space-y-2">
-          {out.screens.map((s, i) => (
-            <li key={s.id} className="rounded-lg border border-neutral-200 p-3">
-              <p>
-                <strong>
-                  {i + 1}. {s.name}
-                </strong>
-                {s.states.length > 0 && <span className="ml-2 text-xs text-neutral-600">shows: {s.states.join(", ")}</span>}
-              </p>
-              <p className="text-sm">{s.purpose}</p>
-              {s.meets.length > 0 && <p className="text-xs text-neutral-600">Meets: {s.meets.join(", ")}</p>}
-            </li>
-          ))}
-        </ul>
+      <Section title={`Screen map (${out.screens.length} screens)`}>
+        <ScreenMap out={out} />
       </Section>
-
-      {out.user_coverage.length > 0 && (
-        <Section title="Who each user gets screens for">
-          <ul className="space-y-1 text-sm">
-            {out.user_coverage.map((c, i) => (
-              <li key={i}>
-                <strong>{c.user}:</strong>{" "}
-                {c.screens.map((id) => out.screens.find((s) => s.id === id)?.name ?? id).join(", ") || "no screens"}
-              </li>
-            ))}
-          </ul>
-        </Section>
-      )}
 
       {out.accessibility_notes.length > 0 && (
         <Section title="Accessibility notes">

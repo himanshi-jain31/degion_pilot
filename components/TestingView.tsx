@@ -10,6 +10,38 @@ const SEV_COLOUR: Record<Severity, string> = {
   Low: "bg-neutral-200 text-neutral-700",
 };
 
+const SEV_BORDER: Record<Severity, string> = { High: "border-l-[var(--bad)]", Medium: "border-l-[var(--wait)]", Low: "border-l-[#9a9aa0]" };
+
+// Screens named in a sentence (only when the screen's name really appears in it)
+function screensIn(text: string, screens: string[]) {
+  const t = text.toLowerCase();
+  return screens.filter((n) => n.trim().length >= 3 && t.includes(n.trim().toLowerCase()));
+}
+
+function ScreenChips({ text, screens }: { text: string; screens: string[] }) {
+  const hit = screensIn(text, screens);
+  if (hit.length === 0) return null;
+  return (
+    <span className="ml-2 inline-flex flex-wrap gap-1 align-middle">
+      {hit.map((h) => <span key={h} className="pill pill-info !text-[12px]">Screen: {h}</span>)}
+    </span>
+  );
+}
+
+function SeverityBar({ items }: { items: { severity: Severity }[] }) {
+  if (items.length === 0) return null;
+  const levels: Severity[] = ["High", "Medium", "Low"];
+  const fill: Record<Severity, string> = { High: "bg-[var(--bad)]", Medium: "bg-[var(--wait)]", Low: "bg-[#9a9aa0]" };
+  return (
+    <div className="mb-4">
+      <div className="flex h-3 overflow-hidden rounded-full bg-line" role="img" aria-label={levels.map((l) => `${items.filter((i) => i.severity === l).length} ${l}`).join(", ")}>
+        {levels.map((l) => { const n = items.filter((i) => i.severity === l).length; return n ? <div key={l} className={fill[l]} style={{ width: `${(n / items.length) * 100}%` }} /> : null; })}
+      </div>
+      <p className="mt-2 text-[14px]">{levels.map((l) => `${items.filter((i) => i.severity === l).length} ${l}`).join(" · ")}</p>
+    </div>
+  );
+}
+
 function Sev({ s }: { s: Severity }) {
   return <span className={`mr-2 rounded-full px-2 py-0.5 text-xs font-medium ${SEV_COLOUR[s]}`}>{s}</span>;
 }
@@ -62,8 +94,10 @@ export function TestingWork(props: {
   notesCount: number;
   round: number;
   onRefresh: () => Promise<void>;
+  screens?: string[];
 }) {
   const { out } = props;
+  const screens = props.screens ?? [];
   const r = out.results_analysis;
   const updates = out.guess_updates ?? [];
   return (
@@ -86,19 +120,23 @@ export function TestingWork(props: {
             {r.issues.length === 0 ? (
               <p>No problems were found in the notes.</p>
             ) : (
+              <>
+              <SeverityBar items={r.issues} />
               <ol className="space-y-3">
                 {r.issues.map((i, n) => (
-                  <li key={n} className="rounded-lg border border-neutral-200 p-3">
+                  <li key={n} className={`rounded-lg border border-l-4 border-neutral-200 p-3 ${SEV_BORDER[i.severity]}`}>
                     <p>
                       <span className="mr-2 font-semibold">{n + 1}.</span>
                       <Sev s={i.severity} />
                       {i.issue}
+                      <ScreenChips text={`${i.issue} ${i.fix}`} screens={screens} />
                     </p>
                     <p className="mt-1 text-sm"><strong>How many people:</strong> {i.how_many}</p>
                     <p className="text-sm"><strong>Suggested fix:</strong> {i.fix}</p>
                   </li>
                 ))}
               </ol>
+              </>
             )}
             {r.recommendation && <p className="mt-3 text-sm"><strong>My advice:</strong> {r.recommendation}</p>}
           </Section>
@@ -150,11 +188,13 @@ export function TestingWork(props: {
 
       <Section title="Expert check">
         <p className="text-sm text-neutral-600">This is my own review of the prototype. It is not a test with real people.</p>
-        <ul className="mt-2 space-y-2">
+        <div className="mt-3"><SeverityBar items={out.expert_check} /></div>
+        <ul className="space-y-2">
           {out.expert_check.map((e, i) => (
             <li key={i}>
               <Sev s={e.severity} />
               {e.issue} <span className="text-sm text-neutral-600">({e.where})</span>
+              <ScreenChips text={`${e.where} ${e.issue}`} screens={screens} />
             </li>
           ))}
         </ul>

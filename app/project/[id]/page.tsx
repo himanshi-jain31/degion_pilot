@@ -156,6 +156,8 @@ function ProjectPage() {
   const built = BUILT_PHASES.includes(sel);
   const finalVersion = project.finalDesignVersionId ? project.versions.find((v) => v.id === project.finalDesignVersionId) : undefined;
   const status = project.phases[info.name] ?? "Not started";
+  // Screen names from the newest finished design (or wireframe), so Testing can point at them
+  const screenNames = (([5, 4].map((n) => [...project.versions].reverse().find((v) => v.phase === n && v.status === "done" && v.output)).find(Boolean)?.output as WireframeOutput | undefined)?.screens ?? []).map((x) => x.name);
   const needsAnalysis = sel === 6 && !!shown?.output && !(shown.output as TestingOutput).results_analysis && latest?.status === "done";
 
   // The one main action for this screen. It always sits bottom right.
@@ -365,9 +367,9 @@ function ProjectPage() {
                           {sel === 2 && <ResearchWork out={shown.output as ResearchOutput} />}
                           {sel === 3 && <IdeateWork out={shown.output as IdeateOutput} />}
                           {sel === 4 && <WireframeWork out={shown.output as WireframeOutput} projectId={id} versionId={shown.id} />}
-                          {sel === 5 && <PrototypeWork out={shown.output as DesignOutput} projectId={id} versionId={shown.id} />}
+                          {sel === 5 && <PrototypeWork out={shown.output as DesignOutput} projectId={id} versionId={shown.id} style={project.designStyle} />}
                           {sel === 6 && (
-                            <TestingWork out={shown.output as TestingOutput} projectId={id} notesCount={roundNotes} round={round} onRefresh={refresh} />
+                            <TestingWork out={shown.output as TestingOutput} projectId={id} notesCount={roundNotes} round={round} onRefresh={refresh} screens={screenNames} />
                           )}
                         </section>
 
