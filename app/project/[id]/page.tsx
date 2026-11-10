@@ -428,8 +428,8 @@ function ProjectPage() {
 
                     {latest && latest.status !== "working" && (
                       <details>
-                        <summary className="flex cursor-pointer select-none list-none items-center gap-3 [&::-webkit-details-marker]:hidden"><span className="step-badge !bg-[#f1f1ed] !text-muted">·</span><span className="section-title">What I did</span><span className="note ml-auto">History</span></summary>
-                        <WhatIDid versions={versions} />
+                        <summary className="flex cursor-pointer select-none list-none items-center gap-3 rounded-xl py-1 [&::-webkit-details-marker]:hidden"><span aria-hidden="true" className="step-badge !bg-[#f1f1ed] !text-muted">↺</span><span className="section-title">What I did</span><span className="note ml-auto">History</span></summary>
+                        <div className="mt-5"><WhatIDid versions={versions} /></div>
                       </details>
                     )}
                   </>
@@ -473,28 +473,39 @@ function ProjectPage() {
 function WhatIDid({ versions }: { versions: PhaseVersion[] }) {
   const latestDone = [...versions].reverse().find((v) => v.output);
   return (
-    <div>
+    <div className="grid gap-8 lg:grid-cols-2">
       {latestDone?.output && (
         <section>
-          <h3 className="text-lg font-medium">What I did</h3>
-          <ul className="mt-2 list-disc space-y-1 pl-5">
-            {latestDone.output.what_i_did.map((t, i) => (
-              <li key={i}>{t}</li>
+          <p className="label-small mb-3">Steps I took</p>
+          <ol>
+            {latestDone.output.what_i_did.map((t, i, all) => (
+              <li key={i} className="relative flex gap-3 pb-3 last:pb-0">
+                {i < all.length - 1 && <span aria-hidden="true" className="absolute left-[11px] top-6 h-[calc(100%-1rem)] w-px bg-line" />}
+                <span aria-hidden="true" className="z-10 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#f1f1ed] text-[12px] text-muted ring-4 ring-canvas">{i + 1}</span>
+                <p className="text-[15px] leading-snug">{t}</p>
+              </li>
             ))}
-          </ul>
+          </ol>
         </section>
       )}
-      <section className="mt-6">
-        <h3 className="text-lg font-medium">Versions saved</h3>
-        <ul className="mt-2 space-y-2">
-          {[...versions].reverse().map((v) => (
-            <li key={v.id} className="rounded-lg border border-neutral-200 p-3 text-sm">
-              <strong>Version {v.version}</strong> · {new Date(v.createdAt).toLocaleString()} ·{" "}
-              {v.status === "done" ? (v.approved ? "Approved" : "Finished") : v.status === "working" ? "Working on it" : "Did not finish"}
-              {v.feedback && <p className="mt-1 text-neutral-700">Your feedback: {v.feedback}</p>}
-              {v.approvalNote && <p className="mt-1 text-neutral-700">Your note: {v.approvalNote}</p>}
-            </li>
-          ))}
+      <section>
+        <p className="label-small mb-3">Versions saved</p>
+        <ul className="space-y-2">
+          {[...versions].reverse().map((v) => {
+            const state = v.status === "done" ? (v.approved ? "Approved" : "Finished") : v.status === "working" ? "Working on it" : "Did not finish";
+            const pill = v.approved ? "pill-ok" : v.status === "done" ? "pill-wait" : v.status === "working" ? "pill-info" : "pill-bad";
+            return (
+              <li key={v.id} className="rounded-xl border border-line bg-card p-4 text-[15px]">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-medium">Version {v.version}</span>
+                  <span className={`pill ${pill} !text-[13px]`}>{state}</span>
+                </div>
+                <p className="note mt-1">{new Date(v.createdAt).toLocaleString()}</p>
+                {v.feedback && <p className="mt-2 text-[14px]"><span className="text-muted">Your feedback:</span> {v.feedback}</p>}
+                {v.approvalNote && <p className="mt-2 text-[14px]"><span className="text-muted">Your note:</span> {v.approvalNote}</p>}
+              </li>
+            );
+          })}
         </ul>
       </section>
     </div>
