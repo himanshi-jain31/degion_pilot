@@ -15,6 +15,7 @@ import { DesignStylePanel } from "@/components/DesignStylePanel";
 import { IdeateWork } from "@/components/IdeateView";
 import { CheckIn } from "@/components/CheckIn";
 import { Progress } from "@/components/Progress";
+import { Icon, PHASE_ICON } from "@/components/Icons";
 import { Overview } from "@/components/Overview";
 import { PhaseLine } from "@/components/PhaseLine";
 import { ActionBar, BackLink, Loading, Notice, primaryClass, quietClass } from "@/components/ui";
@@ -235,7 +236,7 @@ function ProjectPage() {
                     onClick={() => choosePhase(p.n)}
                     className={`w-full rounded-xl border px-4 py-3 text-left transition-colors duration-150 ${active ? "border-line bg-card shadow-[0_1px_2px_rgba(28,28,30,0.04)]" : "border-transparent text-muted hover:bg-card/70 hover:text-ink"}`}
                   >
-                    <span className={`block text-[15px] ${active ? "font-medium text-ink" : ""}`}>{p.n}. {p.name}</span>
+                    <span className={`flex items-center gap-2 text-[15px] ${active ? "font-medium text-ink" : ""}`}><Icon name={PHASE_ICON[p.n]} size={16} />{p.n}. {p.name}</span>
                     <span className={`${STATUS_COLOUR[s]} mt-1 !text-[13px]`}>{s}</span>
                   </button>
                 </li>
@@ -301,7 +302,7 @@ function ProjectPage() {
               <div className="relative overflow-hidden rounded-3xl border border-line bg-card p-6 shadow-[0_1px_2px_rgba(28,28,30,0.04),0_8px_28px_rgba(79,70,229,0.06)] sm:p-8">
                 <div className="relative">
                   <div className="flex items-start gap-4">
-                    <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent text-[22px] font-medium text-white">{info.n}</span>
+                    <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent text-white"><Icon name={PHASE_ICON[info.n]} size={24} /></span>
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                         <h2 className="text-[30px] font-medium leading-tight tracking-tight">{info.name}</h2>

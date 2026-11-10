@@ -1,6 +1,7 @@
 "use client";
 
 import { PHASES, PHASE_INFO } from "@/lib/phases";
+import { Icon, PHASE_ICON, type IconName } from "@/components/Icons";
 import type { PhaseStatus, Project, UnderstandOutput } from "@/lib/storage";
 import { Pill } from "@/components/UnderstandView";
 
@@ -210,19 +211,19 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
               <li key={ph.n} className="flex">
                 <article className="card relative flex w-full flex-col !p-5 transition-shadow duration-150 focus-within:shadow-md hover:shadow-md">
                   <div className="flex items-center justify-between gap-3">
-                    <span aria-hidden="true" className="step-badge !h-8 !w-8">{ph.n}</span>
+                    <span aria-hidden="true" className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-soft text-[var(--accent-ink)]"><Icon name={PHASE_ICON[ph.n]} size={20} /></span>
                     <span className={`${STATUS_PILL[s]} !text-[13px]`}>{s}</span>
                   </div>
                   <h3 className="mt-4 text-[18px] font-medium leading-snug">
                     <button onClick={() => onOpenPhase(ph.n)} className="text-left after:absolute after:inset-0 after:content-['']">
-                      {ph.name}
+                      <span className="mr-1.5 text-[14px] font-normal text-muted">{ph.n}.</span>{ph.name}
                     </button>
                   </h3>
                   <p className="mt-1 text-[15px] leading-relaxed text-muted">{info.goal}</p>
                   <p className="label-small mt-4">You get</p>
                   <ul className="mb-4 mt-2 flex flex-wrap gap-2">
                     {info.makes.map((m) => (
-                      <li key={m} className="rounded-full bg-[#f4f4f0] px-3 py-1.5 text-[13px] leading-snug text-ink">{m}</li>
+                      <li key={m.label} className="flex items-center gap-2 rounded-full bg-[#f4f4f0] py-1.5 pl-2.5 pr-3 text-[13px] leading-snug text-ink"><Icon name={m.icon as IconName} size={15} className="text-[var(--accent-ink)]" />{m.label}</li>
                     ))}
                   </ul>
                   <p className="mt-auto border-t border-line pt-3 text-[14px] leading-snug text-muted">

@@ -15,11 +15,11 @@ export function phaseByNumber(n: number) {
 }
 
 // Plain-words goal and deliverables for each step. This is the same for every project.
-export const PHASE_INFO: Record<number, { goal: string; makes: string[] }> = {
-  1: { goal: "Make sure I understood what you need.", makes: ["Brief", "User profiles", "Requirements", "Things you may not have asked about"] },
-  2: { goal: "Find out what already exists and what people need.", makes: ["Competitors and patterns", "What people say", "What the numbers say", "Accessibility"] },
-  3: { goal: "Shape the product and pick a direction.", makes: ["Product structure", "User flows", "User journeys", "2 to 3 directions"] },
-  4: { goal: "Draw every screen in grey, clickable form.", makes: ["Wireframes of every screen and state"] },
-  5: { goal: "Give it the final look.", makes: ["Working HTML prototype"] },
-  6: { goal: "Check it with real people.", makes: ["Test plan and script", "Analysis of your test notes", "Suggested fixes"] },
+export const PHASE_INFO: Record<number, { goal: string; makes: { label: string; icon: string }[] }> = {
+  1: { goal: "Make sure I understood what you need.", makes: [{ label: "Brief", icon: "file-text" }, { label: "User profiles", icon: "users" }, { label: "Requirements", icon: "list-checks" }, { label: "Things you may not have asked about", icon: "help" }] },
+  2: { goal: "Find out what already exists and what people need.", makes: [{ label: "Competitors and patterns", icon: "search" }, { label: "What people say", icon: "message" }, { label: "What the numbers say", icon: "chart" }, { label: "Accessibility", icon: "eye" }] },
+  3: { goal: "Shape the product and pick a direction.", makes: [{ label: "Product structure", icon: "network" }, { label: "User flows", icon: "route" }, { label: "User journeys", icon: "activity" }, { label: "2 to 3 directions", icon: "compass" }] },
+  4: { goal: "Draw every screen in grey, clickable form.", makes: [{ label: "Wireframes of every screen and state", icon: "layout" }] },
+  5: { goal: "Give it the final look.", makes: [{ label: "Working HTML prototype", icon: "phone" }] },
+  6: { goal: "Check it with real people.", makes: [{ label: "Test plan and script", icon: "clipboard" }, { label: "Analysis of your test notes", icon: "chart" }, { label: "Suggested fixes", icon: "wrench" }] },
 };
