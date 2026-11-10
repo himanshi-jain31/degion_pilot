@@ -8,9 +8,12 @@ export function Pill({ label }: { label: string }) {
 
 export function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="mt-6">
-      <h3 className="text-lg font-medium">{title}</h3>
-      <div className="mt-2">{children}</div>
+    <section className="mt-8">
+      <h3 className="flex items-center gap-2 text-[17px] font-medium">
+        <span aria-hidden="true" className="h-4 w-1 rounded-full bg-accent" />
+        {title}
+      </h3>
+      <div className="mt-3">{children}</div>
     </section>
   );
 }
@@ -25,26 +28,38 @@ export function List({ items }: { items: string[] }) {
   );
 }
 
-// The Plan tab: what I will do and what I will skip
+// The plan: what I will do as a numbered path, and what I will skip as quiet "skipped" cards
 export function PlanView({ out }: { out: PhaseOutput }) {
+  const steps = out.plan.will_do;
   return (
-    <div>
-      <Section title="What I will do">
-        <List items={out.plan.will_do} />
-      </Section>
-      <Section title="What I will skip, and why">
+    <div className="grid gap-6 lg:grid-cols-5">
+      <div className="lg:col-span-3">
+        <p className="label-small mb-3">What I will do</p>
+        <ol>
+          {steps.map((t, i) => (
+            <li key={i} className="relative flex gap-4 pb-4 last:pb-0">
+              {i < steps.length - 1 && <span aria-hidden="true" className="absolute left-[15px] top-8 h-[calc(100%-1.5rem)] w-px bg-[#d9d9f5]" />}
+              <span aria-hidden="true" className="z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-soft text-[14px] font-medium text-[var(--accent-ink)] ring-4 ring-canvas">{i + 1}</span>
+              <p className="pt-1 text-[16px] leading-snug">{t}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div className="lg:col-span-2">
+        <p className="label-small mb-3">What I will skip, and why</p>
         {out.plan.will_skip.length === 0 ? (
-          <p className="text-neutral-600">Nothing. I did every part.</p>
+          <p className="rounded-xl border border-dashed border-line p-4 text-muted">Nothing. I did every part.</p>
         ) : (
-          <ul className="list-disc space-y-1 pl-5">
+          <ul className="space-y-2">
             {out.plan.will_skip.map((s, i) => (
-              <li key={i}>
-                <strong>{s.item}:</strong> {s.why}
+              <li key={i} className="rounded-xl border border-dashed border-[#d6d6cf] bg-[#f6f6f2] p-3">
+                <p className="text-[15px] font-medium text-muted line-through decoration-[#b5b5ad]">{s.item}</p>
+                <p className="mt-0.5 text-[14px] text-muted">{s.why}</p>
               </li>
             ))}
           </ul>
         )}
-      </Section>
+      </div>
     </div>
   );
 }

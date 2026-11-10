@@ -1,21 +1,11 @@
 "use client";
 
-import { PHASES } from "@/lib/phases";
+import { PHASES, PHASE_INFO } from "@/lib/phases";
 import type { PhaseStatus, Project, UnderstandOutput } from "@/lib/storage";
 import { Pill } from "@/components/UnderstandView";
 
 type OverviewProject = Pick<Project, "title" | "requirement" | "createdAt" | "phases" | "versions" | "thingsIGuessed" | "quickQuestions" | "answers"> & {
   files: { name: string }[];
-};
-
-// Plain-words goal and deliverables for each step. This is the same for every project.
-const PHASE_INFO: Record<number, { goal: string; makes: string[] }> = {
-  1: { goal: "Make sure I understood what you need.", makes: ["Brief", "User profiles", "Requirements", "Things you may not have asked about"] },
-  2: { goal: "Find out what already exists and what people need.", makes: ["Competitors and patterns", "What people say", "What the numbers say", "Accessibility"] },
-  3: { goal: "Shape the product and pick a direction.", makes: ["Product structure", "User flows", "User journeys", "2 to 3 directions"] },
-  4: { goal: "Draw every screen in grey, clickable form.", makes: ["Wireframes of every screen and state"] },
-  5: { goal: "Give it the final look.", makes: ["Working HTML prototype"] },
-  6: { goal: "Check it with real people.", makes: ["Test plan and script", "Analysis of your test notes", "Suggested fixes"] },
 };
 
 const STATUS_PILL: Record<PhaseStatus, string> = {

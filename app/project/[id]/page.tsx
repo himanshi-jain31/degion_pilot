@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { PHASES, BUILT_PHASES } from "@/lib/phases";
+import { PHASES, BUILT_PHASES, PHASE_INFO } from "@/lib/phases";
 import type { IdeateOutput, PhaseVersion, Project, DesignOutput, ResearchOutput, TestingOutput, UnderstandOutput, WireframeOutput } from "@/lib/storage";
 import { Pill, PlanView, WorkView } from "@/components/UnderstandView";
 import { ResearchWork } from "@/components/ResearchView";
@@ -298,12 +298,34 @@ function ProjectPage() {
           )}
           {view === "phase" && (
             <>
-              <div className="flex flex-wrap items-center gap-3">
-                <h2 className="section-title">{info.n}. {info.name}</h2>
-                <span className={STATUS_COLOUR[status]}>{status}</span>
+              <div className="relative overflow-hidden rounded-3xl border border-line bg-card p-6 shadow-[0_1px_2px_rgba(28,28,30,0.04),0_8px_28px_rgba(79,70,229,0.06)] sm:p-8">
+                <span aria-hidden="true" className="pointer-events-none absolute -right-4 -top-10 select-none text-[180px] font-semibold leading-none text-accent-soft">{info.n}</span>
+                <div className="relative">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <p className="label-small">Step {info.n} of 6</p>
+                    <span className={STATUS_COLOUR[status]}>{status}</span>
+                  </div>
+                  <h2 className="mt-2 text-[34px] font-medium leading-tight tracking-tight">{info.name}</h2>
+                  <p className="mt-1 max-w-xl text-[17px] text-muted">{PHASE_INFO[info.n].goal}</p>
+                  <ol className="mt-6 flex flex-wrap items-center gap-2 text-[14px]" aria-label="Where this step is">
+                    {[
+                      ["Plan", !!shown?.output || latest?.status === "working"],
+                      ["Made", !!shown?.output && latest?.status !== "working"],
+                      ["Your decision", status === "Approved"],
+                    ].map(([label, done], i) => (
+                      <li key={String(label)} className="flex items-center gap-2">
+                        {i > 0 && <span aria-hidden="true" className={`h-px w-6 ${done ? "bg-[var(--ok)]" : "bg-[#dcdcd5]"}`} />}
+                        <span className={`flex items-center gap-1.5 rounded-full px-3 py-1 ${done ? "bg-[var(--ok-soft)] text-[var(--ok-ink)]" : "bg-[#f1f1ed] text-muted"}`}>
+                          <span aria-hidden="true">{done ? "✓" : i + 1}</span>
+                          {label}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
               </div>
 
-              <div key={sel} className="fade-in mt-6 space-y-10">
+              <div key={sel} className="fade-in mt-8 space-y-12">
                 {!built ? (
                   <Notice>This step is not built yet. It comes after the earlier steps are working.</Notice>
                 ) : (
@@ -357,12 +379,14 @@ function ProjectPage() {
                         )}
 
                         <details open={!shown.approved} className="group">
-                          <summary className="section-title cursor-pointer select-none">My plan</summary>
+                          <summary className="flex cursor-pointer select-none list-none items-center gap-3 [&::-webkit-details-marker]:hidden"><span className="step-badge">1</span><span className="section-title">My plan</span><span className="note ml-auto group-open:hidden">Show</span></summary>
+                          <div className="mt-5">
                           <PlanView out={shown.output} />
+                          </div>
                         </details>
 
                         <section id="made" aria-label="What I made" className="scroll-mt-6">
-                          <h3 className="section-title">What I made</h3>
+                          <h3 className="mb-2 flex items-center gap-3"><span className="step-badge">2</span><span className="section-title">What I made</span></h3>
                           {sel === 1 && <WorkView out={shown.output as UnderstandOutput} />}
                           {sel === 2 && <ResearchWork out={shown.output as ResearchOutput} />}
                           {sel === 3 && <IdeateWork out={shown.output as IdeateOutput} />}
@@ -374,7 +398,7 @@ function ProjectPage() {
                         </section>
 
                         <section id="checkin" ref={setCheckinEl} aria-label="Check-in" className="scroll-mt-6">
-                          <h3 className="section-title">Check-in</h3>
+                          <h3 className="mb-3 flex items-center gap-3"><span className="step-badge">3</span><span className="section-title">Your decision: Check-in</span></h3>
                           {sel === 6 && !(shown.output as TestingOutput).results_analysis ? (
                             <Notice>The check-in comes after the testing. Download the test kit above, run your sessions, then add your notes.</Notice>
                           ) : (
@@ -404,7 +428,7 @@ function ProjectPage() {
 
                     {latest && latest.status !== "working" && (
                       <details>
-                        <summary className="section-title cursor-pointer select-none">What I did</summary>
+                        <summary className="flex cursor-pointer select-none list-none items-center gap-3 [&::-webkit-details-marker]:hidden"><span className="step-badge !bg-[#f1f1ed] !text-muted">·</span><span className="section-title">What I did</span><span className="note ml-auto">History</span></summary>
                         <WhatIDid versions={versions} />
                       </details>
                     )}
