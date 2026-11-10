@@ -21,10 +21,8 @@ export function DirectionCard({ d, recommended, selected, pick }: { d: IdeateOut
     <div className={`flex min-h-full w-full flex-1 flex-col rounded-2xl border bg-card p-5 transition-shadow ${selected ? "border-accent shadow-[0_0_0_2px_var(--accent)]" : "border-line"} ${recommended && !selected ? "border-[#c9ceff]" : ""}`}>
       <header className="flex items-start gap-3">
         <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-[18px] font-medium text-white">{d.id}</span>
-        <div className="min-w-0">
-          <h4 className="text-[18px] font-medium leading-snug">{d.name}</h4>
-          {recommended && <span className="pill pill-info mt-1 !text-[13px]">My pick</span>}
-        </div>
+        <h4 className="min-w-0 flex-1 pt-1.5 text-[18px] font-medium leading-snug">{d.name}</h4>
+        {recommended && <span className="pill pill-info mt-1 shrink-0 !text-[13px]">My pick</span>}
       </header>
       <p className="mt-3 text-[15px] leading-snug">{d.core_idea}</p>
 
