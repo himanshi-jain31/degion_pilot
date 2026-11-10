@@ -159,7 +159,7 @@ export function CheckIn(props: {
           <legend className="section-title mb-4">Which direction do you want to follow?</legend>
           <div className="grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">
             {directions.map((d) => (
-              <label key={d.id} className="block cursor-pointer rounded-2xl focus-within:ring-4 focus-within:ring-[rgba(79,70,229,0.35)]">
+              <label key={d.id} className="flex cursor-pointer rounded-2xl focus-within:ring-4 focus-within:ring-[rgba(79,70,229,0.35)]">
                 <input type="radio" name="direction" className="sr-only" checked={direction === d.id} onChange={() => { setDirection(d.id); setHint(""); }} />
                 <DirectionCard d={d} recommended={d.id === (version.output as IdeateOutput).recommendation.direction} selected={direction === d.id} pick />
               </label>

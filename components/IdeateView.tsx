@@ -18,7 +18,7 @@ function EffortDots({ effort }: { effort: string }) {
 // One direction as a card. Every card in a row has the same height, with the choice at the bottom.
 export function DirectionCard({ d, recommended, selected, pick }: { d: IdeateOutput["directions"][number]; recommended?: boolean; selected?: boolean; pick?: boolean }) {
   return (
-    <div className={`flex h-full flex-col rounded-2xl border bg-card p-5 transition-shadow ${selected ? "border-accent shadow-[0_0_0_2px_var(--accent)]" : "border-line"} ${recommended && !selected ? "border-[#c9ceff]" : ""}`}>
+    <div className={`flex min-h-full w-full flex-1 flex-col rounded-2xl border bg-card p-5 transition-shadow ${selected ? "border-accent shadow-[0_0_0_2px_var(--accent)]" : "border-line"} ${recommended && !selected ? "border-[#c9ceff]" : ""}`}>
       <header className="flex items-start gap-3">
         <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-[18px] font-medium text-white">{d.id}</span>
         <div className="min-w-0">
@@ -55,9 +55,11 @@ export function DirectionCard({ d, recommended, selected, pick }: { d: IdeateOut
       )}
 
       {pick && (
-        <div className={`mt-auto flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-[15px] font-medium ${selected ? "border-accent bg-accent text-white" : "border-[var(--control-line)] text-ink"}`} style={{ marginTop: "1.25rem" }}>
-          <span aria-hidden="true">{selected ? "✓" : "○"}</span>
-          {selected ? "Selected" : `Pick ${d.id}`}
+        <div className="mt-auto pt-5">
+          <div className={`flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-[15px] font-medium ${selected ? "border-accent bg-accent text-white" : "border-[var(--control-line)] text-ink"}`}>
+            <span aria-hidden="true">{selected ? "✓" : "○"}</span>
+            {selected ? "Selected" : `Pick ${d.id}`}
+          </div>
         </div>
       )}
     </div>
