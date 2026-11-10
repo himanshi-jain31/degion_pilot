@@ -355,7 +355,7 @@ function ProjectPage() {
                         )}
 
                         <details open={!shown.approved} className="group">
-                          <summary className="section-title cursor-pointer select-none">What I will do</summary>
+                          <summary className="section-title cursor-pointer select-none">My plan</summary>
                           <PlanView out={shown.output} />
                         </details>
 
