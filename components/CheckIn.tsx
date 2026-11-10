@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import type { IdeateOutput, PhaseVersion, TestingOutput } from "@/lib/storage";
 import { DirectionCard } from "@/components/IdeateView";
 import { FramePreview } from "@/components/WireframeView";
-import { ActionBar, Kbd, isTypingTarget, primaryClass, quietClass, useDraft, useKey } from "@/components/ui";
+import { ActionBar, Kbd, isTypingTarget, primaryClass, quietClass, secondaryClass, useDraft, useKey } from "@/components/ui";
 
 export type Extra = { talkToUsers?: string; direction?: string; fix?: string };
 
-const outlineClass = "inline-flex items-center rounded-lg border border-neutral-500 px-6 py-3 font-medium hover:bg-neutral-100 disabled:opacity-50";
+const outlineClass = secondaryClass;
 
 // The check-in: the summary first, in big text. Details are one click away.
 // Go ahead is the main button (and the Enter key). Not yet opens the feedback box with the cursor in it.
@@ -92,8 +92,9 @@ export function CheckIn(props: {
 
   if (version.approved) {
     return (
-      <p className="rounded-lg border border-green-300 bg-green-50 p-4 text-lg">
-        You said Go ahead.{version.chosenDirection && ` You picked direction ${version.chosenDirection}.`} This step is approved.
+      <p className="card flex items-center gap-3" style={{ background: "var(--ok-soft)", borderColor: "#c9ecd6", color: "var(--ok-ink)" }}>
+        <span aria-hidden="true">✓</span>
+        <span>You said Go ahead.{version.chosenDirection && ` You picked direction ${version.chosenDirection}.`} This step is approved.</span>
       </p>
     );
   }
@@ -103,11 +104,11 @@ export function CheckIn(props: {
     version.phase === 4 ? `/api/projects/${props.projectId}/wireframe?version=${version.id}` : version.phase === 5 ? `/api/projects/${props.projectId}/prototype?version=${version.id}` : "";
 
   return (
-    <div className="pb-4">
+    <div className="fade-in space-y-6">
       {version.version > 1 && changed && changed.length > 0 && (
-        <section className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
-          <h3 className="font-medium">What changed</h3>
-          <ul className="mt-2 list-disc space-y-1 pl-5">
+        <section className="card" style={{ background: "var(--accent-soft)", borderColor: "#dfe2ff" }}>
+          <h3 className="font-medium" style={{ color: "var(--accent-ink)" }}>What changed</h3>
+          <ul className="mt-2 list-disc space-y-1 pl-5" style={{ color: "var(--accent-ink)" }}>
             {changed.map((t, i) => (
               <li key={i}>{t}</li>
             ))}
@@ -115,55 +116,57 @@ export function CheckIn(props: {
         </section>
       )}
 
-      <section aria-labelledby="made">
-        <h2 id="made" className="text-sm font-medium uppercase tracking-wide text-neutral-700">What I made</h2>
-        <p className="mt-2 whitespace-pre-line text-2xl leading-relaxed">{c.what_i_made}</p>
+      <section className="card" aria-labelledby="made">
+        <h2 id="made" className="label-small">What I made</h2>
+        <p className="mt-3 whitespace-pre-line text-xl leading-relaxed">{c.what_i_made}</p>
+
+        {previewUrl && (
+          <div className="mt-6">
+            <FramePreview url={previewUrl} downloadUrl={version.phase === 5 ? `${previewUrl}&download=1` : undefined} title={version.phase === 5 ? "Prototype preview" : "Wireframe preview"} />
+          </div>
+        )}
+
+        {c.not_sure_about.length > 0 && (
+          <div className="mt-6 border-t border-line pt-6">
+            <h2 id="unsure" className="label-small">What I&apos;m not sure about</h2>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-base">
+              {c.not_sure_about.map((t, i) => (
+                <li key={i}>{t}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </section>
-
-      {previewUrl && (
-        <div className="mt-6">
-          <FramePreview url={previewUrl} downloadUrl={version.phase === 5 ? `${previewUrl}&download=1` : undefined} title={version.phase === 5 ? "Prototype preview" : "Wireframe preview"} />
-        </div>
-      )}
-
-      {c.not_sure_about.length > 0 && (
-        <section className="mt-6" aria-labelledby="unsure">
-          <h2 id="unsure" className="text-sm font-medium uppercase tracking-wide text-neutral-700">What I&apos;m not sure about</h2>
-          <ul className="mt-2 list-disc space-y-1 pl-6 text-lg">
-            {c.not_sure_about.map((t, i) => (
-              <li key={i}>{t}</li>
-            ))}
-          </ul>
-        </section>
-      )}
 
       {/* The one choice that goes with Go ahead for steps 2, 3 and 6 */}
       {version.phase === 2 && (
-        <fieldset className="mt-6 rounded-lg border border-neutral-300 p-4">
-          <legend className="px-1 font-medium">Talk to real users first?</legend>
-          {(["no", "yes"] as const).map((v) => (
-            <label key={v} className="mt-1 flex items-center gap-2 text-lg">
-              <input type="radio" name="talk" checked={talk === v} onChange={() => setTalk(v)} />
-              {v === "no" ? "No, keep going" : "Yes, wait for me"}
-            </label>
-          ))}
-          {talk === "yes" && <p className="mt-2 text-sm text-neutral-700">After Go ahead, I will wait. You can then add your interview notes and I will redo the research with them.</p>}
+        <fieldset className="card">
+          <legend className="section-title float-left mb-3 w-full">Talk to real users first?</legend>
+          <div className="clear-both space-y-2">
+            {(["no", "yes"] as const).map((v) => (
+              <label key={v} className="flex items-center gap-3">
+                <input type="radio" name="talk" checked={talk === v} onChange={() => setTalk(v)} />
+                {v === "no" ? "No, keep going" : "Yes, wait for me"}
+              </label>
+            ))}
+          </div>
+          {talk === "yes" && <p className="note mt-3">After Go ahead, I will wait. You can then add your interview notes and I will redo the research with them.</p>}
         </fieldset>
       )}
 
       {version.phase === 3 && (
-        <fieldset className="mt-6">
-          <legend className="mb-2 text-lg font-medium">Which direction do you want to follow?</legend>
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <fieldset>
+          <legend className="section-title mb-4">Which direction do you want to follow?</legend>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {directions.map((d) => (
-              <label key={d.id} className={`block cursor-pointer rounded-lg focus-within:ring-4 focus-within:ring-blue-700 ${direction === d.id ? "ring-2 ring-black" : ""}`}>
+              <label key={d.id} className={`block cursor-pointer rounded-2xl transition-shadow focus-within:ring-4 focus-within:ring-[rgba(79,70,229,0.35)] ${direction === d.id ? "ring-2 ring-accent" : ""}`}>
                 <input type="radio" name="direction" className="sr-only" checked={direction === d.id} onChange={() => { setDirection(d.id); setHint(""); }} />
                 <DirectionCard d={d} />
-                <span className="block px-1 pt-1 text-sm font-medium">{direction === d.id ? "Selected" : `Pick ${d.id}`}</span>
+                <span className="block px-2 pt-2 text-sm font-medium">{direction === d.id ? "Selected" : `Pick ${d.id}`}</span>
               </label>
             ))}
           </div>
-          <label className="mt-3 flex items-center gap-2">
+          <label className="mt-4 flex items-center gap-3">
             <input type="radio" name="direction" checked={direction === "Mix"} onChange={() => { setDirection("Mix"); setHint(""); }} />
             Mix (take parts from more than one)
           </label>
@@ -171,34 +174,36 @@ export function CheckIn(props: {
       )}
 
       {version.phase === 6 && (
-        <fieldset className="mt-6 rounded-lg border border-neutral-300 p-4">
-          <legend className="px-1 font-medium">What should happen next?</legend>
-          {([["wireframes", "Send fixes to Wireframes"], ["design", "Send fixes to Visual design"], ["none", "No fixes needed"]] as const).map(([k, l]) => (
-            <label key={k} className="mt-1 flex items-center gap-2 text-lg">
-              <input type="radio" name="fix" checked={fix === k} onChange={() => { setFix(k); setHint(""); }} />
-              {l}
-              {recommended && ((k === "wireframes" && /wireframe/i.test(recommended)) || (k === "design" && /visual|design/i.test(recommended) && !/wireframe/i.test(recommended)) || (k === "none" && /no fixes/i.test(recommended))) && (
-                <span className="rounded-full bg-black px-2 py-0.5 text-xs text-white">My advice</span>
-              )}
-            </label>
-          ))}
+        <fieldset className="card">
+          <legend className="section-title float-left mb-3 w-full">What should happen next?</legend>
+          <div className="clear-both space-y-2">
+            {([["wireframes", "Send fixes to Wireframes"], ["design", "Send fixes to Visual design"], ["none", "No fixes needed"]] as const).map(([k, l]) => (
+              <label key={k} className="flex items-center gap-3">
+                <input type="radio" name="fix" checked={fix === k} onChange={() => { setFix(k); setHint(""); }} />
+                {l}
+                {recommended && ((k === "wireframes" && /wireframe/i.test(recommended)) || (k === "design" && /visual|design/i.test(recommended) && !/wireframe/i.test(recommended)) || (k === "none" && /no fixes/i.test(recommended))) && (
+                  <span className="pill pill-info !text-[13px]">My advice</span>
+                )}
+              </label>
+            ))}
+          </div>
         </fieldset>
       )}
 
       {/* Details, one click away */}
-      <div className="mt-6">
-        <button onClick={() => setDetailsOpen((o) => !o)} aria-expanded={detailsOpen} className="text-neutral-800 underline">
+      <div>
+        <button onClick={() => setDetailsOpen((o) => !o)} aria-expanded={detailsOpen} className="btn btn-quiet !px-0">
           {detailsOpen ? "Hide the details" : "See the details"}
         </button>
         {detailsOpen && (
-          <div className="mt-3 rounded-lg border border-neutral-300 p-4">
+          <div className="card fade-in mt-2">
             {c.another_view && (
               <>
-                <h3 className="font-medium">Another view</h3>
-                <p className="mt-1">{c.another_view}</p>
+                <h3 className="label-small">Another view</h3>
+                <p className="mt-2">{c.another_view}</p>
               </>
             )}
-            <button onClick={props.onOpenWork} className={`${quietClass} mt-3 -ml-4`}>
+            <button onClick={props.onOpenWork} className={`${secondaryClass} mt-4`}>
               Open everything I made
             </button>
           </div>
@@ -207,8 +212,8 @@ export function CheckIn(props: {
 
       {/* The feedback box appears when you need it, with the cursor in it */}
       {mode !== "none" && (
-        <section className="mt-6">
-          <label htmlFor="feedback" className="block text-lg font-medium">
+        <section className="card fade-in">
+          <label htmlFor="feedback" className="section-title block">
             {mode === "notYet" ? "What should I change?" : "Your note"}
           </label>
           <textarea
@@ -218,12 +223,12 @@ export function CheckIn(props: {
             value={note}
             onChange={(e) => { setNote(e.target.value); setHint(""); }}
             placeholder="Tell me what to keep, add or change."
-            className="mt-2 w-full rounded-lg border border-neutral-500 p-3 text-lg focus:border-black focus:outline-none"
+            className="input mt-3"
           />
-          <p className="mt-1 text-sm text-neutral-700">Your words are kept as you type.</p>
+          <p className="note mt-2">Your words are kept as you type.</p>
         </section>
       )}
-      {hint && <p role="alert" className="mt-3 text-red-800">{hint}</p>}
+      {hint && <p role="alert" className="font-medium text-[var(--bad-ink)]">{hint}</p>}
 
       <ActionBar>
         {mode === "none" ? (
@@ -235,7 +240,7 @@ export function CheckIn(props: {
               Not yet
             </button>
             <button onClick={goAhead} disabled={!canAct} className={primaryClass}>
-              Go ahead <Kbd onDark>Enter</Kbd>
+              Go ahead <Kbd>Enter</Kbd>
             </button>
           </>
         ) : (
@@ -245,11 +250,11 @@ export function CheckIn(props: {
             </button>
             {mode === "notYet" ? (
               <button onClick={sendFeedback} disabled={!canAct || !note.trim()} className={primaryClass}>
-                Send feedback <Kbd onDark>⌘ Enter</Kbd>
+                Send feedback <Kbd>⌘ Enter</Kbd>
               </button>
             ) : (
               <button onClick={goAhead} disabled={!canAct} className={primaryClass}>
-                Go ahead with my note <Kbd onDark>⌘ Enter</Kbd>
+                Go ahead with my note <Kbd>⌘ Enter</Kbd>
               </button>
             )}
           </>

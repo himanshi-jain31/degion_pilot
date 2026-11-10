@@ -29,11 +29,11 @@ type Tab = "Plan" | "Work" | "What I did" | "Check-in";
 const TABS: Tab[] = ["Plan", "Work", "What I did", "Check-in"];
 
 const STATUS_COLOUR: Record<string, string> = {
-  "Not started": "bg-neutral-100 text-neutral-800",
-  "Working on it": "bg-blue-100 text-blue-900",
-  "Ready for you": "bg-amber-100 text-amber-900",
-  "Changes asked": "bg-orange-100 text-orange-900",
-  Approved: "bg-green-100 text-green-900",
+  "Not started": "pill pill-idle",
+  "Working on it": "pill pill-info",
+  "Ready for you": "pill pill-wait",
+  "Changes asked": "pill pill-wait",
+  Approved: "pill pill-ok",
 };
 
 // Which tab to open for a step: the check-in when something is waiting for you, otherwise the plan
@@ -210,16 +210,16 @@ function ProjectPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-5 pb-32 pt-4">
-      <header className="mb-4">
+    <div className="mx-auto w-full max-w-7xl px-6 pb-40 pt-2">
+      <header className="mb-8">
         <BackLink />
-        <h1 className="mb-3 mt-1 text-xl font-semibold">{project.title}</h1>
+        <h1 className="page-title mb-6 mt-3 max-w-3xl">{project.title}</h1>
         <PhaseLine phases={project.phases} selected={view === "phase" ? sel : null} onSelect={choosePhase} />
       </header>
 
       <div className="flex flex-col gap-6 lg:flex-row">
         {/* Phase rail */}
-        <nav aria-label="Steps" className="lg:w-56 lg:shrink-0">
+        <nav aria-label="Steps" className="lg:w-60 lg:shrink-0">
           <ol className="space-y-1">
             {PHASES.map((p) => {
               const s = project.phases[p.name] ?? "Not started";
@@ -229,36 +229,36 @@ function ProjectPage() {
                   <button
                     aria-current={active ? "step" : undefined}
                     onClick={() => choosePhase(p.n)}
-                    className={`w-full rounded-lg px-3 py-2 text-left ${active ? "bg-neutral-900 text-white" : "hover:bg-neutral-100"}`}
+                    className={`w-full rounded-xl border px-4 py-3 text-left transition-colors duration-150 ${active ? "border-line bg-card shadow-[0_1px_2px_rgba(28,28,30,0.04)]" : "border-transparent text-muted hover:bg-card/70 hover:text-ink"}`}
                   >
-                    <span className="block text-sm font-medium">{p.n}. {p.name}</span>
-                    <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs ${active ? "bg-white text-neutral-900" : STATUS_COLOUR[s]}`}>{s}</span>
+                    <span className={`block text-[15px] ${active ? "font-medium text-ink" : ""}`}>{p.n}. {p.name}</span>
+                    <span className={`${STATUS_COLOUR[s]} mt-1 !text-[13px]`}>{s}</span>
                   </button>
                 </li>
               );
             })}
-            <li className="pt-2">
-              <button onClick={() => setView("style")} className={`w-full rounded-lg px-3 py-2 text-left ${view === "style" ? "bg-neutral-900 text-white" : "hover:bg-neutral-100"}`}>
-                <span className="block text-sm font-medium">Design style</span>
-                <span className="text-xs">{project.designStyle ? "Saved" : "Optional"}</span>
+            <li className="pt-4">
+              <button onClick={() => setView("style")} className={`w-full rounded-xl border px-4 py-3 text-left transition-colors duration-150 ${view === "style" ? "border-line bg-card shadow-[0_1px_2px_rgba(28,28,30,0.04)]" : "border-transparent text-muted hover:bg-card/70 hover:text-ink"}`}>
+                <span className="block text-[15px]">Design style</span>
+                <span className="text-[13px]">{project.designStyle ? "Saved" : "Optional"}</span>
               </button>
             </li>
             <li>
-              <button onClick={() => setView("figma")} className={`w-full rounded-lg px-3 py-2 text-left ${view === "figma" ? "bg-neutral-900 text-white" : "hover:bg-neutral-100"}`}>
-                <span className="block text-sm font-medium">Add a Figma file</span>
-                <span className="text-xs">{(project.figmaFiles ?? []).length ? `${(project.figmaFiles ?? []).length} added` : "Optional, read only"}</span>
+              <button onClick={() => setView("figma")} className={`w-full rounded-xl border px-4 py-3 text-left transition-colors duration-150 ${view === "figma" ? "border-line bg-card shadow-[0_1px_2px_rgba(28,28,30,0.04)]" : "border-transparent text-muted hover:bg-card/70 hover:text-ink"}`}>
+                <span className="block text-[15px]">Add a Figma file</span>
+                <span className="text-[13px]">{(project.figmaFiles ?? []).length ? `${(project.figmaFiles ?? []).length} added` : "Optional, read only"}</span>
               </button>
             </li>
             <li>
               {finalVersion ? (
-                <button onClick={() => setView("final")} className={`w-full rounded-lg px-3 py-2 text-left ${view === "final" ? "bg-neutral-900 text-white" : "hover:bg-neutral-100"}`}>
-                  <span className="block text-sm font-medium">Final result</span>
-                  <span className="text-xs">Your design is ready</span>
+                <button onClick={() => setView("final")} className={`w-full rounded-xl border px-4 py-3 text-left transition-colors duration-150 ${view === "final" ? "border-line bg-card shadow-[0_1px_2px_rgba(28,28,30,0.04)]" : "border-transparent text-muted hover:bg-card/70 hover:text-ink"}`}>
+                  <span className="block text-[15px]">Final result</span>
+                  <span className="text-[13px]">Your design is ready</span>
                 </button>
               ) : (
-                <div className="rounded-lg px-3 py-2 text-neutral-700">
-                  <span className="block text-sm font-medium">Final result</span>
-                  <span className="text-xs">Comes after Visual design</span>
+                <div className="rounded-xl px-4 py-3 text-muted">
+                  <span className="block text-[15px]">Final result</span>
+                  <span className="text-[13px]">Comes after Visual design</span>
                 </div>
               )}
             </li>
@@ -269,19 +269,19 @@ function ProjectPage() {
         <main id="main" tabIndex={-1} className="min-w-0 flex-1">
           {view === "style" && (
             <div>
-              <h2 className="text-2xl font-semibold">Design style</h2>
+              <h2 className="section-title">Design style</h2>
               <DesignStylePanel projectId={id} style={project.designStyle} onSaved={refresh} />
             </div>
           )}
           {view === "figma" && (
             <div>
-              <h2 className="text-2xl font-semibold">Add a Figma file</h2>
+              <h2 className="section-title">Add a Figma file</h2>
               <FigmaPanel projectId={id} files={project.figmaFiles ?? []} onChanged={refresh} />
             </div>
           )}
           {view === "final" && finalVersion?.output && (
             <div>
-              <h2 className="text-2xl font-semibold">Final result</h2>
+              <h2 className="section-title">Final result</h2>
               <FinalResult
                 out={finalVersion.output as DesignOutput}
                 projectId={id}
@@ -294,11 +294,11 @@ function ProjectPage() {
           {view === "phase" && (
             <>
               <div className="flex flex-wrap items-center gap-3">
-                <h2 className="text-2xl font-semibold">{info.n}. {info.name}</h2>
-                <span className={`rounded-full px-3 py-1 text-sm ${STATUS_COLOUR[status]}`}>{status}</span>
+                <h2 className="section-title">{info.n}. {info.name}</h2>
+                <span className={STATUS_COLOUR[status]}>{status}</span>
               </div>
 
-              <div role="tablist" aria-label="Parts of this step" className="mt-4 flex gap-1 border-b border-neutral-300">
+              <div role="tablist" aria-label="Parts of this step" className="mt-6 flex gap-2 overflow-x-auto border-b border-line">
                 {TABS.map((t, i) => (
                   <button
                     key={t}
@@ -316,14 +316,14 @@ function ProjectPage() {
                       setTab(next);
                       document.getElementById(`tab-${next}`)?.focus();
                     }}
-                    className={`px-4 py-2 text-sm font-medium ${tab === t ? "border-b-2 border-black" : "text-neutral-700 hover:text-black"}`}
+                    className={`-mb-px whitespace-nowrap border-b-2 px-4 py-3 text-[15px] transition-colors duration-150 ${tab === t ? "border-accent font-medium text-ink" : "border-transparent text-muted hover:text-ink"}`}
                   >
                     {t}
                   </button>
                 ))}
               </div>
 
-              <div id="tab-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} className="mt-5">
+              <div key={`${sel}-${tab}`} id="tab-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} className="fade-in mt-8">
                 {!built ? (
                   <Notice>This step is not built yet. It comes after the earlier steps are working.</Notice>
                 ) : (
@@ -428,23 +428,23 @@ function ProjectPage() {
         </main>
 
         {/* Things I guessed */}
-        <aside aria-label="Things I guessed" className="lg:w-72 lg:shrink-0">
-          <div className="rounded-lg border border-neutral-300 p-4">
-            <h2 className="font-medium">Things I guessed</h2>
+        <aside aria-label="Things I guessed" className="lg:w-80 lg:shrink-0">
+          <div className="card !p-6">
+            <h2 className="section-title">Things I guessed</h2>
             {project.thingsIGuessed.length === 0 ? (
-              <p className="mt-2 text-sm text-neutral-700">Nothing yet. Anything I guess will show up here.</p>
+              <p className="note mt-2">Nothing yet. Anything I guess will show up here.</p>
             ) : (
-              <ul className="mt-2 space-y-3 text-sm">
+              <ul className="mt-4 space-y-4 text-sm leading-relaxed">
                 {project.thingsIGuessed.map((g) => (
                   <li key={g.id}>
                     {g.text}
                     <Pill label={g.label} />
                     {g.status && (
-                      <span className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${g.status === "Confirmed" ? "bg-green-100 text-green-900" : g.status === "Wrong" ? "bg-red-100 text-red-900" : "bg-neutral-200 text-neutral-800"}`}>
+                      <span className={`ml-2 ${g.status === "Confirmed" ? "pill pill-ok" : g.status === "Wrong" ? "pill pill-bad" : "pill pill-idle"} !text-[13px]`}>
                         {g.status}
                       </span>
                     )}
-                    {g.evidence && <span className="mt-1 block text-xs text-neutral-700">From your notes: {g.evidence}</span>}
+                    {g.evidence && <span className="note mt-1 block">From your notes: {g.evidence}</span>}
                   </li>
                 ))}
               </ul>

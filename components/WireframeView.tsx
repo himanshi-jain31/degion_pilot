@@ -7,7 +7,7 @@ import { List, Section } from "@/components/UnderstandView";
 // A sandboxed frame with phone and laptop sizes, "Open in new tab" and (optionally) "Download"
 export function FramePreview({ url, downloadUrl, title }: { url: string; downloadUrl?: string; title: string }) {
   const [size, setSize] = useState<"phone" | "laptop">("phone");
-  const linkClass = "rounded-lg border border-neutral-500 px-4 py-2 text-sm hover:bg-neutral-100";
+  const linkClass = "btn btn-secondary !min-h-10 !px-4 !text-[15px]";
   return (
     <div>
       <div className="flex flex-wrap items-center gap-2">
@@ -16,7 +16,7 @@ export function FramePreview({ url, downloadUrl, title }: { url: string; downloa
             key={s}
             onClick={() => setSize(s)}
             aria-pressed={size === s}
-            className={`rounded-lg border px-4 py-2 text-sm ${size === s ? "border-black bg-black text-white" : "border-neutral-500 hover:bg-neutral-100"}`}
+            className={`btn !min-h-10 !px-4 !text-[15px] ${size === s ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent-ink)]" : "btn-secondary"}`}
           >
             {s === "phone" ? "Phone size" : "Laptop size"}
           </button>
@@ -30,13 +30,13 @@ export function FramePreview({ url, downloadUrl, title }: { url: string; downloa
           </a>
         )}
       </div>
-      <div className="mt-3 overflow-x-auto rounded-lg border border-neutral-500 bg-neutral-200 p-3">
+      <div className="mt-4 overflow-x-auto rounded-2xl border border-line bg-[#efefe9] p-4">
         <iframe
           title={title}
           src={url}
           sandbox="allow-scripts"
           style={{ width: size === "phone" ? 390 : "100%", maxWidth: "100%", height: 640 }}
-          className="mx-auto block rounded-md border border-neutral-500 bg-white"
+          className="mx-auto block rounded-xl border border-line bg-white shadow-[0_4px_16px_rgba(28,28,30,0.06)]"
         />
       </div>
     </div>

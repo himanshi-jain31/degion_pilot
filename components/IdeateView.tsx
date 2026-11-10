@@ -20,7 +20,7 @@ export function DirectionCard({ d, recommended }: { d: IdeateOutput["directions"
     <div className={`rounded-lg border p-4 ${recommended ? "border-black" : "border-neutral-200"}`}>
       <p className="text-xs uppercase tracking-wide text-neutral-600">
         Direction {d.id}
-        {recommended && <span className="ml-2 rounded-full bg-black px-2 py-0.5 text-white">My pick</span>}
+        {recommended && <span className="pill pill-info ml-2 !text-[13px]">My pick</span>}
       </p>
       <h4 className="mt-1 text-lg font-medium">{d.name}</h4>
       <p className="mt-2 text-sm">{d.core_idea}</p>

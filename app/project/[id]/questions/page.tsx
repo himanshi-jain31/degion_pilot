@@ -91,7 +91,7 @@ function QuickQuestions() {
   });
 
   return (
-    <main id="main" tabIndex={-1} className="mx-auto max-w-2xl px-5 pb-32 pt-8">
+    <main id="main" tabIndex={-1} className="mx-auto w-full max-w-2xl px-6 pb-40 pt-8">
       <BackLink />
 
       {loading && (

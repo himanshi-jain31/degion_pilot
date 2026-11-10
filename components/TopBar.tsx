@@ -27,8 +27,8 @@ export function TopBar() {
 
   const tip = "Showing sample results. Add an API key to get real designs.";
   return (
-    <header className="flex items-center justify-between border-b border-neutral-200 px-5 py-2">
-      <Link href="/" className="text-sm font-semibold">
+    <header className="flex items-center justify-between px-6 py-4">
+      <Link href="/" className="text-base font-medium tracking-tight">
         DesignPilot
       </Link>
       {demo && (
@@ -38,13 +38,13 @@ export function TopBar() {
             role="note"
             title={tip}
             aria-label={`Demo mode. ${tip}`}
-            className="inline-block cursor-help rounded-full border border-neutral-500 bg-neutral-100 px-3 py-0.5 text-xs text-neutral-700"
+            className="pill pill-idle cursor-help !text-[13px]"
           >
             Demo mode
           </span>
           <span
             role="tooltip"
-            className="pointer-events-none absolute right-0 top-full z-50 mt-1 hidden w-64 rounded-lg bg-neutral-900 p-2 text-xs text-white group-focus-within:block group-hover:block"
+            className="pointer-events-none absolute right-0 top-full z-50 mt-2 hidden w-64 rounded-xl bg-ink p-3 text-sm text-white shadow-lg group-focus-within:block group-hover:block"
           >
             {tip}
           </span>

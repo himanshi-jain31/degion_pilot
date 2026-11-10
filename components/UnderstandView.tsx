@@ -1,9 +1,9 @@
 import type { PhaseOutput, UnderstandOutput } from "@/lib/storage";
 
 export function Pill({ label }: { label: string }) {
-  const colour =
-    label === "Checked" ? "bg-green-100 text-green-800" : label === "Test idea only" ? "bg-purple-100 text-purple-800" : "bg-amber-100 text-amber-800";
-  return <span className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${colour}`}>{label}</span>;
+  // Checked has a source (green), My guess is inferred (amber), Test idea only is made up for testing (grey)
+  const kind = label === "Checked" ? "pill-ok" : label === "Test idea only" ? "pill-idle" : "pill-wait";
+  return <span className={`pill ${kind} ml-2 !text-[13px] align-middle`}>{label}</span>;
 }
 
 export function Section({ title, children }: { title: string; children: React.ReactNode }) {

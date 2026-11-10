@@ -8,23 +8,20 @@ import { ReactNode, useCallback, useEffect, useState } from "react";
 // The one place for the main action: bottom right, on every screen. Quieter choices sit to its left.
 export function ActionBar({ children }: { children: ReactNode }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-500 bg-white px-5 py-3">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas/95 px-6 py-4 backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-end gap-3">{children}</div>
     </div>
   );
 }
 
-export const primaryClass =
-  "inline-flex items-center rounded-lg bg-black px-6 py-3 font-medium text-white hover:bg-neutral-800 disabled:opacity-50";
-export const quietClass = "inline-flex items-center rounded-lg px-4 py-3 text-neutral-800 underline hover:bg-neutral-100 disabled:opacity-50";
+export const primaryClass = "btn btn-primary";
+export const secondaryClass = "btn btn-secondary";
+export const quietClass = "btn btn-quiet";
 
 // A small keyboard hint, for example "Enter" next to Go ahead
-export function Kbd({ children, onDark = false }: { children: ReactNode; onDark?: boolean }) {
+export function Kbd({ children }: { children: ReactNode; onDark?: boolean }) {
   return (
-    <kbd
-      aria-hidden="true"
-      className={`ml-2 rounded border px-1.5 text-xs font-normal ${onDark ? "border-white/60 text-white" : "border-neutral-500 text-neutral-700"}`}
-    >
+    <kbd aria-hidden="true" className="kbd max-sm:hidden">
       {children}
     </kbd>
   );
@@ -32,9 +29,9 @@ export function Kbd({ children, onDark = false }: { children: ReactNode; onDark?
 
 // One friendly sentence and one action, for empty and error states
 export function Notice({ tone = "info", children, action }: { tone?: "info" | "error"; children: ReactNode; action?: ReactNode }) {
-  const colours = tone === "error" ? "border-red-300 bg-red-50 text-red-900" : "border-neutral-300 bg-neutral-50 text-neutral-800";
+  const colours = tone === "error" ? "border-[#f3c7c7] bg-[var(--bad-soft)] text-[var(--bad-ink)]" : "border-line bg-card text-ink";
   return (
-    <div role={tone === "error" ? "alert" : "status"} className={`rounded-lg border p-4 ${colours}`}>
+    <div role={tone === "error" ? "alert" : "status"} className={`rounded-2xl border p-6 ${colours}`}>
       <p>{children}</p>
       {action && <div className="mt-3">{action}</div>}
     </div>
@@ -95,7 +92,7 @@ export function useDraft(key: string): [string, (v: string) => void] {
 
 export function BackLink({ href = "/", children = "Back to Home" }: { href?: string; children?: ReactNode }) {
   return (
-    <Link href={href} className="text-sm text-neutral-700 underline">
+    <Link href={href} className="text-sm text-muted underline underline-offset-4 hover:text-ink">
       {children}
     </Link>
   );
