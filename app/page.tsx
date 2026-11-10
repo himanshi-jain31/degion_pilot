@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-type ProjectRow = { id: string; title: string; createdAt: string; fileCount: number };
+type ProjectRow = { id: string; title: string; createdAt: string; fileCount: number; madeInDemo: boolean };
 type Result = {
   skipped: string[];
   files: { name: string; kind: string; note: string; characters: number }[];
@@ -19,7 +19,7 @@ export default function Home() {
   const [projectId, setProjectId] = useState("");
   const [projects, setProjects] = useState<ProjectRow[] | null>(null); // null = still loading
   const [listError, setListError] = useState("");
-  const [status, setStatus] = useState<{ demo: boolean; keySet: boolean } | null>(null);
+  const [status, setStatus] = useState<{ demo: boolean; keySet: boolean; demoIgnored: boolean } | null>(null);
   const [confirmId, setConfirmId] = useState("");
   const [deleteError, setDeleteError] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
@@ -91,11 +91,6 @@ export default function Home() {
       <h1 className="text-3xl font-semibold">DesignPilot</h1>
       <p className="mt-1 text-neutral-600">I do the design steps for you. You say Go ahead after each one.</p>
 
-      {status?.demo && (
-        <p className="mt-4 rounded-lg bg-purple-100 p-3 text-sm text-purple-900">
-          Demo mode is on: every result is made up so you can try the screens. To use the real AI, remove the line DEMO_MODE=on from the file .env.local.
-        </p>
-      )}
       {status && !status.demo && !status.keySet && (
         <div role="alert" className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm">
           <p className="font-medium">One thing first: I need your key.</p>

@@ -15,6 +15,8 @@ The approved wireframes, and the **design style**: colours, fonts, sizes, and re
 6. Add a small label on every screen: "Prototype. Not the final product."
 
 ## Rules
+- Keep every screen from the approved wireframes, for every kind of user (for example both the employee and the manager flow). Do not drop or merge screens.
+- Screens show only what a real user would read. Never print notes such as the purpose, the states, or requirement numbers on a screen.
 - One self-contained HTML file. All CSS and JavaScript inside. No external links.
 - Works on phone and laptop.
 - Only use colours and text styles from the design style. List anything you had to add.

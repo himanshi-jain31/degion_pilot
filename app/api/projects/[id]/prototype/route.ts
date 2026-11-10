@@ -17,7 +17,7 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
     "X-Content-Type-Options": "nosniff",
   };
   if (q.get("download")) {
-    headers["Content-Disposition"] = 'attachment; filename="designpilot-prototype.html"';
+    headers["Content-Disposition"] = `attachment; filename="designpilot-prototype${version?.demo ? "-DEMO" : ""}.html"`;
   } else {
     // Same lock as the wireframe: its buttons work, but it cannot reach the app or the internet
     headers["Content-Security-Policy"] = "sandbox allow-scripts; default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:";

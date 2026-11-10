@@ -10,7 +10,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
   return new Response(testKitHtml(project.title, v.output as TestingOutput), {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="designpilot-test-kit.html"',
+      "Content-Disposition": `attachment; filename="designpilot-test-kit${v.demo ? "-DEMO" : ""}.html"`,
       "Cache-Control": "no-store",
     },
   });

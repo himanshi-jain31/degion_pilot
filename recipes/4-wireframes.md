@@ -14,6 +14,8 @@ The approved requirements, user profiles, insights, product structure, flows, an
 5. Make it work on phone and laptop sizes.
 
 ## Rules
+- Every kind of user in the approved Understand step (for example employee AND manager) needs their own screens: their home or inbox, their main task, and its empty, error, and no-permission states. Never design only the first user's flow. In user_coverage, list every user profile from the approved Understand step (use its exact name) and the ids of the screens built for that user.
+- Screens show only what a real user would read. Never print notes such as the purpose, the states, or requirement numbers on a screen.
 - Grey only (#f2f2f2 to #333). No brand colours yet.
 - Every screen must be reachable.
 - One self-contained HTML file: all CSS and JavaScript inside. No external links.
@@ -22,6 +24,7 @@ The approved requirements, user profiles, insights, product structure, flows, an
 {
   "plan": { "will_do": ["..."], "will_skip": [{ "item": "...", "why": "..." }] },
   "screens": [{ "id": "home", "name": "...", "purpose": "...", "meets": ["R1"], "states": ["normal", "empty", "error"] }],
+  "user_coverage": [{ "user": "exact user profile name", "screens": ["home", "new-request"] }],
   "wording": [{ "screen": "...", "text": "...", "where": "button|title|message" }],
   "accessibility_notes": ["..."],
   "html": "<!doctype html>... the full clickable wireframe ...",

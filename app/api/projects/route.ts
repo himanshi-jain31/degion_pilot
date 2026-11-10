@@ -2,6 +2,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
+import { isDemo } from "@/lib/ai";
 import { ALLOWED_EXTENSIONS, MAX_FILE_BYTES, extractText } from "@/lib/extract";
 import { PHASE_NAMES, Project, ProjectFile, UPLOADS_DIR, listProjects, saveProject } from "@/lib/storage";
 
@@ -13,6 +14,7 @@ export async function GET() {
       title: p.title,
       createdAt: p.createdAt,
       fileCount: p.files.length,
+      madeInDemo: !!p.madeInDemo,
     }))
   );
 }
@@ -59,6 +61,7 @@ export async function POST(request: Request) {
     title,
     requirement,
     createdAt: new Date().toISOString(),
+    madeInDemo: isDemo() || undefined,
     files,
     answers: {},
     phases: Object.fromEntries(PHASE_NAMES.map((n) => [n, "Not started"])),

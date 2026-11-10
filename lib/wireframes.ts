@@ -1,4 +1,5 @@
 import { FriendlyError, MODEL_PHASE, askForText } from "@/lib/ai";
+import { stripDesignerNotes } from "@/lib/checks";
 import type { Screen } from "@/lib/storage";
 import type Anthropic from "@anthropic-ai/sdk";
 
@@ -42,6 +43,7 @@ Grey only (#f2f2f2 to #333). Use real labels and realistic sample content. Never
 Use these ready-made classes (they are already styled): .bar (top bar), .title, .sub, .muted, .box (grey block), .card, .row (side by side), .col, .btn, .btn.primary (dark button), .input, .label, .list, .item, .tabs, .tab, .banner, .banner.error, .img (picture placeholder), .badge, .empty (empty-state block).
 To move to another screen, put data-go="<screen id>" on a button, link or card. Only use these screen ids: ${ids.join(", ")}.
 Every button and link must have a data-go. Forms: use <form data-go="<screen id>"> for the screen shown after sending.
+The details below (purpose, states, requirement numbers) are notes for you. NEVER write them on the screen. Only write what a real user would read.
 Show the states this screen must show (for example empty, error, loading) as they would look. Keep it under about 120 lines of HTML. Make it work on a phone and a laptop (it already stacks on narrow screens).`;
 
 export function sanitizeFragment(input: string): string {
@@ -74,7 +76,7 @@ export async function drawScreen(opts: {
 
   for (let attempt = 0; attempt < 2; attempt++) {
     const raw = await askForText({ model: MODEL_PHASE, system: FRAGMENT_SYSTEM(ids), content, demo: opts.demo });
-    const html = sanitizeFragment(raw);
+    const html = stripDesignerNotes(sanitizeFragment(raw), opts.screen);
     if (html.length > 40 && html.includes("<")) return html;
   }
   throw new FriendlyError(`I couldn't draw the screen "${opts.screen.name}". Please try again.`);
@@ -146,29 +148,4 @@ export function assemble(screens: Screen[], fragments: string[]): { html: string
 ${sections.join("\n")}
 <script>${JS}</script></body></html>`;
   return { html, warnings };
-}
-
-// ---------- Demo mode ----------
-
-export const DEMO_SCREENS: Screen[] = [
-  { id: "home", name: "Home", purpose: "See your requests and start a new one", meets: ["R1"], states: ["normal"] },
-  { id: "new-request", name: "New request", purpose: "Pick dates and send a request", meets: ["R1"], states: ["normal", "error"] },
-  { id: "request-list", name: "My requests", purpose: "See every request and its answer", meets: ["R1", "R2"], states: ["normal"] },
-  { id: "empty-list", name: "No requests yet", purpose: "Shown when there are no requests", meets: ["R1"], states: ["empty"] },
-  { id: "error", name: "Something went wrong", purpose: "Shown when sending fails", meets: ["R1"], states: ["error"] },
-  { id: "no-access", name: "No permission", purpose: "Shown when someone may not open a page", meets: ["R2"], states: ["no permission"] },
-];
-
-export function demoFragment(s: Screen, all: Screen[]): string {
-  const go = (id: string, text: string, primary = false) => `<button class="btn${primary ? " primary" : ""}" data-go="${id}">${text}</button>`;
-  const head = `<div class="bar">DEMO · ${esc(s.name)}</div><p class="title">${esc(s.name)}</p><p class="muted">${esc(s.purpose)}</p>`;
-  if (s.id === "home")
-    return `${head}<div class="card" data-go="request-list"><p class="sub">DEMO: Days left</p><p>12 days</p></div><div class="row">${go("new-request", "New request", true)}${go("request-list", "My requests")}${go("empty-list", "See empty state")}${go("error", "See error state")}${go("no-access", "See no-permission state")}</div>`;
-  if (s.id === "new-request")
-    return `${head}<form data-go="request-list"><label class="label">From</label><input class="input" value="12 Dec"><label class="label">To</label><input class="input" value="14 Dec"><button class="btn primary">Send request</button></form><div class="row">${go("error", "Pretend sending fails")}${go("home", "Cancel")}</div>`;
-  if (s.id === "request-list")
-    return `${head}<div class="list"><div class="item" data-go="home">12–14 Dec · <span class="badge">Waiting</span></div><div class="item" data-go="home">3 Nov · <span class="badge">Approved</span></div></div>${go("home", "Back to Home")}`;
-  if (s.id === "error")
-    return `${head}<div class="banner error">DEMO: We could not send your request. Nothing was lost.</div>${go("new-request", "Try again", true)} ${go("home", "Back to Home")}`;
-  return `${head}<div class="empty">DEMO: nothing to show here yet.</div>${go("home", "Back to Home", true)}`;
 }

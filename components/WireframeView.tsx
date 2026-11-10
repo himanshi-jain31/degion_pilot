@@ -79,6 +79,19 @@ export function WireframeWork({ out, projectId, versionId }: { out: WireframeOut
         </ul>
       </Section>
 
+      {out.user_coverage.length > 0 && (
+        <Section title="Who each user gets screens for">
+          <ul className="space-y-1 text-sm">
+            {out.user_coverage.map((c, i) => (
+              <li key={i}>
+                <strong>{c.user}:</strong>{" "}
+                {c.screens.map((id) => out.screens.find((s) => s.id === id)?.name ?? id).join(", ") || "no screens"}
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
+
       {out.accessibility_notes.length > 0 && (
         <Section title="Accessibility notes">
           <List items={out.accessibility_notes} />

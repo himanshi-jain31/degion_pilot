@@ -1,3 +1,4 @@
+import { demoFigma } from "@/lib/demo";
 import { envValue } from "@/lib/env";
 import { FigmaFile, FigmaSummary } from "@/lib/storage";
 import { FriendlyError, isDemo } from "@/lib/ai";
@@ -121,25 +122,7 @@ export function summarise(root: Node, styles: Record<string, { name?: string; st
 export async function readFigma(url: string): Promise<Omit<FigmaFile, "id" | "addedAt">> {
   const { fileKey, nodeId } = parseFigmaUrl(url);
 
-  if (isDemo()) {
-    return {
-      url, fileKey, name: "DEMO: Example design system", lastModified: new Date().toISOString(), demo: true,
-      summary: {
-        colours: [
-          { hex: "#0b6b3a", name: "Brand/Green", uses: 40 }, { hex: "#ffffff", name: "Neutral/White", uses: 90 },
-          { hex: "#1a1a1a", name: "Neutral/Ink", uses: 70 }, { hex: "#e0702b", name: "Accent/Orange", uses: 12 }, { hex: "#f4f4f2", uses: 8 },
-        ],
-        colourCount: 5, namedColourCount: 4,
-        textStyles: [
-          { name: "Heading/Large", fontFamily: "Georgia", fontSize: 32, fontWeight: 700, lineHeight: 40 },
-          { name: "Body/Regular", fontFamily: "Inter", fontSize: 16, fontWeight: 400, lineHeight: 24 },
-        ],
-        textStyleCount: 2, textStylesNamed: true,
-        components: [{ name: "Button/Primary" }, { name: "Input/Text" }, { name: "Card" }],
-        componentCount: 3,
-      },
-    };
-  }
+  if (isDemo()) return demoFigma(url, fileKey);
 
   const token = await figmaToken();
   if (!token)

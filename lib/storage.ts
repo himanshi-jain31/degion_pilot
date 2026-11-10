@@ -62,6 +62,7 @@ export type PhaseVersion = {
   chosenDirection?: string; // Phase 3: A, B or C
   progressNote?: string; // plain words about what is being worked on now
   part?: "prepare" | "analyse"; // Phase 6 only: before testing, or after the notes are uploaded
+  demo?: boolean; // made-up result from demo mode, not from the AI
 };
 
 type Label = "Checked" | "My guess" | "Test idea only";
@@ -127,6 +128,7 @@ export type IdeateOutput = PhaseOutput & {
 export type Screen = { id: string; name: string; purpose: string; meets: string[]; states: string[] };
 export type WireframeOutput = PhaseOutput & {
   screens: Screen[];
+  user_coverage: { user: string; screens: string[] }[]; // which screens each user profile gets
   wording: { screen: string; text: string; where: string }[];
   accessibility_notes: string[];
   html: string;
@@ -203,6 +205,7 @@ export type FigmaFile = {
 
 export type Project = {
   id: string;
+  madeInDemo?: boolean; // true if any part was made in demo mode
   title: string;
   requirement: string;
   createdAt: string;

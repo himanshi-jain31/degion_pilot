@@ -131,11 +131,6 @@ function ProjectPage() {
 
   return (
     <>
-    {project.demo && (
-      <div className="bg-purple-100 px-5 py-2 text-center text-sm text-purple-900">
-        Demo mode: every result here is made up so you can try the screens. Nothing is real.
-      </div>
-    )}
     <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-6 lg:flex-row">
       {/* Phase rail */}
       <nav aria-label="Steps" className="lg:w-56 lg:shrink-0">
@@ -343,6 +338,11 @@ function ProjectPage() {
 
               {shown?.output && latest?.status !== "working" && (
                 <>
+                  {shown.version > 1 && shown.feedback && (
+                    <p className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
+                      <strong>Version {shown.version}: updated using your feedback.</strong> You asked: &quot;{shown.feedback.length > 200 ? shown.feedback.slice(0, 200) + "…" : shown.feedback}&quot;
+                    </p>
+                  )}
                   {tab === "Plan" && <PlanView out={shown.output} />}
                   {tab === "Work" && selected === 1 && <WorkView out={shown.output as UnderstandOutput} />}
                   {tab === "Work" && selected === 2 && <ResearchWork out={shown.output as ResearchOutput} />}

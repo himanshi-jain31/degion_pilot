@@ -1,9 +1,11 @@
 import { randomUUID } from "crypto";
 import { FriendlyError, MODEL_PHASE, askForJson, buildProjectContent, isDemo, readRecipe } from "@/lib/ai";
-import { checkSources, demoTestingAnalyse, demoTestingPrepare, demos, validateTesting, validators } from "@/lib/phaseDefs";
+import { demoTestingAnalyse, demoTestingPrepare, demos, demoFragment } from "@/lib/demo";
+import { checkSources, validateTesting, validators } from "@/lib/phaseDefs";
 import { phaseByNumber } from "@/lib/phases";
-import { PhaseVersion, Project, DesignOutput, ResearchOutput, TestingOutput, WireframeOutput, loadProject, saveProject, withProjectLock } from "@/lib/storage";
-import { DEMO_SCREENS, PLAN_RULES, assemble, demoFragment, drawScreen } from "@/lib/wireframes";
+import { PhaseVersion, Project, DesignOutput, ResearchOutput, TestingOutput, UnderstandOutput, WireframeOutput, loadProject, saveProject, withProjectLock } from "@/lib/storage";
+import { missingUsers, profileNames } from "@/lib/checks";
+import { PLAN_RULES, assemble, drawScreen } from "@/lib/wireframes";
 import { DESIGN_RULES, assemblePrototype, sanitizeCss, designScreen, wireframeFragments } from "@/lib/prototype";
 import { figmaText, figmaPalette, offStyleColours } from "@/lib/figma";
 import { computedChecks, hasStyle, rootVars, styleBlocks, styleSummary } from "@/lib/styles";
@@ -89,8 +91,10 @@ async function startPhaseNow(projectId: string, phase: number, feedback?: string
     feedback: feedback || undefined,
     progressChars: 0,
     part: phase === 6 ? part ?? "prepare" : undefined,
+    demo: isDemo() || undefined,
   };
   project.versions.push(version);
+  if (version.demo) project.madeInDemo = true;
   project.phases[info.name] = "Working on it";
   await saveProject(project);
 
@@ -137,21 +141,44 @@ async function work(projectId: string, versionId: string, phase: number, feedbac
         content.push({ type: "text", text: `THE TEST PLAN AND SCRIPT YOU PREPARED:\n${JSON.stringify(prepared ? { test_plan: prepared.test_plan, script: prepared.script } : {})}\n\nTEST NOTES FROM THE DESIGNER (the only evidence you may use):\n${notesText}\n\nTHINGS I GUESSED SO FAR (return one entry for every id):\n${guessList.map((g) => `${g.id}: ${g.text}`).join("\n")}` });
       }
     }
-    let output = await askForJson({
+    // Phase 4: every kind of user from the approved Understand step needs their own screens
+    let kinds: string[] = [];
+    if (phase === 4) {
+      const understand = project.versions.filter((v) => v.phase === 1 && v.approved).at(-1)?.output as UnderstandOutput | undefined;
+      kinds = profileNames(understand);
+      if (kinds.length) content.push({ type: "text", text: `USER PROFILES THAT EACH NEED THEIR OWN SCREENS (not only the first one). In user_coverage, add one entry for each, using these exact names and the ids of the screens built for them:\n${kinds.map((k) => `- ${k}`).join("\n")}` });
+    }
+    const recipeText = await readRecipe(info.recipe);
+    const callPlan = (extra?: string) => askForJson({
       model: MODEL_PHASE,
-      recipe: (await readRecipe(info.recipe)) + (phase === 4 ? PLAN_RULES : phase === 5 ? DESIGN_RULES : phase === 6 ? (part === "analyse" ? ANALYSE_RULES : PREPARE_RULES) : ""),
-      content,
+      recipe: recipeText + (phase === 4 ? PLAN_RULES : phase === 5 ? DESIGN_RULES : phase === 6 ? (part === "analyse" ? ANALYSE_RULES : PREPARE_RULES) : ""),
+      content: extra ? [...content, { type: "text" as const, text: extra }] : content,
       validate: phase === 6 ? (d) => validateTesting(d, part ?? "prepare") : validators[phase],
       maxTokens: 16000,
       useWebSearch: phase === 2,
       onSearchedUrls: (urls) => { searched = urls; },
-      demo: { seconds: phase === 2 ? 10 : 8, data: phase === 6 ? (part === "analyse" ? demoTestingAnalyse(notesText, guessList) : demoTestingPrepare(feedback)) : demos[phase](feedback) },
+      // made-up results are only built in demo mode
+      demo: isDemo() ? { seconds: phase === 2 ? 10 : 8, data: phase === 6 ? (part === "analyse" ? demoTestingAnalyse(notesText, guessList) : demoTestingPrepare(feedback)) : demos[phase](feedback) } : undefined,
       onProgress: (chars) => {
         if (Date.now() - lastWrite < 1500) return;
         lastWrite = Date.now();
         void saveRun(projectId, versionId, (v) => { v.progressChars = chars; });
       },
     });
+    let output = await callPlan();
+
+    // If a kind of user has no screens, ask once more. If still missing, tell the designer in plain words.
+    const coverageWarnings: string[] = [];
+    if (phase === 4 && kinds.length && !isDemo()) {
+      const gapsOf = () => missingUsers(kinds, (output as WireframeOutput).user_coverage, (output as WireframeOutput).screens);
+      let gaps = gapsOf();
+      if (gaps.length) {
+        setNote(0.05, `Some users had no screens (${gaps.join(", ")}). Adding them.`);
+        output = await callPlan(`YOUR LAST SCREEN LIST GAVE NO SCREENS (or no user_coverage entry) FOR THESE USER PROFILES: ${gaps.join(", ")}. Here it is:\n${JSON.stringify((output as WireframeOutput).screens)}\nSend the full JSON again with a complete set of screens for those users too (their own home or inbox, the main task, and its empty, error and no-permission states).`);
+        gaps = gapsOf();
+      }
+      for (const g of gaps) coverageWarnings.push(`I could not see any screens for "${g}". Please check the screen list, and use Not yet to ask for them.`);
+    }
     // Honesty rule: no "Checked" label without a link the search really found
     if (phase === 2) output = checkSources(output as ResearchOutput, searched, isDemo());
 
@@ -171,7 +198,7 @@ async function work(projectId: string, versionId: string, phase: number, feedbac
             const screen = wf.screens[i];
             fragments[i] = await drawScreen({
               screen, screens: wf.screens, context: content, wording: wf.wording,
-              demo: demoMode ? demoFragment(wf.screens.length ? screen : DEMO_SCREENS[0], wf.screens) : "",
+              demo: demoMode ? demoFragment(screen) : "",
             });
             done++;
             setNote(0.1 + 0.85 * (done / total), `Drew screen ${done} of ${total}: ${screen.name}`);
@@ -180,7 +207,7 @@ async function work(projectId: string, versionId: string, phase: number, feedbac
       );
       const joined = assemble(wf.screens, fragments);
       wf.html = joined.html;
-      wf.warnings = joined.warnings;
+      wf.warnings = [...coverageWarnings, ...joined.warnings];
     }
 
     // Phase 5: restyle each approved wireframe screen, then join them with the stylesheet

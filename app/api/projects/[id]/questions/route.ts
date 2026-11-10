@@ -40,7 +40,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
       demo: {
         seconds: 2,
         data: {
-          request_summary: "DEMO: you want a simple app. These questions are made up.",
+          request_summary: "You want a simpler way for staff to ask for time off and for managers to answer.",
           suggested_depth: "Light",
           questions: [
             { id: "q1", question: "Where will people mostly use this?", why_it_matters: "Changes the layout", options: ["Phone", "Laptop", "Both"] },

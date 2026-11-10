@@ -102,7 +102,6 @@ export function FigmaPanel({ projectId, files, onChanged }: { projectId: string;
               <li key={f.id} className="rounded-lg border border-neutral-200 p-4">
                 <p className="font-medium">
                   {f.name}
-                  {f.demo && <span className="ml-2 rounded-full bg-purple-100 px-2 py-0.5 text-xs text-purple-800">Demo</span>}
                 </p>
                 <p className="text-sm text-neutral-700">{plainSummary(f.summary)}</p>
                 <p className="text-xs text-neutral-600">Read from Figma, so these facts are Checked.</p>

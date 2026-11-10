@@ -1,4 +1,5 @@
 import { FriendlyError, MODEL_PHASE, askForText } from "@/lib/ai";
+import { stripDesignerNotes } from "@/lib/checks";
 import { NAV_JS, esc, joinSections, sanitizeFragment } from "@/lib/wireframes";
 import type { Screen } from "@/lib/storage";
 import type Anthropic from "@anthropic-ai/sdk";
@@ -36,6 +37,7 @@ KEEP the approved layout and every data-go attribute exactly. Only these screen 
 Use the ready-made classes. Their stylesheet is below. You may add small inline style attributes, but colours must come from var(--primary), var(--background), var(--text), var(--accent).
 Use realistic content, including one very long name and one empty value where it fits. Buttons at least 44px tall. Plain, honest wording: no hidden costs, no guilt-trip wording, no tricky defaults.
 Keep every state the wireframe screen shows.
+The screen's purpose and requirement numbers are notes for you. NEVER write them on the screen. Only write what a real user would read.
 
 DESIGN STYLE:
 ${styleText}
@@ -61,7 +63,7 @@ export async function designScreen(opts: {
   ];
   for (let attempt = 0; attempt < 2; attempt++) {
     const raw = await askForText({ model: MODEL_PHASE, system: FRAGMENT_SYSTEM(ids, opts.css, opts.styleText), content, demo: opts.demo });
-    const html = sanitizeFragment(raw);
+    const html = stripDesignerNotes(sanitizeFragment(raw), opts.screen);
     if (html.length > 40 && html.includes("<")) return html;
   }
   throw new FriendlyError(`I couldn't design the screen "${opts.screen.name}". Please try again.`);
@@ -85,15 +87,3 @@ ${sections.join("\n")}
 <script>${NAV_JS}</script></body></html>`;
   return { html, warnings };
 }
-
-// ---------- Demo mode ----------
-export const DEMO_CSS = `:root{--primary:#2f5bd8;--background:#ffffff;--text:#1d2433;--accent:#2f5bd8;--radius:8px}
-.bar{padding:14px;background:var(--primary);color:var(--background);border-radius:var(--radius);font-weight:700;margin-bottom:12px}
-.title{font:700 24px var(--font-heading,system-ui);margin:8px 0}.sub{font:600 17px var(--font-heading,system-ui);margin:8px 0}.muted{opacity:.7;font-size:14px}
-.box,.card,.item,.empty{border:1px solid rgba(0,0,0,.15);border-radius:var(--radius);padding:14px;margin:8px 0;background:#fff}
-.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.row>*{flex:1 1 200px}.col{display:flex;flex-direction:column;gap:8px}
-.btn{padding:10px 18px;border:1px solid var(--primary);border-radius:var(--radius);background:var(--background);color:var(--primary);cursor:pointer}
-.btn.primary{background:var(--primary);color:var(--background)}.input{display:block;width:100%;padding:10px;border:1px solid #999;border-radius:var(--radius);margin:4px 0 10px}
-.label{display:block;font-weight:600;font-size:14px}.list{display:flex;flex-direction:column}.badge{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--accent);color:var(--background);font-size:12px}
-.banner{padding:12px;border-radius:var(--radius);background:#eef2ff;margin:8px 0}.banner.error{background:#fde8e8;border:2px solid #b42318}.empty{text-align:center;opacity:.8;padding:28px}
-.tabs{display:flex;gap:6px}.tab{padding:8px 14px;border-radius:var(--radius);background:#eef2ff}.img{min-height:90px;background:#e8ecf8;border-radius:var(--radius)}a{color:var(--primary)}`;

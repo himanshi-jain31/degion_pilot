@@ -10,15 +10,17 @@ export const MODEL_QUICK = "claude-haiku-5-5";
 // Errors with a friendly message the screen can show as it is
 export class FriendlyError extends Error {}
 
-// Demo mode (DEMO_MODE=on in .env.local) plays back made-up results so the app can be tried without a key
-export const isDemo = () => envValue("DEMO_MODE") === "on";
 export const anthropicKeySet = () => !!envValue("ANTHROPIC_API_KEY");
+// Demo mode plays back made-up results so the app can be tried without a key (see lib/demo.ts).
+// It needs DEMO_MODE=on in .env.local AND no key. As soon as a key is set, the real AI is always used.
+export const demoSwitchedOn = () => envValue("DEMO_MODE") === "on";
+export const isDemo = () => demoSwitchedOn() && !anthropicKeySet();
 
 export async function readRecipe(name: string): Promise<string> {
   return fs.readFile(path.join(process.cwd(), "recipes", name), "utf8");
 }
 
-function getClient() {
+async function getClient() {
   const key = envValue("ANTHROPIC_API_KEY");
   if (!key) {
     throw new FriendlyError(
@@ -88,11 +90,12 @@ export async function askForJson<T>(opts: {
     return opts.validate(opts.demo.data);
   }
 
-  const client = getClient();
+  const client = await getClient();
   const system = `${opts.recipe}\n\nReply with the JSON only. No other words, no code fences.`;
   const messages: Anthropic.MessageParam[] = [{ role: "user", content: opts.content }];
   let lastProblem = "";
   let lastRaw = "";
+  let cutOff = false;
   let written = 0;
   const urls = new Set<string>();
 
@@ -123,6 +126,7 @@ export async function askForJson<T>(opts: {
           opts.onProgress?.(written);
         });
         const res = await stream.finalMessage();
+        cutOff = res.stop_reason === "max_tokens";
 
         let lastResult = -1;
         res.content.forEach((b, idx) => {
@@ -149,7 +153,9 @@ export async function askForJson<T>(opts: {
     try {
       return opts.validate(parseJson(lastRaw));
     } catch (e) {
-      lastProblem = e instanceof Error ? e.message : "broken JSON";
+      lastProblem = cutOff
+        ? "your answer was cut off because it was too long. Send a shorter version of the same JSON: fewer and shorter items"
+        : e instanceof Error ? e.message : "broken JSON";
     }
   }
   throw new FriendlyError("The AI sent back something I couldn't read. Please try again.");
@@ -164,7 +170,8 @@ function toFriendly(e: unknown): FriendlyError {
   return new FriendlyError("I couldn't reach the AI. Check your internet and try again.");
 }
 
-// Asks the AI for plain text (used for one wireframe screen at a time). Demo text is used in demo mode.
+// Asks the AI for plain text (used for one wireframe or prototype screen at a time).
+// If the reply is cut off by its length limit, it asks again for a shorter version. A cut-off screen is never kept.
 export async function askForText(opts: {
   model: string;
   system: string;
@@ -176,16 +183,19 @@ export async function askForText(opts: {
     await new Promise((r) => setTimeout(r, 900));
     return opts.demo;
   }
-  const client = getClient();
-  try {
-    const res = await client.messages.stream({
-      model: opts.model,
-      max_tokens: opts.maxTokens ?? 6000,
-      system: opts.system,
-      messages: [{ role: "user", content: opts.content }],
-    }).finalMessage();
-    return res.content.map((b) => (b.type === "text" ? b.text : "")).join("");
-  } catch (e) {
-    throw toFriendly(e);
+  const client = await getClient();
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await client.messages.stream({
+        model: opts.model,
+        max_tokens: (opts.maxTokens ?? 6000) * (attempt + 1),
+        system: opts.system + (attempt > 0 ? "\n\nYour last reply was cut off because it was too long. Make this screen simpler and shorter so it fits." : ""),
+        messages: [{ role: "user", content: opts.content }],
+      }).finalMessage();
+      if (res.stop_reason !== "max_tokens") return res.content.map((b) => (b.type === "text" ? b.text : "")).join("");
+    } catch (e) {
+      throw toFriendly(e);
+    }
   }
+  throw new FriendlyError("One screen was too long for me to finish. Please try again.");
 }
