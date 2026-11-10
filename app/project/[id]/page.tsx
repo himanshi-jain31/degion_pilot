@@ -394,7 +394,16 @@ function ProjectPage() {
                           <h3 className="mb-2 flex items-center gap-3"><span className="step-badge">2</span><span className="section-title">What I made</span></h3>
                           {sel === 1 && <WorkView out={shown.output as UnderstandOutput} />}
                           {sel === 2 && <ResearchWork out={shown.output as ResearchOutput} />}
-                          {sel === 3 && <IdeateWork out={shown.output as IdeateOutput} />}
+                          {sel === 3 && (
+                            <IdeateWork
+                              out={shown.output as IdeateOutput}
+                              onMakeJourneysFuller={
+                                !shown.approved && latest?.id === shown.id && !busy
+                                  ? () => post(`/api/projects/${id}/phases/3/checkin`, { decision: "not_yet", note: "Make the user journeys fuller: 5 to 7 stages each, with what the person does, thinks and feels, a feeling score, the problem at each stage, and the same stages again for the future." })
+                                  : undefined
+                              }
+                            />
+                          )}
                           {sel === 4 && <WireframeWork out={shown.output as WireframeOutput} projectId={id} versionId={shown.id} />}
                           {sel === 5 && <PrototypeWork out={shown.output as DesignOutput} projectId={id} versionId={shown.id} style={project.designStyle} />}
                           {sel === 6 && (

@@ -183,101 +183,135 @@ function scoreOf(s: Stage) {
   const bad = BAD.some((w) => f.includes(w)) || /\bnot (sure|clear|confident|happy)/.test(f);
   return { value: bad ? 2 : GOOD.some((w) => f.includes(w)) ? 4 : 3, guessed: true };
 }
-const topPct = (v: number) => 10 + ((5 - v) / 4) * 80; // 5 is high on the chart, 1 is low
+const FACES = ["", "😣", "😕", "😐", "🙂", "😄"];
+const face = (s: Stage) => FACES[scoreOf(s).value];
+const topPct = (v: number) => 12 + ((5 - v) / 4) * 76; // 5 is high on the chart, 1 is low
 
-// The feeling curve: positions are percentages so it always fills the width and never scrolls
-function Curve({ lines }: { lines: { stages: Stage[]; colour: string; name: string }[] }) {
-  const n = Math.max(...lines.map((l) => l.stages.length));
-  const xPct = (i: number, len: number) => ((i + 0.5) / len) * 100;
-  return (
-    <div className="relative h-36 rounded-xl bg-[#fafaf7]" role="img" aria-label={lines.map((l) => `${l.name}: ${l.stages.map((s) => `${s.stage ?? s.step} ${s.feeling}`).join(", ")}`).join(". ")}>
-      <span className="absolute left-2 top-1 text-[12px] text-muted">Good</span>
-      <span className="absolute bottom-1 left-2 text-[12px] text-muted">Low</span>
-      <div aria-hidden="true" className="absolute inset-x-0 top-1/2 border-t border-dashed border-line" />
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        {lines.map((l) => (
-          <polyline key={l.name} points={l.stages.map((s, i) => `${xPct(i, l.stages.length)},${topPct(scoreOf(s).value)}`).join(" ")} fill="none" stroke={l.colour} strokeWidth={2.5} vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
-        ))}
-      </svg>
-      {lines.map((l) =>
-        l.stages.map((s, i) => (
-          <span key={l.name + i} aria-hidden="true" className="absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 bg-white" style={{ left: `${xPct(i, l.stages.length)}%`, top: `${topPct(scoreOf(s).value)}%`, borderColor: l.colour }} />
-        ))
-      )}
-      <span className="sr-only">{n} stages</span>
-    </div>
-  );
+// A smooth line through the points. x and y are percentages of the chart.
+function smooth(pts: [number, number][]) {
+  if (pts.length === 1) return `M${pts[0][0] - 4},${pts[0][1]} L${pts[0][0] + 4},${pts[0][1]}`;
+  return pts.reduce((d, [x, y], i) => {
+    if (i === 0) return `M${x},${y}`;
+    const [px, py] = pts[i - 1];
+    const mx = (px + x) / 2;
+    return `${d} C${mx},${py} ${mx},${y} ${x},${y}`;
+  }, "");
 }
 
-function Row({ label, cols, children }: { label: string; cols: number; children: (i: number) => React.ReactNode }) {
-  return (
-    <div className="grid items-start gap-3 border-t border-line py-3" style={{ gridTemplateColumns: `76px repeat(${cols}, minmax(0, 1fr))` }}>
-      <p className="label-small pt-0.5 !text-[13px]">{label}</p>
-      {Array.from({ length: cols }, (_, i) => <div key={i} className="min-w-0 text-[14px] leading-snug">{children(i)}</div>)}
-    </div>
-  );
-}
-
-function JourneyGrid({ title, stages, future, colour }: { title: string; stages: Stage[]; future?: boolean; colour: string }) {
+// The feeling curve with a face on every stage. It sits in the same columns as the cards, so they line up.
+function EmotionCurve({ stages, colour }: { stages: Stage[]; colour: string }) {
   const n = stages.length;
+  const pts: [number, number][] = stages.map((s, i) => [((i + 0.5) / n) * 100, topPct(scoreOf(s).value)]);
+  const id = `fill-${colour.replace("#", "")}`;
   return (
-    <section className="rounded-2xl border border-line bg-card p-4 sm:p-5" aria-label={title}>
-      <div className="mb-3 flex items-center gap-2">
-        <span aria-hidden="true" className="h-3 w-3 rounded-full" style={{ background: colour }} />
-        <h4 className="text-[17px] font-medium">{title}</h4>
+    <div className="relative h-44 overflow-hidden rounded-xl bg-[#fafaf7]" role="img" aria-label={`How the person feels: ${stages.map((s, i) => `${i + 1}, ${s.feeling}`).join("; ")}`}>
+      <div aria-hidden="true" className="absolute inset-x-0 top-[12%] border-t border-dashed border-line" />
+      <div aria-hidden="true" className="absolute inset-x-0 top-1/2 border-t border-dashed border-line" />
+      <div aria-hidden="true" className="absolute inset-x-0 top-[88%] border-t border-dashed border-line" />
+      <span className="absolute left-2 top-0.5 text-[11px] text-muted">Feels good</span>
+      <span className="absolute bottom-0.5 left-2 text-[11px] text-muted">Feels bad</span>
+      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id={id} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={colour} stopOpacity="0.18" /><stop offset="1" stopColor={colour} stopOpacity="0" /></linearGradient>
+        </defs>
+        {n > 1 && <path d={`${smooth(pts)} L${pts[n - 1][0]},100 L${pts[0][0]},100 Z`} fill={`url(#${id})`} />}
+        <path d={smooth(pts)} fill="none" stroke={colour} strokeWidth={3} strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+      </svg>
+      {stages.map((s, i) => (
+        <div key={i} className="absolute -translate-x-1/2 -translate-y-1/2 text-center" style={{ left: `${pts[i][0]}%`, top: `${pts[i][1]}%` }}>
+          <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 bg-white text-[22px] shadow-sm" style={{ borderColor: colour }}>{face(s)}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Label({ children }: { children: React.ReactNode }) {
+  return <p className="mb-0.5 text-[11px] font-medium uppercase tracking-wide text-muted">{children}</p>;
+}
+
+function JourneyBlock({ title, subtitle, stages, future, colour }: { title: string; subtitle: string; stages: Stage[]; future?: boolean; colour: string }) {
+  const n = stages.length;
+  const cols = { "--n": n } as React.CSSProperties;
+  return (
+    <section className="rounded-2xl border border-line bg-card p-4 sm:p-6" aria-label={title}>
+      <div className="mb-4 flex flex-wrap items-baseline gap-x-3">
+        <h4 className="text-[19px] font-medium" style={{ color: colour }}>{title}</h4>
+        <p className="note">{subtitle}</p>
       </div>
-      <div className="grid gap-3 pb-3" style={{ gridTemplateColumns: `76px repeat(${n}, minmax(0, 1fr))` }}>
-        <span />
+
+      {/* Stages as a row of arrows (wide screens) */}
+      <ol className="hidden gap-2 sm:grid" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }} aria-hidden="true">
         {stages.map((s, i) => (
-          <div key={i} className="min-w-0 rounded-lg px-2 py-1.5 text-center text-[13px] font-medium leading-tight" style={{ background: future ? "#eef0ff" : "#f4f4f0", color: future ? "#4338ca" : "#1c1c1e" }}>
-            <span className="block text-[11px] font-normal opacity-70">{i + 1}</span>{s.stage || `Step ${i + 1}`}
-          </div>
+          <li key={i} className="flex min-h-12 items-center justify-center px-5 py-2 text-center text-[14px] font-medium leading-tight text-white" style={{ background: colour, clipPath: "polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%)", paddingLeft: i === 0 ? 14 : undefined }}>
+            {s.stage || `Step ${i + 1}`}
+          </li>
         ))}
-      </div>
-      <Row label="Does" cols={n}>{(i) => stages[i].step}</Row>
-      {stages.some((s) => s.thought) && <Row label="Thinks" cols={n}>{(i) => stages[i].thought ? <span className="italic text-muted">&ldquo;{stages[i].thought}&rdquo;</span> : null}</Row>}
-      <Row label="Feels" cols={n}>
-        {(i) => <span className={`pill ${scoreOf(stages[i]).value >= 4 ? "pill-ok" : scoreOf(stages[i]).value <= 2 ? "pill-bad" : "pill-idle"} !text-[13px]`}>{stages[i].feeling}</span>}
-      </Row>
-      {future ? (
-        stages.some((s) => s.improves) && <Row label="Fixes" cols={n}>{(i) => stages[i].improves ? <span className="rounded-lg bg-[var(--ok-soft)] px-2 py-1 text-[13px] text-[var(--ok-ink)]">{stages[i].improves}</span> : null}</Row>
-      ) : (
-        <>
-          <Row label="Problem" cols={n}>{(i) => stages[i].pain ? <span className="block rounded-lg bg-[var(--bad-soft)] px-2 py-1 text-[13px] text-[var(--bad-ink)]">{stages[i].pain}</span> : <span className="text-muted">·</span>}</Row>
-          {stages.some((s) => s.opportunity) && <Row label="Chance" cols={n}>{(i) => stages[i].opportunity ? <span className="text-[13px]">💡 {stages[i].opportunity}</span> : null}</Row>}
-        </>
-      )}
+      </ol>
+
+      <div className="mt-4 hidden sm:block"><EmotionCurve stages={stages} colour={colour} /></div>
+
+      {/* One card per stage. On a phone they stack. */}
+      <ol className="mt-4 grid grid-cols-1 gap-2 sm:[grid-template-columns:repeat(var(--n),minmax(0,1fr))]" style={cols}>
+        {stages.map((s, i) => (
+          <li key={i} className="flex min-w-0 flex-col gap-3 rounded-xl border border-line p-3 text-[14px] leading-snug">
+            <div className="flex items-center gap-2 sm:hidden">
+              <span className="text-[24px]" aria-hidden="true">{face(s)}</span>
+              <span className="font-medium">{i + 1}. {s.stage || `Step ${i + 1}`}</span>
+            </div>
+            <div><Label>Does</Label><p>{s.step}</p></div>
+            {s.thought && <div><Label>Thinks</Label><p className="rounded-lg bg-[#f6f6f2] px-2.5 py-2 italic">&ldquo;{s.thought}&rdquo;</p></div>}
+            <div><Label>Feels</Label><p className="font-medium">{face(s)} {s.feeling}</p></div>
+            {!future && s.pain && <div className="rounded-lg bg-[var(--bad-soft)] px-2.5 py-2 text-[var(--bad-ink)]"><Label>Problem</Label><p>{s.pain}</p></div>}
+            {future && s.improves && <div className="rounded-lg bg-[var(--ok-soft)] px-2.5 py-2 text-[var(--ok-ink)]"><Label>Fixes</Label><p>{s.improves}</p></div>}
+            {!future && s.opportunity && <div className="mt-auto rounded-lg bg-accent-soft px-2.5 py-2 text-[var(--accent-ink)]"><Label>Chance</Label><p>{s.opportunity}</p></div>}
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }
 
-export function JourneyMap({ journeys }: { journeys: IdeateOutput["journeys"] }) {
+// Today and the future, stage by stage, as one quick row of faces
+function Compare({ today, future }: { today: Stage[]; future: Stage[] }) {
+  const n = today.length;
+  return (
+    <section className="rounded-2xl border border-line bg-card p-4 sm:p-6" aria-label="What changes">
+      <h4 className="text-[19px] font-medium">What changes for the person</h4>
+      <p className="note mb-4">Each stage: how it feels today, and how it should feel with the new product.</p>
+      <ol className="grid gap-2" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}>
+        {today.map((t, i) => {
+          const f = future[i];
+          const up = scoreOf(f).value - scoreOf(t).value;
+          return (
+            <li key={i} className="min-w-0 rounded-xl bg-[#f6f6f2] p-2 text-center sm:p-3">
+              <p className="mb-2 truncate text-[12px] font-medium text-muted sm:text-[13px]">{t.stage || `Step ${i + 1}`}</p>
+              <p className="text-[22px] leading-none sm:text-[26px]" aria-label={`Today ${t.feeling}, future ${f.feeling}`}>{face(t)}<span aria-hidden="true" className="mx-0.5 text-[14px] text-muted">→</span>{face(f)}</p>
+              <p className={`mt-2 text-[12px] font-medium ${up > 0 ? "text-[var(--ok-ink)]" : up < 0 ? "text-[var(--bad-ink)]" : "text-muted"}`}>{up > 0 ? "Better" : up < 0 ? "Worse" : "Same"}</p>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}
+
+export function JourneyMap({ journeys, onMakeFuller }: { journeys: IdeateOutput["journeys"]; onMakeFuller?: () => void }) {
   const { today, future } = journeys;
   const guessed = [...today, ...future].some((s) => scoreOf(s).guessed);
   const thin = (today.length > 0 && today.length < 3) || (future.length > 0 && future.length < 3);
   return (
     <div className="space-y-5">
       {thin && (
-        <p className="rounded-xl border border-[var(--wait)]/40 bg-[var(--wait-soft)] p-4 text-[15px] text-[var(--wait-ink)]" role="status">
-          This journey only has {Math.min(today.length || 99, future.length || 99)} step. It was made before I was asked for a full journey. Choose <strong>Not yet</strong> in the Check-in and write &ldquo;Make the journeys longer, 5 to 7 stages&rdquo; to get a complete one.
-        </p>
-      )}
-      {today.length > 0 && future.length > 0 && (
-        <div className="rounded-2xl border border-line bg-card p-4 sm:p-5">
-          <div className="mb-3 flex flex-wrap items-center gap-x-5 gap-y-1">
-            <h4 className="text-[17px] font-medium">How it feels: today and in the future</h4>
-            <span className="flex items-center gap-1.5 text-[14px] text-muted"><span aria-hidden="true" className="h-0.5 w-5 bg-[#6b6b70]" />Today</span>
-            <span className="flex items-center gap-1.5 text-[14px] text-muted"><span aria-hidden="true" className="h-0.5 w-5 bg-[#4f46e5]" />In the future</span>
-          </div>
-          <div className="grid gap-3" style={{ gridTemplateColumns: "76px 1fr" }}>
-            <span />
-            <Curve lines={[{ stages: today, colour: "#6b6b70", name: "Today" }, { stages: future, colour: "#4f46e5", name: "In the future" }]} />
-          </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--wait)]/40 bg-[var(--wait-soft)] p-4 text-[15px] text-[var(--wait-ink)]" role="status">
+          <p className="max-w-xl">This journey is too short to be useful. It was made before I was asked for a full one (5 to 7 stages).</p>
+          {onMakeFuller && <button onClick={onMakeFuller} className="btn btn-primary">Make the journeys fuller</button>}
         </div>
       )}
-      {today.length > 0 && <JourneyGrid title="Today" stages={today} colour="#6b6b70" />}
-      {future.length > 0 && <JourneyGrid title="In the future" stages={future} colour="#4f46e5" future />}
-      {guessed && <p className="note">Some feeling scores are my rough reading of the feeling words, because none were given.</p>}
+      {today.length > 0 && <JourneyBlock title="Today" subtitle="How the person gets this done now" stages={today} colour="#6b6b70" />}
+      {today.length > 0 && today.length === future.length && <Compare today={today} future={future} />}
+      {future.length > 0 && <JourneyBlock title="In the future" subtitle="The same stages with the new product" stages={future} colour="#4f46e5" future />}
+      {guessed && <p className="note">Some faces are my rough reading of the feeling words, because no score was given.</p>}
     </div>
   );
 }

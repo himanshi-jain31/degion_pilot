@@ -23,7 +23,7 @@ export function DirectionCard({ d, recommended }: { d: IdeateOutput["directions"
 }
 
 // The Work tab for Phase 3
-export function IdeateWork({ out }: { out: IdeateOutput }) {
+export function IdeateWork({ out, onMakeJourneysFuller }: { out: IdeateOutput; onMakeJourneysFuller?: () => void }) {
   return (
     <div>
       <Section title="Product structure">
@@ -40,7 +40,7 @@ export function IdeateWork({ out }: { out: IdeateOutput }) {
 
       {(out.journeys.today.length > 0 || out.journeys.future.length > 0) && (
         <Section title="User journeys">
-          <JourneyMap journeys={out.journeys} />
+          <JourneyMap journeys={out.journeys} onMakeFuller={onMakeJourneysFuller} />
         </Section>
       )}
 
