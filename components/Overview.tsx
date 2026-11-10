@@ -208,25 +208,27 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
             const prevOk = ph.n === 1 || project.phases[PHASES[ph.n - 2].name] === "Approved";
             return (
               <li key={ph.n} className="flex">
-                <button
-                  onClick={() => onOpenPhase(ph.n)}
-                  className="card flex w-full flex-col items-stretch justify-start gap-0 !p-5 text-left transition-shadow duration-150 hover:shadow-md"
-                >
-                  <div className="flex items-start gap-3">
-                    <div aria-hidden="true" className="step-badge !h-8 !w-8">{ph.n}</div>
-                    <div className="min-w-0 flex-1 pt-0.5 text-[16px] font-medium leading-snug">{ph.name}</div>
-                    <div className={`${STATUS_PILL[s]} shrink-0 whitespace-nowrap !text-[13px]`}>{s}</div>
+                <article className="card relative flex w-full flex-col !p-5 transition-shadow duration-150 focus-within:shadow-md hover:shadow-md">
+                  <div className="flex items-center justify-between gap-3">
+                    <span aria-hidden="true" className="step-badge !h-8 !w-8">{ph.n}</span>
+                    <span className={`${STATUS_PILL[s]} !text-[13px]`}>{s}</span>
                   </div>
-                  <p className="mt-3 text-[15px] leading-snug">{info.goal}</p>
-                  <div className="mb-4 mt-4 flex flex-wrap gap-1.5" aria-label="You get">
+                  <h3 className="mt-4 text-[18px] font-medium leading-snug">
+                    <button onClick={() => onOpenPhase(ph.n)} className="text-left after:absolute after:inset-0 after:content-['']">
+                      {ph.name}
+                    </button>
+                  </h3>
+                  <p className="mt-1 text-[15px] leading-relaxed text-muted">{info.goal}</p>
+                  <p className="label-small mt-4">You get</p>
+                  <ul className="mb-4 mt-2 flex flex-wrap gap-2">
                     {info.makes.map((m) => (
-                      <span key={m} className="rounded-full bg-[#f4f4f0] px-2.5 py-1 text-[13px] leading-none text-muted">{m}</span>
+                      <li key={m} className="rounded-full bg-[#f4f4f0] px-3 py-1.5 text-[13px] leading-snug text-ink">{m}</li>
                     ))}
-                  </div>
-                  <p className="note mt-auto border-t border-line pt-3">
+                  </ul>
+                  <p className="mt-auto border-t border-line pt-3 text-[14px] leading-snug text-muted">
                     {s === "Approved" ? "✓ You said Go ahead." : made ? "Made. Waiting for your Go ahead." : prevOk ? "Waiting to start." : `Opens after you approve ${PHASES[ph.n - 2].name}.`}
                   </p>
-                </button>
+                </article>
               </li>
             );
           })}
