@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Finding, ResearchOutput } from "@/lib/storage";
+import { ProfileGrid } from "@/components/ProfileCard";
 import { List, Pill, Section } from "@/components/UnderstandView";
 
 const isWebLink = (u: string) => /^https?:\/\//i.test(u);
@@ -123,26 +124,7 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
 
       {out.updated_user_profiles.length > 0 && (
         <Section title="User profiles, updated with what I found">
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {out.updated_user_profiles.map((u, i) => (
-              <div key={i} className="card !p-5">
-                <div className="flex items-center gap-3">
-                  <span aria-hidden="true" className="flex h-11 w-11 items-center justify-center rounded-full bg-accent-soft text-lg font-medium text-[var(--accent-ink)]">{u.name.trim().charAt(0).toUpperCase()}</span>
-                  <p className="font-medium">{u.name}<Pill label={u.label} /></p>
-                </div>
-                <p className="mt-3 text-[15px]"><span className="label-small block">Goal</span>{u.goal}</p>
-                <p className="mt-2 text-[15px]"><span className="label-small block">Situation</span>{u.situation}</p>
-                {u.frustrations.length > 0 && (
-                  <div className="mt-2">
-                    <span className="label-small block">Frustrations</span>
-                    <ul className="mt-1 space-y-1 text-[15px]">
-                      {u.frustrations.map((x, j) => <li key={j} className="rounded-lg bg-[var(--bad-soft)] px-2 py-1 text-[var(--bad-ink)]">{x}</li>)}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+          <ProfileGrid profiles={out.updated_user_profiles} />
         </Section>
       )}
 

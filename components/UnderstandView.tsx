@@ -1,3 +1,4 @@
+import { ProfileGrid } from "@/components/ProfileCard";
 import type { PhaseOutput, UnderstandOutput } from "@/lib/storage";
 
 export function Pill({ label }: { label: string }) {
@@ -92,28 +93,7 @@ export function WorkView({ out }: { out: UnderstandOutput }) {
       </Section>
 
       <Section title="User profiles (first draft)">
-        <div className="grid gap-3 sm:grid-cols-2">
-          {out.user_profiles.map((u, i) => (
-            <div key={i} className="rounded-lg border border-neutral-200 p-3">
-              <p className="font-medium">
-                {u.name}
-                <Pill label={u.label} />
-              </p>
-              <p className="mt-1 text-sm">
-                <strong>Goal:</strong> {u.goal}
-              </p>
-              <p className="mt-1 text-sm">
-                <strong>Situation:</strong> {u.situation}
-              </p>
-              {u.frustrations.length > 0 && (
-                <div className="mt-1 text-sm">
-                  <strong>Frustrations:</strong>
-                  <List items={u.frustrations} />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+        <ProfileGrid profiles={out.user_profiles} />
       </Section>
 
       <Section title="Requirements">
