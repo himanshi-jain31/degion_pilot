@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AppShell, Icon } from "@/components/AppShell";
+import { Icon as LineIcon } from "@/components/Icons";
 import { Kbd, Loading, Notice, primaryClass, secondaryClass, useDraft, useKey } from "@/components/ui";
 import { PHASES } from "@/lib/phases";
 import { useName } from "@/lib/name";
@@ -217,8 +218,18 @@ export default function Home() {
           <h1 className="font-display text-[44px] font-semibold leading-tight">
             Hello,{" "}
             <span className="text-accent" suppressHydrationWarning>
-              {nameLoaded && name.trim() ? name.trim() : "there"}
+              {nameLoaded && name.trim() ? name.trim() : "designer"}
             </span>
+            {nameLoaded && !name.trim() && (
+              <Link
+                href="/settings#name"
+                aria-label="Add your name"
+                title="Add your name"
+                className="ml-3 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--line)] bg-white/80 align-middle text-muted transition-colors duration-150 hover:border-[#cdd3e0] hover:text-ink"
+              >
+                <LineIcon name="edit" size={17} />
+              </Link>
+            )}
           </h1>
           <p className="text-soft mt-2 text-xl">What would you like to design today?</p>
 
