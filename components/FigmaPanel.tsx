@@ -59,7 +59,7 @@ export function FigmaPanel({ projectId, files, onChanged }: { projectId: string;
       </p>
 
       {tokenSet === false && (
-        <section className="mt-5 rounded-lg border border-amber-300 bg-amber-50 p-4">
+        <section className="mt-5 rounded-lg border border-line bg-amber-50 p-4">
           <h3 className="font-medium">First, make a Figma access key (once, about 3 minutes)</h3>
           <p className="mt-1 text-sm">An access key lets DesignPilot read your Figma files. Figma calls it a &quot;token&quot;, so you will see that word in Figma. It stays on your laptop.</p>
           <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm">
@@ -85,11 +85,11 @@ export function FigmaPanel({ projectId, files, onChanged }: { projectId: string;
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://www.figma.com/design/..."
-          className="mt-2 w-full rounded-lg border border-neutral-500 p-3 focus:border-black focus:outline-none"
+          className="mt-2 w-full rounded-lg border border-[var(--control-line)] p-3 focus:border-black focus:outline-none"
         />
         <p className="mt-1 text-xs text-neutral-600">In Figma, click Share, then Copy link. A link to one frame works too: I will read only that part.</p>
         {error && <div className="mt-3"><Notice tone="error">{error}</Notice></div>}
-        {msg && <p role="status" className="mt-3 rounded-lg border border-green-300 bg-green-50 p-3">{msg} Now tell me what it is, below.</p>}
+        {msg && <p role="status" className="mt-3 rounded-lg border border-line bg-green-50 p-3">{msg} Now tell me what it is, below.</p>}
       </section>
 
       {files.length === 0 && (
@@ -103,7 +103,7 @@ export function FigmaPanel({ projectId, files, onChanged }: { projectId: string;
           <h3 className="text-lg font-medium">Figma files in this project</h3>
           <ul className="mt-3 space-y-4">
             {files.map((f) => (
-              <li key={f.id} className="rounded-lg border border-neutral-200 p-4">
+              <li key={f.id} className="rounded-lg border border-line p-4">
                 <p className="font-medium">
                   {f.name}
                 </p>
@@ -113,7 +113,7 @@ export function FigmaPanel({ projectId, files, onChanged }: { projectId: string;
                 {f.summary.colours.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {f.summary.colours.slice(0, 24).map((c) => (
-                      <span key={c.hex} title={`${c.name ?? "No name"} ${c.hex}`} role="img" aria-label={`${c.name ?? "Colour"} ${c.hex}`} className="inline-block h-6 w-6 rounded border border-neutral-500" style={{ background: c.hex }} />
+                      <span key={c.hex} title={`${c.name ?? "No name"} ${c.hex}`} role="img" aria-label={`${c.name ?? "Colour"} ${c.hex}`} className="inline-block h-6 w-6 rounded border border-[var(--control-line)]" style={{ background: c.hex }} />
                     ))}
                   </div>
                 )}

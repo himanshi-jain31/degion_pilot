@@ -19,7 +19,7 @@ function EffortDots({ effort }: { effort: string }) {
 // One direction as a card. Every card in a row has the same height, with the choice at the bottom.
 export function DirectionCard({ d, recommended, selected, pick }: { d: IdeateOutput["directions"][number]; recommended?: boolean; selected?: boolean; pick?: boolean }) {
   return (
-    <div className={`flex min-h-full w-full flex-1 flex-col rounded-2xl border bg-card p-5 transition-shadow ${selected ? "border-accent shadow-[0_0_0_2px_var(--accent)]" : "border-line"} ${recommended && !selected ? "border-[#c9ceff]" : ""}`}>
+    <div className={`flex min-h-full w-full flex-1 flex-col rounded-2xl border bg-card p-5 transition-shadow ${selected ? "border-accent shadow-[0_0_0_2px_var(--accent)]" : "border-line"} ${recommended && !selected ? "border-[var(--line)]" : ""}`}>
       <header className="flex items-start gap-3">
         <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-[18px] font-medium text-white">{d.id}</span>
         <h4 className="min-w-0 flex-1 pt-1.5 text-[18px] font-medium leading-snug">{d.name}</h4>

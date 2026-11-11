@@ -8,7 +8,7 @@ import { ReactNode, useCallback, useEffect, useState } from "react";
 // The one place for the main action: bottom right, on every screen. Quieter choices sit to its left.
 export function ActionBar({ children }: { children: ReactNode }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#e8e8f0] bg-white/85 px-4 py-4 backdrop-blur max-sm:bottom-[62px] sm:left-[72px] lg:px-6">
+    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--line)] bg-white/85 px-4 py-4 backdrop-blur max-sm:bottom-[62px] sm:left-[72px] lg:px-6">
       <div className="mx-auto flex max-w-[2200px] flex-wrap items-center justify-end gap-3">{children}</div>
     </div>
   );

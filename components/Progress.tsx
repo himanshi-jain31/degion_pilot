@@ -39,7 +39,7 @@ export function Progress({ v, phase }: { v: PhaseVersion; phase: number }) {
   const remaining = percent >= 12 ? (elapsed * (100 - percent)) / percent : Math.max(15, (TYPICAL_SECONDS[phase] ?? 90) - elapsed);
 
   return (
-    <section className="rounded-lg border border-blue-200 bg-blue-50 p-5" role="status" aria-live="polite">
+    <section className="rounded-lg border border-line bg-blue-50 p-5" role="status" aria-live="polite">
       <p className="text-xl font-semibold">Working on it...{v.version > 1 && " (using your feedback)"}</p>
       <p className="mt-1 text-lg">{timeLeft(remaining)}</p>
       <div role="progressbar" aria-label="Progress (an estimate)" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.max(percent, 3)} className="mt-3 h-2 overflow-hidden rounded-full bg-blue-100">

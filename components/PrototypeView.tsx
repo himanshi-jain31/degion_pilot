@@ -38,7 +38,7 @@ export function PrototypeWork({ out, projectId, versionId }: { out: DesignOutput
   return (
     <div>
       {!out.style_given && (
-        <p className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm">
+        <p className="mt-4 rounded-lg border border-line bg-amber-50 p-3 text-sm">
           No design style was given, so this is a clean neutral look. Not matched to a design system.
         </p>
       )}
@@ -65,10 +65,10 @@ export function FinalResult({ out, projectId, versionId, testingDone, onNext }: 
   void versionId;
   return (
     <div>
-      <p className="mt-2 rounded-lg border border-green-300 bg-green-50 p-3">
+      <p className="mt-2 rounded-lg border border-line bg-green-50 p-3">
         This is your final design. It works on a phone and a laptop. It is a prototype, not the finished product.
       </p>
-      <div className="mt-3 rounded-lg border border-neutral-200 p-3 text-sm">
+      <div className="mt-3 rounded-lg border border-line p-3 text-sm">
         {testingDone ? (
           <p>All six steps are done.</p>
         ) : (

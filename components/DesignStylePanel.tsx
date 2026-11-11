@@ -95,7 +95,7 @@ export function DesignStylePanel({ projectId, style, onSaved }: { projectId: str
     }
   }
 
-  const field = "mt-1 rounded-lg border border-neutral-500 p-2";
+  const field = "mt-1 rounded-lg border border-[var(--control-line)] p-2";
   return (
     <div>
       <p className="mt-2 text-neutral-700">
@@ -103,7 +103,7 @@ export function DesignStylePanel({ projectId, style, onSaved }: { projectId: str
         You can change this any time before the Visual design step starts.
       </p>
 
-      <fieldset className="mt-5 rounded-lg border border-neutral-200 p-4">
+      <fieldset className="mt-5 rounded-lg border border-line p-4">
         <legend className="px-1 font-medium">Colours</legend>
         <label className="flex items-center gap-2">
           <input type="checkbox" checked={useColours} onChange={(e) => setUseColours(e.target.checked)} /> Use my colours
@@ -123,7 +123,7 @@ export function DesignStylePanel({ projectId, style, onSaved }: { projectId: str
         )}
       </fieldset>
 
-      <fieldset className="mt-4 rounded-lg border border-neutral-200 p-4">
+      <fieldset className="mt-4 rounded-lg border border-line p-4">
         <legend className="px-1 font-medium">Fonts</legend>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="text-sm">Headings
@@ -143,7 +143,7 @@ export function DesignStylePanel({ projectId, style, onSaved }: { projectId: str
         <p className="mt-1 text-xs text-neutral-600">The prototype can only show a font that is already on the viewer&apos;s device. If it is missing, the style above is used instead.</p>
       </fieldset>
 
-      <fieldset className="mt-4 rounded-lg border border-neutral-200 p-4">
+      <fieldset className="mt-4 rounded-lg border border-line p-4">
         <legend className="px-1 font-medium">Corners</legend>
         {([["sharp", "Sharp"], ["slight", "Slightly round"], ["round", "Very round"]] as const).map(([k, l]) => (
           <label key={k} className="mr-5 inline-flex items-center gap-2">
@@ -152,7 +152,7 @@ export function DesignStylePanel({ projectId, style, onSaved }: { projectId: str
         ))}
       </fieldset>
 
-      <fieldset className="mt-4 rounded-lg border border-neutral-200 p-4">
+      <fieldset className="mt-4 rounded-lg border border-line p-4">
         <legend className="px-1 font-medium">Brand guide or screenshots</legend>
         <input type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.webp" onChange={(e) => { void uploadFiles(Array.from(e.target.files ?? [])); e.target.value = ""; }} className="text-sm" />
         {style && style.files.length > 0 && (

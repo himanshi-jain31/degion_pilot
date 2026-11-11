@@ -113,7 +113,7 @@ function QuickQuestions() {
       {!loading && quick && current && (
         <section className="mt-6" aria-live="polite">
           {step === 0 && quick.request_summary && (
-            <p className="mb-6 rounded-2xl border border-[#d9ddff] bg-[var(--accent-soft)] p-4 text-[var(--accent-ink)]"><span className="font-medium">Here is what I understood:</span> {quick.request_summary}</p>
+            <p className="mb-6 rounded-2xl border border-[var(--line)] bg-[var(--accent-soft)] p-4 text-[var(--accent-ink)]"><span className="font-medium">Here is what I understood:</span> {quick.request_summary}</p>
           )}
           <div className="shell-card p-6 sm:p-8">
           <div className="flex items-center gap-3">

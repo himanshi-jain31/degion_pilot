@@ -92,7 +92,7 @@ export function CheckIn(props: {
 
   if (version.approved) {
     return (
-      <p className="card flex items-center gap-3" style={{ background: "var(--ok-soft)", borderColor: "#c9ecd6", color: "var(--ok-ink)" }}>
+      <p className="card flex items-center gap-3" style={{ background: "var(--ok-soft)", borderColor: "var(--line)", color: "var(--ok-ink)" }}>
         <span aria-hidden="true">✓</span>
         <span>You said Go ahead.{version.chosenDirection && ` You picked direction ${version.chosenDirection}.`} This step is approved.</span>
       </p>
@@ -106,7 +106,7 @@ export function CheckIn(props: {
   return (
     <div className="fade-in space-y-6">
       {version.version > 1 && changed && changed.length > 0 && (
-        <section className="card" style={{ background: "var(--accent-soft)", borderColor: "#dfe2ff" }}>
+        <section className="card" style={{ background: "var(--accent-soft)", borderColor: "var(--line)" }}>
           <h3 className="font-medium" style={{ color: "var(--accent-ink)" }}>What changed</h3>
           <ul className="mt-2 list-disc space-y-1 pl-5" style={{ color: "var(--accent-ink)" }}>
             {changed.map((t, i) => (
@@ -314,7 +314,7 @@ function WaitingForNotes(props: {
   }
 
   return (
-    <section className="rounded-lg border border-amber-300 bg-amber-50 p-5 pb-6">
+    <section className="rounded-lg border border-line bg-amber-50 p-5 pb-6">
       <h2 className="text-xl font-semibold">I am waiting for you</h2>
       <p className="mt-2 text-lg">
         Go and talk to real users. The interview questions are under Work. When you are done, add your notes here: text, Word, Excel or PDF. They are saved as soon as you choose them.

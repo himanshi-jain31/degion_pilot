@@ -9,7 +9,7 @@ const isWebLink = (u: string) => /^https?:\/\//i.test(u);
 
 function FindingCard({ f, n }: { f: Finding; n: number }) {
   return (
-    <li id={`finding-${n}`} className="scroll-mt-24 rounded-lg border border-neutral-200 p-3 transition-shadow target:ring-2 target:ring-[var(--accent)]">
+    <li id={`finding-${n}`} className="scroll-mt-24 rounded-lg border border-line p-3 transition-shadow target:ring-2 target:ring-[var(--accent)]">
       <p className="text-xs uppercase tracking-wide text-neutral-600">
         Finding {n} · {f.type}
       </p>

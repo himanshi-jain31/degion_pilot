@@ -107,7 +107,7 @@ export function UnderstoodCanvas({ requirement, files, shortVersion, u, hideNote
                   const [bg, fg] = avatarTone(x.name);
                   const open = person === i;
                   return (
-                    <li key={i} className={`rounded-2xl border transition-colors ${open ? "border-[#c8e3f8] bg-[#f4faff]" : "border-line hover:border-[#c8e3f8]"}`}>
+                    <li key={i} className={`rounded-2xl border transition-colors ${open ? "border-[#c7cbf5] bg-[#f7f8ff]" : "border-line hover:border-[#cdd3e0]"}`}>
                       <button onClick={() => setPerson(open ? -1 : i)} aria-expanded={open} className="flex w-full items-center gap-3 p-3 text-left">
                         <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[15px] font-semibold" style={{ background: bg, color: fg }}>{x.name.trim().charAt(0).toUpperCase()}</span>
                         <span className="min-w-0 flex-1 font-medium leading-snug">{x.name}<Pill label={x.label} /></span>
@@ -129,7 +129,7 @@ export function UnderstoodCanvas({ requirement, files, shortVersion, u, hideNote
                   const s = parseStory(r.story);
                   const [bg, fg] = avatarTone(s?.who ?? r.id);
                   return (
-                    <li key={r.id} className="rounded-2xl border border-[#c7efd6] p-4 transition hover:shadow-md">
+                    <li key={r.id} className="rounded-2xl border border-[var(--line)] p-4 transition hover:shadow-md">
                       <div className="flex items-start gap-3">
                         <span className="rounded-lg px-2 py-1 text-[13px] font-semibold" style={{ background: TONE.green.bg, color: TONE.green.fg }}>{r.id}</span>
                         <div className="min-w-0 flex-1">

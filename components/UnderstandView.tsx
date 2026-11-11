@@ -12,12 +12,12 @@ export function Pill({ label }: { label: string }) {
 // Soft colour families for section icons and panels
 export type Tone = "indigo" | "green" | "amber" | "rose" | "sky" | "slate";
 export const TONE: Record<Tone, { bg: string; fg: string; edge: string }> = {
-  indigo: { bg: "#eef0ff", fg: "#4338ca", edge: "#d9ddff" },
-  green: { bg: "#ecfdf3", fg: "#166534", edge: "#c7efd6" },
-  amber: { bg: "#fff7e6", fg: "#92400e", edge: "#f5dca8" },
-  rose: { bg: "#fef2f2", fg: "#b91c1c", edge: "#f6cccc" },
-  sky: { bg: "#ecf6ff", fg: "#075985", edge: "#c8e3f8" },
-  slate: { bg: "#f3f5f9", fg: "#3f3f46", edge: "#e5e9f1" },
+  indigo: { bg: "#eef0ff", fg: "#4338ca", edge: "var(--line)" },
+  green: { bg: "#ecfdf3", fg: "#166534", edge: "var(--line)" },
+  amber: { bg: "#fff7e6", fg: "#92400e", edge: "var(--line)" },
+  rose: { bg: "#fef2f2", fg: "#b91c1c", edge: "var(--line)" },
+  sky: { bg: "#ecf6ff", fg: "#075985", edge: "var(--line)" },
+  slate: { bg: "#f3f5f9", fg: "#3f3f46", edge: "var(--line)" },
 };
 
 export function Section({ title, children, icon, tone = "indigo", hint }: { title: string; children: React.ReactNode; icon?: IconName; tone?: Tone; hint?: string }) {

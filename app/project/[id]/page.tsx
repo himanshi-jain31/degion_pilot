@@ -354,10 +354,10 @@ function ProjectPage() {
                     )}
 
                     {sel === 6 && latest?.approved && (
-                      <p className="rounded-lg border border-green-300 bg-green-50 p-3">All six steps are done. Your final design is on the Final result page.</p>
+                      <p className="rounded-lg border border-line bg-green-50 p-3">All six steps are done. Your final design is on the Final result page.</p>
                     )}
                     {project.fixLoop && (sel === 6 || (sel === 4 && project.fixLoop.target === "wireframes" && !project.fixLoop.needsDesign) || sel === 5) && (
-                      <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm">
+                      <p className="rounded-lg border border-line bg-blue-50 p-3 text-sm">
                         {sel === 6
                           ? `Fixes from testing are being made in ${fixWhere}. When you say Go ahead there, you come back here for another round.`
                           : "These changes are fixes from testing. When you say Go ahead, " + (sel === 4 ? "the design will be redone next, then you come back to Testing." : "you come back to Testing.")}
@@ -390,7 +390,7 @@ function ProjectPage() {
                     {shown?.output && latest?.status !== "working" && (
                       <>
                         {shown.version > 1 && shown.feedback && (
-                          <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
+                          <p className="rounded-lg border border-line bg-blue-50 p-3 text-sm text-blue-900">
                             <strong>Version {shown.version}: updated using your feedback.</strong> You asked: &quot;{shown.feedback.length > 200 ? shown.feedback.slice(0, 200) + "…" : shown.feedback}&quot;
                           </p>
                         )}
@@ -423,8 +423,8 @@ function ProjectPage() {
                           )}
                         </section>
 
-                        <section id="checkin" ref={setCheckinEl} aria-label="Check-in" className="scroll-mt-6 rounded-2xl border border-[#dfe2ff] bg-[#fbfbff] p-5 shadow-[0_1px_2px_rgba(40,40,80,0.04),0_8px_24px_rgba(79,70,229,0.07)] sm:p-8">
-                          <h3 className="mb-6 flex items-center gap-3 border-b border-[#e6e8ff] pb-5"><span className="step-badge">3</span><span className="section-title">Your decision: Check-in</span></h3>
+                        <section id="checkin" ref={setCheckinEl} aria-label="Check-in" className="scroll-mt-6 rounded-2xl border border-[var(--line)] bg-[#fbfbff] p-5 shadow-[0_1px_2px_rgba(40,40,80,0.04),0_8px_24px_rgba(79,70,229,0.07)] sm:p-8">
+                          <h3 className="mb-6 flex items-center gap-3 border-b border-[var(--line)] pb-5"><span className="step-badge">3</span><span className="section-title">Your decision: Check-in</span></h3>
                           {sel === 6 && !(shown.output as TestingOutput).results_analysis ? (
                             <Notice>The check-in comes after the testing. Download the test kit above, run your sessions, then add your notes.</Notice>
                           ) : (
@@ -467,7 +467,7 @@ function ProjectPage() {
 
         {/* Things I guessed */}
         <aside aria-label="Things I guessed" className="lg:w-72 lg:shrink-0 xl:w-80">
-          <div className="rounded-2xl border bg-card p-4 sm:p-5" style={{ borderColor: "#f5dca8" }}>
+          <div className="rounded-2xl border bg-card p-4 sm:p-5" style={{ borderColor: "var(--line)" }}>
             <h2 className="flex items-center gap-2.5 whitespace-nowrap text-[17px] font-medium">
               <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--wait-soft)] text-[var(--wait-ink)]"><Icon name="help" size={18} /></span>
               Things I guessed

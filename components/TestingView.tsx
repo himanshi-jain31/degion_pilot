@@ -72,7 +72,7 @@ function NotesUpload(props: { projectId: string; notesCount: number; round: numb
   }
 
   return (
-    <section className="mt-6 rounded-lg border border-amber-300 bg-amber-50 p-4">
+    <section className="mt-6 rounded-lg border border-line bg-amber-50 p-4">
       <h3 className="font-medium">Round {props.round}: add your test notes</h3>
       <p className="mt-1 text-sm">
         Run your sessions with the test kit. Then add what you wrote down: text, Word, Excel or PDF. They are saved as soon as you choose them. I only use what is in your notes. I will not invent numbers or quotes.
@@ -107,7 +107,7 @@ export function TestingWork(props: {
           <Section title="What the test notes say" icon="message" tone="sky">
             <ul className="space-y-2">
               {r.task_results.map((t, i) => (
-                <li key={i} className="rounded-lg border border-neutral-200 p-3">
+                <li key={i} className="rounded-lg border border-line p-3">
                   <p className="font-medium">{t.task}</p>
                   <p className="text-sm"><strong>Succeeded:</strong> {t.succeeded}</p>
                   <p className="text-sm"><strong>Got stuck at:</strong> {t.stuck_at}</p>
@@ -124,7 +124,7 @@ export function TestingWork(props: {
               <SeverityBar items={r.issues} />
               <ol className="space-y-3">
                 {r.issues.map((i, n) => (
-                  <li key={n} className={`rounded-lg border border-l-4 border-neutral-200 p-3 ${SEV_BORDER[i.severity]}`}>
+                  <li key={n} className={`rounded-lg border border-l-4 border-line p-3 ${SEV_BORDER[i.severity]}`}>
                     <p>
                       <span className="mr-2 font-semibold">{n + 1}.</span>
                       <Sev s={i.severity} />
@@ -170,7 +170,7 @@ export function TestingWork(props: {
         <List items={out.test_plan.goals} />
         <ul className="mt-3 space-y-2">
           {out.test_plan.tasks.map((t, i) => (
-            <li key={i} className="rounded-lg border border-neutral-200 p-3">
+            <li key={i} className="rounded-lg border border-line p-3">
               <p className="font-medium">Task {i + 1}: {t.task}</p>
               <p className="text-sm"><strong>Success looks like:</strong> {t.success}</p>
               {t.tests.length > 0 && <p className="text-xs text-neutral-600">Tests: {t.tests.join(", ")}</p>}

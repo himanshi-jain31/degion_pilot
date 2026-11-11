@@ -19,7 +19,7 @@ const STATUS_PILL: Record<string, string> = { Confirmed: "pill-ok", Wrong: "pill
 export function GuessCard({ g }: { g: Guess }) {
   const { kind, main, check } = split(g.text);
   return (
-    <li className="rounded-2xl border border-[#f1e3c4] bg-[#fffaf0] p-4">
+    <li className="rounded-2xl border border-[var(--line)] bg-[#fffaf0] p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className={`pill ${LABEL_PILL[g.label] ?? "pill-wait"} !px-2.5 !py-0.5 !text-[12px]`}>{g.label}</span>
         {g.status && <span className={`pill ${STATUS_PILL[g.status] ?? "pill-idle"} !px-2.5 !py-0.5 !text-[12px]`}>{g.status}</span>}
@@ -33,12 +33,12 @@ export function GuessCard({ g }: { g: Guess }) {
         <p className="mt-3 text-[15px] leading-snug first-letter:uppercase">{main}</p>
       )}
       {check && (
-        <p className="mt-3 flex items-start gap-2 border-t border-[#f1e3c4] pt-3 text-[13px] leading-snug text-muted">
+        <p className="mt-3 flex items-start gap-2 border-t border-[var(--line)] pt-3 text-[13px] leading-snug text-muted">
           <Icon name="check" size={14} className="mt-0.5 text-[var(--ok)]" />
           <span><span className="font-medium text-ink">To check:</span> {check}</span>
         </p>
       )}
-      {g.evidence && <p className="mt-3 border-t border-[#f1e3c4] pt-3 text-[13px] leading-snug text-muted"><span className="font-medium text-ink">From your notes:</span> {g.evidence}</p>}
+      {g.evidence && <p className="mt-3 border-t border-[var(--line)] pt-3 text-[13px] leading-snug text-muted"><span className="font-medium text-ink">From your notes:</span> {g.evidence}</p>}
     </li>
   );
 }
