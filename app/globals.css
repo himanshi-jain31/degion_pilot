@@ -129,24 +129,15 @@ body {
   opacity: 0.45;
   cursor: not-allowed;
 }
-/* Main action: flat, crisp, one colour. No gradient, no glow. */
+/* Main action: flat deep navy, crisp, no gradient, no glow. Purple is kept for "selected" and highlights. */
 .btn-primary {
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 1px 2px rgba(15, 27, 45, 0.14);
-}
-.btn-primary:hover:not(:disabled) {
-  background: var(--accent-hover);
-  box-shadow: 0 1px 2px rgba(15, 27, 45, 0.16), 0 6px 14px -8px rgba(79, 70, 229, 0.55);
-}
-/* Dark main action, for the one highlighted card */
-.btn-dark {
   background: #0e1a2b;
   color: #fff;
   box-shadow: 0 1px 2px rgba(15, 27, 45, 0.25);
 }
-.btn-dark:hover:not(:disabled) {
+.btn-primary:hover:not(:disabled) {
   background: #1a2744;
+  box-shadow: 0 1px 2px rgba(15, 27, 45, 0.25), 0 6px 14px -8px rgba(15, 27, 45, 0.5);
 }
 /* Second action: white with a hairline edge */
 .btn-secondary {
@@ -372,4 +363,40 @@ a.button-link {
 .halo-pulse { animation: halo 2.4s ease-out infinite; }
 @media (prefers-reduced-motion: reduce) {
   .halo-pulse { animation: none; }
+}
+
+/* ---- The soft blue glass card: for the one card that matters most on a screen. No border. ---- */
+.glass-card {
+  position: relative;
+  overflow: hidden;
+  border: 0;
+  background: linear-gradient(135deg, #eef4ff 0%, #dbe8ff 45%, #c6dbfd 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --muted: #3f4b62; /* darker grey text, so it stays easy to read on the blue */
+}
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.55) 48%, transparent 58%),
+    linear-gradient(115deg, transparent 62%, rgba(255, 255, 255, 0.35) 66%, transparent 70%);
+}
+.glass-card .text-soft { color: #3f4b62; }
+/* The small white pill that floats at the top right of a glass card */
+.glass-badge {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  background: #fff;
+  padding: 8px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 6px 16px -6px rgba(15, 27, 45, 0.28);
 }

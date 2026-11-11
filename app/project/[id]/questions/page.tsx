@@ -115,7 +115,8 @@ function QuickQuestions() {
           {step === 0 && quick.request_summary && (
             <p className="mb-6 rounded-2xl border border-[var(--line)] bg-[var(--accent-soft)] p-4 text-[var(--accent-ink)]"><span className="font-medium">Here is what I understood:</span> {quick.request_summary}</p>
           )}
-          <div className="shell-card p-6 sm:p-8">
+          <div className="glass-card rounded-2xl p-6 sm:p-8">
+          <div className="relative z-10">
           <div className="flex items-center gap-3">
             <ol aria-hidden="true" className="flex flex-1 gap-1.5">
               {questions.map((q, i) => (
@@ -148,6 +149,7 @@ function QuickQuestions() {
               <span>You decide</span>
               <Kbd>D</Kbd>
             </button>
+          </div>
           </div>
           </div>
         </section>

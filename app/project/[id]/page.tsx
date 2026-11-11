@@ -31,6 +31,7 @@ type ProjectView = Omit<Project, "files" | "interviewNotes" | "testNotes"> & {
   files: { name: string; kind: string; note: string }[];
 };
 
+const STATUS_DOT: Record<string, string> = { Approved: "bg-[var(--ok)]", "Working on it": "bg-accent", "Ready for you": "bg-[var(--wait)]", "Changes asked": "bg-[var(--wait)]", "Not started": "bg-[#9aa3b2]" };
 const STATUS_COLOUR: Record<string, string> = {
   "Not started": "pill pill-idle",
   "Working on it": "pill pill-info",
@@ -309,17 +310,15 @@ function ProjectPage() {
           )}
           {view === "phase" && (
             <>
-              <div className="shell-card relative overflow-hidden p-6 sm:p-8">
-                <div className="relative">
+              <div className="glass-card rounded-2xl p-6 sm:p-8">
+                <span className="glass-badge"><span aria-hidden="true" className={`h-2 w-2 rounded-full ${STATUS_DOT[status] ?? "bg-[#9aa3b2]"}`} />{status}</span>
+                <div className="relative z-10">
                   <div className="flex items-start gap-4">
                     <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent text-white"><Icon name={PHASE_ICON[info.n]} size={24} /></span>
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                        <h2 className="font-display text-[32px] font-semibold leading-tight">{info.name}</h2>
-                        <span className={STATUS_COLOUR[status]}>{status}</span>
-                      </div>
+                    <div className="min-w-0 pr-28 sm:pr-40">
+                      <h2 className="font-display text-[32px] font-semibold leading-tight sm:text-[36px]">{info.name}</h2>
                       <p className="eyebrow mt-1.5">Step {info.n} of 6</p>
-                      <p className="mt-2 max-w-xl text-[17px] text-muted">{PHASE_INFO[info.n].goal}</p>
+                      <p className="text-soft mt-2 max-w-xl text-[17px]">{PHASE_INFO[info.n].goal}</p>
                     </div>
                   </div>
                   <ol className="mt-6 flex flex-wrap items-center gap-2 text-[14px]" aria-label="Where this step is">
@@ -329,8 +328,8 @@ function ProjectPage() {
                       ["Your decision", status === "Approved"],
                     ].map(([label, done], i) => (
                       <li key={String(label)} className="flex items-center gap-2">
-                        {i > 0 && <span aria-hidden="true" className={`h-px w-6 ${done ? "bg-[var(--ok)]" : "bg-[#dbe0ea]"}`} />}
-                        <span className={`flex items-center gap-1.5 rounded-full px-3 py-1 ${done ? "bg-[var(--ok-soft)] text-[var(--ok-ink)]" : "bg-[#f1f3f8] text-muted"}`}>
+                        {i > 0 && <span aria-hidden="true" className={`h-px w-6 ${done ? "bg-[var(--ok)]" : "bg-white/80"}`} />}
+                        <span className={`flex items-center gap-1.5 rounded-full px-3 py-1 ${done ? "bg-white text-[var(--ok-ink)]" : "bg-white/60 text-[#3f4b62]"}`}>
                           <span aria-hidden="true">{done ? "✓" : i + 1}</span>
                           {label}
                         </span>
@@ -421,8 +420,9 @@ function ProjectPage() {
                           )}
                         </section>
 
-                        <section id="checkin" ref={setCheckinEl} aria-label="Check-in" className="scroll-mt-6 rounded-2xl border border-[var(--line)] bg-[#fbfbff] p-5 shadow-[0_1px_2px_rgba(40,40,80,0.04),0_8px_24px_rgba(79,70,229,0.07)] sm:p-8">
-                          <h3 className="mb-6 flex items-center gap-3 border-b border-[var(--line)] pb-5"><span className="step-badge">3</span><span className="section-title">Your decision: Check-in</span></h3>
+                        <section id="checkin" ref={setCheckinEl} aria-label="Check-in" className="glass-card scroll-mt-6 rounded-2xl p-5 sm:p-8">
+                        <div className="relative z-10">
+                          <h3 className="mb-6 flex items-center gap-3 border-b border-white/70 pb-5"><span className="step-badge !bg-white">3</span><span className="section-title">Your decision: Check-in</span></h3>
                           {sel === 6 && !(shown.output as TestingOutput).results_analysis ? (
                             <Notice>The check-in comes after the testing. Download the test kit above, run your sessions, then add your notes.</Notice>
                           ) : (
@@ -446,6 +446,7 @@ function ProjectPage() {
                               onNotYet={(note) => post(`/api/projects/${id}/phases/${sel}/checkin`, { decision: "not_yet", note })}
                             />
                           )}
+                        </div>
                         </section>
                       </>
                     )}

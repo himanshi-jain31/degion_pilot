@@ -56,18 +56,12 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
   return (
     <div className="fade-in space-y-8">
       {/* The one thing to do next. This is the focal point of the page. */}
-      <section
-        aria-label="What to do next"
-        className="relative overflow-hidden rounded-2xl p-6 sm:p-8"
-        style={{ background: "linear-gradient(135deg, #eef4ff 0%, #dbe8ff 45%, #c6dbfd 100%)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.9)" }}
-      >
-        {/* soft diagonal light, like a sheen across glass */}
-        <span aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(115deg, transparent 38%, rgba(255,255,255,0.55) 48%, transparent 58%), linear-gradient(115deg, transparent 62%, rgba(255,255,255,0.35) 66%, transparent 70%)" }} />
-        <span className="absolute right-5 top-5 z-10 rounded-xl bg-white px-4 py-2 text-[15px] font-medium shadow-[0_6px_16px_-6px_rgba(15,27,45,0.28)]">Next step</span>
+      <section aria-label="What to do next" className="glass-card rounded-2xl p-6 sm:p-8">
+        <span className="glass-badge">Next step</span>
 
         <div className="relative z-10">
           <h2 className="font-display max-w-2xl pr-28 text-[30px] font-semibold leading-tight sm:text-[38px]">{lead}</h2>
-          {more && <p className="mt-2 max-w-xl text-[17px] leading-snug text-[#33405f]">{more}</p>}
+          {more && <p className="text-soft mt-2 max-w-xl text-[17px] leading-snug">{more}</p>}
 
           <p className="mt-8 flex items-baseline gap-2" aria-label={`${approved} of 6 steps approved`}>
             <span className="font-display text-[56px] font-semibold leading-none">{approved}</span>
@@ -81,7 +75,7 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
           </ol>
 
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-            <button onClick={() => onOpenPhase(next.phase)} className="btn btn-dark min-w-[240px]">
+            <button onClick={() => onOpenPhase(next.phase)} className="btn btn-primary min-w-[240px]">
               {next.button}
               <span aria-hidden="true">→</span>
             </button>
