@@ -122,7 +122,7 @@ function ProjectPage() {
 
   if (loadError)
     return (
-      <AppShell>
+      <AppShell light>
       <main id="main" tabIndex={-1} className="mx-auto max-w-xl px-5 pb-16 pt-20">
         <h1 className="mb-4 text-2xl font-semibold">{loadError.missing ? "I can't find this project" : "I couldn't open this project"}</h1>
         <Notice
@@ -142,7 +142,7 @@ function ProjectPage() {
     );
   if (!project)
     return (
-      <AppShell>
+      <AppShell light>
       <main id="main" tabIndex={-1} className="mx-auto max-w-xl px-5 pb-16 pt-20">
         <Loading onReload={refresh}>Working on it... opening your project.</Loading>
       </main>
@@ -213,7 +213,7 @@ function ProjectPage() {
   }
 
   return (
-    <AppShell>
+    <AppShell light>
     <div className="mx-auto w-full max-w-[2200px] px-4 pb-56 pt-8 sm:pb-40 lg:px-6">
       <header className="mb-6">
         <BackLink />

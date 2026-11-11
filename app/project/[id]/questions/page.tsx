@@ -92,7 +92,7 @@ function QuickQuestions() {
   });
 
   return (
-    <AppShell>
+    <AppShell light>
     <main id="main" tabIndex={-1} className="fade-in mx-auto w-full max-w-2xl px-6 pb-56 pt-16 sm:pb-40 sm:pt-20">
       <BackLink />
 

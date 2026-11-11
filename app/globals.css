@@ -232,6 +232,12 @@ body {
     linear-gradient(180deg, #ffffff 0%, #fbfbfd 100%);
   background-attachment: fixed;
 }
+.shell-bg-light {
+  background:
+    radial-gradient(900px 480px at 100% 0%, rgba(196, 203, 255, 0.14), transparent 65%),
+    linear-gradient(180deg, #fdfdff 0%, #ffffff 100%);
+  background-attachment: fixed;
+}
 .shell-card {
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid var(--line);

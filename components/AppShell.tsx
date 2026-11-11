@@ -89,10 +89,10 @@ function Sidebar() {
   );
 }
 
-// The calm page frame: soft gradient background and the icon bar
-export function AppShell({ children }: { children: ReactNode }) {
+// The calm page frame: soft gradient background and the icon bar. "light" is a nearly white background, for pages with blue glass cards.
+export function AppShell({ children, light }: { children: ReactNode; light?: boolean }) {
   return (
-    <div className="shell-bg min-h-screen sm:pl-[72px]">
+    <div className={`${light ? "shell-bg-light" : "shell-bg"} min-h-screen sm:pl-[72px]`}>
       <Sidebar />
       {children}
     </div>
