@@ -44,6 +44,9 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
   const understood = [...project.versions].reverse().find((v) => v.phase === 1 && v.status === "done" && v.output);
   const u = understood?.output as UnderstandOutput | undefined;
   const next = nextStep(project);
+  // the first sentence is the headline, the rest sits under it in quieter text
+  const [lead, ...rest] = next.text.split(/(?<=[.!?])\s+/);
+  const more = rest.join(" ");
 
   const told = (project.quickQuestions?.questions ?? [])
     .filter((q) => project.answers[q.id] && project.answers[q.id] !== "You decide")
@@ -55,13 +58,14 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
       {/* The one thing to do next. This is the focal point of the page. */}
       <section
         aria-label="What to do next"
-        className="relative overflow-hidden rounded-2xl p-6 text-white sm:p-8"
-        style={{ background: "radial-gradient(640px 260px at 92% -30%, rgba(129,120,255,0.42), transparent 70%), linear-gradient(135deg, #0e1a2b 0%, #1a2744 100%)", boxShadow: "0 18px 40px -18px rgba(14,26,43,0.55)" }}
+        className="relative overflow-hidden rounded-2xl border border-[var(--line)] p-6 sm:p-8"
+        style={{ background: "radial-gradient(520px 220px at 100% 0%, rgba(176,190,255,0.32), transparent 70%), radial-gradient(420px 200px at 0% 115%, rgba(186,222,255,0.30), transparent 70%), #ffffff", boxShadow: "0 1px 2px rgba(15,27,45,0.04), 0 14px 36px -14px rgba(40,70,140,0.16)" }}
       >
-        <p className="eyebrow !text-white/60">Next step</p>
-        <h2 className="font-display mt-3 max-w-3xl text-[26px] font-semibold leading-tight sm:text-[32px]">{next.text}</h2>
-        <div className="mt-7 flex flex-wrap items-center gap-x-8 gap-y-5">
-          <button onClick={() => onOpenPhase(next.phase)} className="btn btn-on-dark">
+        <p className="eyebrow">Next step</p>
+        <h2 className="font-display mt-3 max-w-3xl text-[26px] font-semibold leading-snug sm:text-[30px]">{lead}</h2>
+        {more && <p className="text-soft mt-2 max-w-2xl text-[17px] leading-snug">{more}</p>}
+        <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-5">
+          <button onClick={() => onOpenPhase(next.phase)} className="btn btn-primary">
             {next.button}
             <span aria-hidden="true">→</span>
           </button>
@@ -69,13 +73,13 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
             <ol className="flex flex-1 gap-1.5" role="progressbar" aria-valuemin={0} aria-valuemax={6} aria-valuenow={approved} aria-label="Steps approved">
               {PHASES.map((ph) => {
                 const st = project.phases[ph.name] ?? "Not started";
-                return <li key={ph.n} className={`h-1.5 flex-1 rounded-full ${st === "Approved" ? "bg-[#4ade80]" : ph.n === next.phase ? "bg-white/70" : "bg-white/15"}`} />;
+                return <li key={ph.n} className={`h-1.5 flex-1 rounded-full ${st === "Approved" ? "bg-[var(--ok)]" : ph.n === next.phase ? "bg-[var(--accent)]/45" : "bg-[#e6e9f0]"}`} />;
               })}
             </ol>
-            <span className="whitespace-nowrap text-[14px] text-white/70">{approved} of 6 approved</span>
+            <span className="note whitespace-nowrap">{approved} of 6 approved</span>
           </div>
         </div>
-        <p className="mt-5 text-[13px] text-white/45">{state} · last changed {new Date(newest(project)).toLocaleString()}</p>
+        <p className="note mt-5 border-t border-[var(--line)] pt-4">{state} · last changed {new Date(newest(project)).toLocaleString()}</p>
       </section>
 
       {/* B. What I understood */}

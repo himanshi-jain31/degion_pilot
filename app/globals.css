@@ -61,7 +61,8 @@ body {
   font-size: 34px;
   line-height: 1.15;
   font-weight: 600;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
+  word-spacing: 0.03em;
 }
 .section-title {
   font-family: var(--font-display), var(--font-inter), system-ui, sans-serif;
@@ -72,7 +73,8 @@ body {
 }
 .font-display {
   font-family: var(--font-display), var(--font-inter), system-ui, sans-serif;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
+  word-spacing: 0.03em;
 }
 /* A small label above a title, like NEW ADD SET */
 .eyebrow {
@@ -136,15 +138,6 @@ body {
 .btn-primary:hover:not(:disabled) {
   background: var(--accent-hover);
   box-shadow: 0 1px 2px rgba(15, 27, 45, 0.16), 0 6px 14px -8px rgba(79, 70, 229, 0.55);
-}
-/* Main action on a dark card */
-.btn-on-dark {
-  background: #fff;
-  color: var(--ink);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-.btn-on-dark:hover:not(:disabled) {
-  background: #eef0ff;
 }
 /* Second action: white with a hairline edge */
 .btn-secondary {
