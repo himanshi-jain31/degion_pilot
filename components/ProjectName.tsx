@@ -111,14 +111,19 @@ export function DeleteProject({ projectId, title }: { projectId: string; title: 
 
   if (!asking)
     return (
-      <button onClick={() => { setAsking(true); setError(""); }} className="text-sm text-muted underline underline-offset-4 hover:text-ink" aria-label={`Delete ${capFirst(title)}`}>
+      <button
+        onClick={() => { setAsking(true); setError(""); }}
+        aria-label={`Delete ${capFirst(title)}`}
+        className="group inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-white px-3.5 py-2 text-[14px] text-muted shadow-[0_1px_2px_rgba(15,27,45,0.05)] transition-colors duration-150 hover:border-[#f0c4c4] hover:bg-[var(--bad-soft)] hover:text-[var(--bad-ink)]"
+      >
+        <Icon name="trash" size={16} />
         Delete this project
       </button>
     );
   return (
     <div className="flex flex-wrap items-center gap-3 text-[15px]" role="group" aria-label="Delete this project?">
       <span>Delete this project and its files for good?</span>
-      <button onClick={remove} className="btn !min-h-10 !px-4 text-white" style={{ background: "var(--bad-ink)" }}>Yes, delete</button>
+      <button onClick={remove} className="btn !min-h-10 !px-4 text-white" style={{ background: "var(--bad-ink)" }}><Icon name="trash" size={16} />Yes, delete</button>
       <button onClick={() => setAsking(false)} className={`${secondaryClass} !min-h-10 !px-4`}>Keep it <Kbd>Esc</Kbd></button>
       {error && <span role="alert" className="text-[var(--bad-ink)]">{error}</span>}
     </div>
