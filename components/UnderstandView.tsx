@@ -1,4 +1,5 @@
-import { ProfileGrid, tone as avatarTone } from "@/components/ProfileCard";
+import { ProfileGrid } from "@/components/ProfileCard";
+import { UnderstoodCanvas } from "@/components/UnderstoodCanvas";
 import { Icon, type IconName } from "@/components/Icons";
 import type { PhaseOutput, UnderstandOutput } from "@/lib/storage";
 
@@ -22,7 +23,7 @@ export const TONE: Record<Tone, { bg: string; fg: string; edge: string }> = {
 export function Section({ title, children, icon, tone = "indigo", hint }: { title: string; children: React.ReactNode; icon?: IconName; tone?: Tone; hint?: string }) {
   const t = TONE[tone];
   return (
-    <section className="mt-8 border-t border-line pt-8 first:mt-0 first:border-0 first:pt-0">
+    <section className="mt-4 rounded-3xl border bg-card p-5 first:mt-0 sm:p-6" style={{ borderColor: t.edge }}>
       <h3 className="flex items-center gap-3 text-[18px] font-medium">
         {icon ? (
           <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl" style={{ background: t.bg, color: t.fg }}><Icon name={icon} size={19} /></span>
@@ -83,26 +84,12 @@ export function PlanView({ out }: { out: PhaseOutput }) {
 }
 
 // The Work tab: the results, shown nicely
-export function WorkView({ out }: { out: UnderstandOutput }) {
+export function WorkView({ out, requirement = "", files = [], shortVersion }: { out: UnderstandOutput; requirement?: string; files?: { name: string }[]; shortVersion?: string }) {
   const card = "rounded-2xl border bg-card p-4 transition duration-150 hover:-translate-y-0.5 hover:shadow-md";
   return (
     <div>
-      <Section title="The brief" icon="file-text" tone="indigo">
-        <div className="rounded-2xl border p-5 sm:p-6" style={{ borderColor: TONE.indigo.edge, background: "linear-gradient(135deg, #eef0ff 0%, #ffffff 70%)" }}>
-          <p className="text-[22px] font-medium leading-snug tracking-tight">{out.brief.one_line}</p>
-          {out.brief.full && (
-            <details className="group mt-4">
-              <summary className="inline-flex cursor-pointer select-none list-none items-center gap-1.5 text-[15px] font-medium text-[var(--accent-ink)] [&::-webkit-details-marker]:hidden">
-                <span className="group-open:hidden">Read the full brief</span>
-                <span className="hidden group-open:inline">Hide the full brief</span>
-                <span aria-hidden="true" className="transition-transform group-open:rotate-180">⌄</span>
-              </summary>
-              <p className="mt-3 max-w-3xl whitespace-pre-line leading-relaxed">{out.brief.full}</p>
-            </details>
-          )}
-        </div>
-      </Section>
-
+      <UnderstoodCanvas requirement={requirement} files={files} shortVersion={shortVersion} u={out} hideNote />
+      <div className="mt-4">
       {out.another_view && (
         <Section title="Another view" icon="lightbulb" tone="amber">
           <div className="flex gap-3 rounded-2xl border p-4 sm:p-5" style={{ background: TONE.amber.bg, borderColor: TONE.amber.edge, color: TONE.amber.fg }}>
@@ -112,53 +99,8 @@ export function WorkView({ out }: { out: UnderstandOutput }) {
         </Section>
       )}
 
-      <Section title="Who will use this" icon="users" tone="sky">
-        <ul className="grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
-          {out.users.map((u, i) => {
-            const [bg, fg] = avatarTone(u.name);
-            return (
-              <li key={i} className={`${card} flex items-start gap-3`} style={{ borderColor: TONE.sky.edge }}>
-                <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[18px] font-semibold" style={{ background: bg, color: fg }}>{u.name.trim().charAt(0).toUpperCase()}</span>
-                <div className="min-w-0">
-                  <p className="flex flex-wrap items-center gap-x-1 font-medium leading-snug">{u.name}<Pill label={u.label} /></p>
-                  <p className="mt-1 text-[15px] leading-snug text-muted">{u.note}</p>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      </Section>
-
       <Section title="User profiles (first draft)" icon="target" tone="indigo">
         <ProfileGrid profiles={out.user_profiles} />
-      </Section>
-
-      <Section title="Requirements" icon="list-checks" tone="green" hint={`${out.requirements.length} things it must do`}>
-        <ul className="grid gap-3 xl:grid-cols-2">
-          {out.requirements.map((r) => (
-            <li key={r.id} className={card} style={{ borderColor: TONE.green.edge }}>
-              <div className="flex items-start gap-3">
-                <span className="rounded-lg px-2 py-1 text-[13px] font-semibold" style={{ background: TONE.green.bg, color: TONE.green.fg }}>{r.id}</span>
-                <p className="min-w-0 flex-1 text-[16px] leading-snug">{r.story}<Pill label={r.label} /></p>
-              </div>
-              {r.done_checks.length > 0 && (
-                <details className="group mt-3">
-                  <summary className="flex cursor-pointer select-none list-none items-center gap-2 text-[14px] font-medium [&::-webkit-details-marker]:hidden" style={{ color: TONE.green.fg }}>
-                    <span aria-hidden="true" className="transition-transform group-open:rotate-90">›</span>
-                    Done when ({r.done_checks.length})
-                  </summary>
-                  <ul className="mt-2 space-y-1.5">
-                    {r.done_checks.map((c, i) => (
-                      <li key={i} className="flex items-start gap-2 rounded-lg px-2 py-1.5 text-[14px] leading-snug" style={{ background: TONE.green.bg }}>
-                        <Icon name="check" size={15} className="mt-0.5" />{c}
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              )}
-            </li>
-          ))}
-        </ul>
       </Section>
 
       {out.edge_cases.length > 0 && (
@@ -186,18 +128,6 @@ export function WorkView({ out }: { out: UnderstandOutput }) {
         </Section>
       )}
 
-      {out.success_measures.length > 0 && (
-        <Section title="How we will know it worked" icon="check" tone="green">
-          <ul className="grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
-            {out.success_measures.map((m, i) => (
-              <li key={i} className="flex items-start gap-3 rounded-2xl border p-4 text-[15px] leading-snug transition hover:-translate-y-0.5 hover:shadow-md" style={{ background: TONE.green.bg, borderColor: TONE.green.edge, color: TONE.green.fg }}>
-                <span aria-hidden="true" className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white"><Icon name="check" size={14} /></span>{m}
-              </li>
-            ))}
-          </ul>
-        </Section>
-      )}
-
       {out.open_questions.length > 0 && (
         <Section title="Questions I could not answer" icon="message" tone="rose" hint="Tell me in the Check-in note">
           <ul className="grid gap-3 md:grid-cols-2">
@@ -209,6 +139,7 @@ export function WorkView({ out }: { out: UnderstandOutput }) {
           </ul>
         </Section>
       )}
+      </div>
     </div>
   );
 }

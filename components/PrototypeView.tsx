@@ -19,7 +19,7 @@ function Checks({ out }: { out: DesignOutput }) {
     ["How well it matches your style", c.style_match],
   ];
   return (
-    <Section title="Design checks">
+    <Section title="Design checks" icon="check" tone="green">
       <p className="text-sm text-neutral-600">
         These are my own checks, not a full audit. The numbers in the first box were worked out from your colours.
       </p>
@@ -50,7 +50,7 @@ function Checks({ out }: { out: DesignOutput }) {
 function CoverNote({ out }: { out: DesignOutput }) {
   const n = out.cover_note;
   return (
-    <Section title="Cover note">
+    <Section title="Cover note" icon="file-text" tone="amber">
       <p>{n.what_was_built}</p>
       {n.what_was_guessed.length > 0 && (
         <>
@@ -77,7 +77,7 @@ function StyleStrip({ style }: { style: StyleLite | null }) {
   const c = style.colours;
   const swatches = c ? [["Main", c.primary], ["Background", c.background], ["Text", c.text], ...(c.accent ? [["Accent", c.accent]] : [])] : [];
   return (
-    <Section title="Design style used">
+    <Section title="Design style used" icon="palette" tone="indigo">
       {swatches.length > 0 && (
         <ul className="flex flex-wrap gap-3">
           {swatches.map(([n, hex]) => (
@@ -102,14 +102,14 @@ export function PrototypeWork({ out, projectId, versionId, style = null }: { out
           No design style was given, so this is a clean neutral look. Not matched to a design system.
         </p>
       )}
-      <Section title="Try the prototype">
+      <Section title="Try the prototype" icon="phone" tone="indigo">
         <p className="text-sm text-neutral-600">Click through it like a real product. Use the menu in the dark bar to jump to any screen.</p>
         <div className="mt-3">
           <FramePreview url={u.view} downloadUrl={u.download} title="Prototype preview" />
         </div>
       </Section>
       {out.warnings.length > 0 && (
-        <Section title="Things to check in the prototype">
+        <Section title="Things to check in the prototype" icon="alert" tone="amber">
           <List items={out.warnings} />
         </Section>
       )}
@@ -139,7 +139,7 @@ export function FinalResult({ out, projectId, versionId, testingDone, onNext }: 
           </>
         )}
       </div>
-      <Section title="Your working prototype">
+      <Section title="Your working prototype" icon="phone" tone="indigo">
         <FramePreview url={u.view} title="Final prototype" />
       </Section>
       <ActionBar>

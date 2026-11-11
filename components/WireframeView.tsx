@@ -103,7 +103,7 @@ export function WireframeWork({ out, projectId, versionId }: { out: WireframeOut
 
   return (
     <div>
-      <Section title="Try the wireframe">
+      <Section title="Try the wireframe" icon="layout" tone="indigo">
         <p className="text-sm text-neutral-600">Click the buttons inside it, or use the menu at the top of the frame to jump to any screen.</p>
         <div className="mt-3">
           <FramePreview url={url} title="Wireframe preview" />

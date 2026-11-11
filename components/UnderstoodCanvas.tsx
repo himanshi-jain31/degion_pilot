@@ -13,7 +13,7 @@ function parseStory(story: string) {
   return m ? { who: m[1], what: m[2], why: m[3] } : null;
 }
 
-function Tile({ title, icon, tone, hint, className = "", children }: { title: string; icon: IconName; tone: Tone; hint?: string; className?: string; children: React.ReactNode }) {
+export function Tile({ title, icon, tone, hint, className = "", children }: { title: string; icon: IconName; tone: Tone; hint?: string; className?: string; children: React.ReactNode }) {
   const t = TONE[tone];
   return (
     <section className={`rounded-3xl border bg-card p-5 sm:p-6 ${className}`} style={{ borderColor: t.edge }} aria-label={title}>
@@ -38,7 +38,7 @@ function Waiting({ title, icon, tone, className = "" }: { title: string; icon: I
   );
 }
 
-export function UnderstoodCanvas({ requirement, files, shortVersion, u }: { requirement: string; files: { name: string }[]; shortVersion?: string; u?: UnderstandOutput }) {
+export function UnderstoodCanvas({ requirement, files, shortVersion, u, hideNote }: { requirement: string; files: { name: string }[]; shortVersion?: string; u?: UnderstandOutput; hideNote?: boolean }) {
   const [person, setPerson] = useState(0);
   const statement = u?.brief.one_line || shortVersion || "";
   const showShort = !!shortVersion && !!u?.brief.one_line && shortVersion.trim() !== u.brief.one_line.trim();
@@ -181,7 +181,7 @@ export function UnderstoodCanvas({ requirement, files, shortVersion, u }: { requ
           )}
         </div>
       )}
-      <p className="note px-1">To change something, open Understand and use the Check-in. Your note there is applied when I redo the step.</p>
+      {!hideNote && <p className="note px-1">To change something, open Understand and use the Check-in. Your note there is applied when I redo the step.</p>}
     </div>
   );
 }

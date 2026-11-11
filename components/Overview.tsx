@@ -3,7 +3,7 @@
 import { PHASES, PHASE_INFO } from "@/lib/phases";
 import { Icon, PHASE_ICON, type IconName } from "@/components/Icons";
 import type { PhaseStatus, Project, UnderstandOutput } from "@/lib/storage";
-import { UnderstoodCanvas } from "@/components/UnderstoodCanvas";
+import { Tile, UnderstoodCanvas } from "@/components/UnderstoodCanvas";
 
 type OverviewProject = Pick<Project, "title" | "requirement" | "createdAt" | "phases" | "versions" | "thingsIGuessed" | "quickQuestions" | "answers"> & {
   files: { name: string }[];
@@ -87,44 +87,44 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
 
       {/* C. Told to me vs guessed */}
       <section aria-label="What is known and what is guessed">
-        <h2 className="section-title">What you told me, and what I guessed</h2>
+        <h2 className="section-title mb-4">What you told me, and what I guessed</h2>
         <div className="grid gap-4 lg:grid-cols-2">
-          <div className="card">
-            <p className="label-small">You told me</p>
+          <Tile title="You told me" icon="message" tone="sky" hint={told.length + left.length > 0 ? `${told.length + left.length} answers` : undefined}>
             {told.length === 0 && left.length === 0 ? (
-              <p className="note mt-2">No answers yet.</p>
+              <p className="note">No answers yet.</p>
             ) : (
-              <ul className="mt-3 space-y-3 text-[15px]">
+              <ul className="space-y-3">
                 {told.map((t, i) => (
                   <li key={i}>
-                    <span className="note block">{t.q}</span>
-                    {t.a}
+                    <p className="note mb-1">{t.q}</p>
+                    <p className="ml-6 inline-block max-w-full rounded-2xl rounded-tl-sm bg-[#ecf6ff] px-3.5 py-2 text-[15px] leading-snug text-[#075985]">{t.a}</p>
                   </li>
                 ))}
                 {left.map((q) => (
                   <li key={q.id}>
-                    <span className="note block">{q.question}</span>
-                    You left this to me, so it is one of my guesses.
+                    <p className="note mb-1">{q.question}</p>
+                    <p className="ml-6 inline-block max-w-full rounded-2xl rounded-tl-sm border border-dashed border-[#d6d6cf] px-3.5 py-2 text-[15px] leading-snug text-muted">You left this to me, so it is one of my guesses.</p>
                   </li>
                 ))}
               </ul>
             )}
-          </div>
-          <div className="card">
-            <p className="label-small">Things I guessed</p>
+          </Tile>
+
+          <Tile title="Things I guessed" icon="help" tone="amber" hint={project.thingsIGuessed.length > 0 ? `${project.thingsIGuessed.length} guesses` : undefined}>
             {project.thingsIGuessed.length === 0 ? (
-              <p className="note mt-2">Nothing yet. Anything I guess will show up here.</p>
+              <p className="note">Nothing yet. Anything I guess will show up here.</p>
             ) : (
-              <div className="mt-3 space-y-4">
+              <div className="space-y-4">
                 {groups.map((g) => {
                   const items = project.thingsIGuessed.filter((x) => x.label === g.label);
                   if (items.length === 0) return null;
+                  const dot = g.label === "Checked" ? "bg-[var(--ok)]" : g.label === "My guess" ? "bg-[var(--wait)]" : "bg-[#9a9aa0]";
                   return (
                     <div key={g.label}>
-                      <p className="text-[15px] font-medium">{g.label}<span className="note ml-2 font-normal">{g.text}</span></p>
-                      <ul className="mt-1 space-y-2 text-[15px]">
+                      <p className="mb-2 flex items-center gap-2 text-[15px] font-medium"><span aria-hidden="true" className={`h-2.5 w-2.5 rounded-full ${dot}`} />{g.label}<span className="note font-normal">{g.text}</span></p>
+                      <ul className="space-y-1.5">
                         {items.map((x) => (
-                          <li key={x.id}>
+                          <li key={x.id} className="rounded-xl bg-[#fffaf0] px-3 py-2 text-[15px] leading-snug">
                             {x.text}
                             {x.status && <span className={`ml-2 ${x.status === "Confirmed" ? "pill pill-ok" : x.status === "Wrong" ? "pill pill-bad" : "pill pill-idle"} !text-[13px]`}>{x.status}</span>}
                           </li>
@@ -136,12 +136,12 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
               </div>
             )}
             {u && u.open_questions.length > 0 && (
-              <div className="mt-4 border-t border-line pt-3">
-                <p className="text-[15px] font-medium">Still to find out</p>
-                <ul className="mt-1 list-disc space-y-1 pl-5 text-[15px]">{u.open_questions.map((q, i) => <li key={i}>{q}</li>)}</ul>
+              <div className="mt-5 rounded-2xl p-3" style={{ background: "#fef2f2" }}>
+                <p className="mb-1.5 flex items-center gap-2 text-[15px] font-medium text-[var(--bad-ink)]"><Icon name="help" size={16} />Still to find out</p>
+                <ul className="space-y-1 text-[15px] leading-snug text-[var(--bad-ink)]">{u.open_questions.map((q, i) => <li key={i} className="flex gap-2"><span aria-hidden="true">?</span>{q}</li>)}</ul>
               </div>
             )}
-          </div>
+          </Tile>
         </div>
       </section>
 

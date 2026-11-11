@@ -104,7 +104,7 @@ export function TestingWork(props: {
     <div>
       {r && (
         <>
-          <Section title="What the test notes say">
+          <Section title="What the test notes say" icon="message" tone="sky">
             <ul className="space-y-2">
               {r.task_results.map((t, i) => (
                 <li key={i} className="rounded-lg border border-neutral-200 p-3">
@@ -116,7 +116,7 @@ export function TestingWork(props: {
             </ul>
           </Section>
 
-          <Section title="Problems found, most important first">
+          <Section title="Problems found, most important first" icon="alert" tone="rose">
             {r.issues.length === 0 ? (
               <p>No problems were found in the notes.</p>
             ) : (
@@ -142,7 +142,7 @@ export function TestingWork(props: {
           </Section>
 
           {updates.length > 0 && (
-            <Section title="Things I guessed: what the notes show">
+            <Section title="Things I guessed: what the notes show" icon="help" tone="amber">
               <ul className="space-y-2 text-sm">
                 {updates.map((u) => (
                   <li key={u.id}>
@@ -157,7 +157,7 @@ export function TestingWork(props: {
         </>
       )}
 
-      <Section title="Test kit">
+      <Section title="Test kit" icon="clipboard" tone="green">
         <p className="text-sm text-neutral-600">Everything you need to run the sessions, on one page you can print.</p>
         <a href={`/api/projects/${props.projectId}/testkit`} className="button-link mt-2 inline-block rounded-lg bg-black px-5 py-2 text-white hover:bg-neutral-800">
           Download test kit
@@ -166,7 +166,7 @@ export function TestingWork(props: {
 
       {!r && <NotesUpload projectId={props.projectId} notesCount={props.notesCount} round={props.round} onRefresh={props.onRefresh} />}
 
-      <Section title="Test plan">
+      <Section title="Test plan" icon="target" tone="indigo">
         <List items={out.test_plan.goals} />
         <ul className="mt-3 space-y-2">
           {out.test_plan.tasks.map((t, i) => (
@@ -179,14 +179,14 @@ export function TestingWork(props: {
         </ul>
       </Section>
 
-      <Section title="Script">
+      <Section title="Script" icon="list-checks" tone="sky">
         <ol className="list-decimal space-y-1 pl-5">
           {out.script.map((t, i) => <li key={i}>{t}</li>)}
         </ol>
         <p className="mt-2 text-sm text-neutral-600">The 10 standard usability questions are added at the end of the downloaded kit.</p>
       </Section>
 
-      <Section title="Expert check">
+      <Section title="Expert check" icon="eye" tone="amber">
         <p className="text-sm text-neutral-600">This is my own review of the prototype. It is not a test with real people.</p>
         <div className="mt-3"><SeverityBar items={out.expert_check} /></div>
         <ul className="space-y-2">

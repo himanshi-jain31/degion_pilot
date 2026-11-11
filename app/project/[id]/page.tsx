@@ -395,9 +395,9 @@ function ProjectPage() {
                           </div>
                         </details>
 
-                        <section id="made" aria-label="What I made" className="scroll-mt-6 rounded-3xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,30,0.03)] sm:p-8">
-                          <h3 className="mb-6 flex items-center gap-3 border-b border-line pb-5"><span className="step-badge">2</span><span className="section-title">What I made</span></h3>
-                          {sel === 1 && <WorkView out={shown.output as UnderstandOutput} />}
+                        <section id="made" aria-label="What I made" className="scroll-mt-6">
+                          <h3 className="mb-4 flex items-center gap-3 px-1"><span className="step-badge">2</span><span className="section-title">What I made</span></h3>
+                          {sel === 1 && <WorkView out={shown.output as UnderstandOutput} requirement={project.requirement} files={project.files} shortVersion={project.quickQuestions?.request_summary} />}
                           {sel === 2 && <ResearchWork out={shown.output as ResearchOutput} />}
                           {sel === 3 && (
                             <IdeateWork
@@ -460,14 +460,18 @@ function ProjectPage() {
 
         {/* Things I guessed */}
         <aside aria-label="Things I guessed" className="lg:w-64 lg:shrink-0 xl:w-72">
-          <div className="card !p-6">
-            <h2 className="section-title">Things I guessed</h2>
+          <div className="rounded-3xl border bg-card p-5" style={{ borderColor: "#f5dca8" }}>
+            <h2 className="flex items-center gap-3 text-[18px] font-medium">
+              <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--wait-soft)] text-[var(--wait-ink)]"><Icon name="help" size={19} /></span>
+              Things I guessed
+              {project.thingsIGuessed.length > 0 && <span className="pill pill-wait ml-auto !text-[13px]">{project.thingsIGuessed.length}</span>}
+            </h2>
             {project.thingsIGuessed.length === 0 ? (
-              <p className="note mt-2">Nothing yet. Anything I guess will show up here.</p>
+              <p className="note mt-3">Nothing yet. Anything I guess will show up here.</p>
             ) : (
-              <ul className="mt-4 space-y-4 text-sm leading-relaxed">
+              <ul className="mt-4 space-y-2">
                 {project.thingsIGuessed.map((g) => (
-                  <li key={g.id}>
+                  <li key={g.id} className="rounded-xl bg-[#fffaf0] p-3 text-[14px] leading-snug">
                     {g.text}
                     <Pill label={g.label} />
                     {g.status && (
