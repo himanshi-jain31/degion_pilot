@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { initialsOf, useName } from "@/lib/name";
+import { Icon } from "@/components/Icons";
 
 // Settings: your name (it saves by itself) and whether the real AI or sample results are in use
 export default function SettingsPage() {
@@ -27,15 +28,16 @@ export default function SettingsPage() {
             <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] font-medium text-[var(--accent-ink)]">
               {initialsOf(name) || "?"}
             </span>
-            <div className="flex-1">
+            <div className="relative flex-1">
               <label htmlFor="name" className="sr-only">Your name</label>
+              <span aria-hidden="true" className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-muted"><Icon name="edit" size={17} /></span>
               <input
                 id="name"
                 value={loaded ? name : ""}
                 onChange={(e) => { setName(e.target.value.slice(0, 40)); setSaved(true); }}
                 placeholder="For example: Priya"
                 autoComplete="given-name"
-                className="input"
+                className="input !pr-11"
               />
             </div>
           </div>

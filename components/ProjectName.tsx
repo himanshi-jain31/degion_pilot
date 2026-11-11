@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { capFirst } from "@/lib/names";
 import { Kbd, secondaryClass } from "@/components/ui";
+import { Icon } from "@/components/Icons";
 
 // The project name at the top of the project page. Click it to rename. It saves when you press Enter or click away.
 export function ProjectName({ projectId, title, onRenamed }: { projectId: string; title: string; onRenamed: () => Promise<void> }) {
@@ -72,11 +73,13 @@ export function ProjectName({ projectId, title, onRenamed }: { projectId: string
       <button
         onClick={() => { cancelled.current = false; setValue(title); setEditing(true); }}
         aria-label={`${capFirst(title)}. Click to rename this project.`}
-        title="Click to rename"
+        title="Edit the project name"
         className="page-title group -mx-2 rounded-xl px-2 text-left transition-colors duration-150 hover:bg-white/70"
       >
         {capFirst(title)}
-        <span aria-hidden="true" className="ml-3 align-middle text-base font-normal text-muted opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100">Rename</span>
+        <span aria-hidden="true" className="ml-3 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--line)] bg-white align-middle text-muted shadow-[0_1px_2px_rgba(15,27,45,0.05)] transition-colors duration-150 group-hover:border-[#cdd3e0] group-hover:text-ink group-focus-visible:text-ink">
+          <Icon name="edit" size={17} />
+        </span>
       </button>
     </h1>
   );
