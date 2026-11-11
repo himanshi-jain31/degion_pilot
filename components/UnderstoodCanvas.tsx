@@ -30,7 +30,7 @@ export function Tile({ title, icon, tone, hint, className = "", children }: { ti
 // A little "ghost" tile for what is still to come, so the board never looks empty
 function Waiting({ title, icon, tone, className = "" }: { title: string; icon: IconName; tone: Tone; className?: string }) {
   return (
-    <section className={`flex min-h-32 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-[#d6d6cf] bg-[#fafaf7] p-5 text-center ${className}`} aria-label={title}>
+    <section className={`flex min-h-32 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-[#d5dbe6] bg-[#f9fafd] p-5 text-center ${className}`} aria-label={title}>
       <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ background: TONE[tone].bg, color: TONE[tone].fg }}><Icon name={icon} size={19} /></span>
       <p className="font-medium">{title}</p>
       <p className="note">Appears when Understand has finished.</p>
@@ -47,8 +47,8 @@ export function UnderstoodCanvas({ requirement, files, shortVersion, u, hideNote
     <div className="space-y-4">
       {/* You said, then I understood */}
       <div className="grid overflow-hidden rounded-2xl border border-line bg-card md:grid-cols-[minmax(0,2fr)_auto_minmax(0,3fr)]">
-        <div className="relative bg-[#f6f6f2] p-6 sm:p-8">
-          <span aria-hidden="true" className="absolute left-4 top-1 select-none font-serif text-[88px] leading-none text-[#dcdcd5]">&ldquo;</span>
+        <div className="relative bg-[#f5f7fb] p-6 sm:p-8">
+          <span aria-hidden="true" className="absolute left-4 top-1 select-none font-serif text-[88px] leading-none text-[#dbe0ea]">&ldquo;</span>
           <p className="relative mt-8 text-[12px] font-medium uppercase tracking-wide text-muted">You said</p>
           <p className="relative mt-2 whitespace-pre-wrap text-[19px] leading-snug">{requirement}</p>
           {files.length > 0 && (
@@ -60,7 +60,7 @@ export function UnderstoodCanvas({ requirement, files, shortVersion, u, hideNote
           )}
         </div>
 
-        <div className="relative z-10 flex items-center justify-center bg-gradient-to-b from-[#f6f6f2] to-[#eef0ff] md:bg-gradient-to-r">
+        <div className="relative z-10 flex items-center justify-center bg-gradient-to-b from-[#f5f7fb] to-[#eef0ff] md:bg-gradient-to-r">
           <span aria-hidden="true" className="-my-5 flex h-10 w-10 rotate-90 items-center justify-center rounded-full bg-accent text-[18px] text-white shadow-md md:-mx-5 md:my-0 md:rotate-0">→</span>
         </div>
 

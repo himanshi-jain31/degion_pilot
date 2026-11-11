@@ -10,7 +10,7 @@ const SEV_COLOUR: Record<Severity, string> = {
   Low: "bg-neutral-200 text-neutral-700",
 };
 
-const SEV_BORDER: Record<Severity, string> = { High: "border-l-[var(--bad)]", Medium: "border-l-[var(--wait)]", Low: "border-l-[#9a9aa0]" };
+const SEV_BORDER: Record<Severity, string> = { High: "border-l-[var(--bad)]", Medium: "border-l-[var(--wait)]", Low: "border-l-[#9aa3b2]" };
 
 // Screens named in a sentence (only when the screen's name really appears in it)
 function screensIn(text: string, screens: string[]) {
@@ -31,7 +31,7 @@ function ScreenChips({ text, screens }: { text: string; screens: string[] }) {
 function SeverityBar({ items }: { items: { severity: Severity }[] }) {
   if (items.length === 0) return null;
   const levels: Severity[] = ["High", "Medium", "Low"];
-  const fill: Record<Severity, string> = { High: "bg-[var(--bad)]", Medium: "bg-[var(--wait)]", Low: "bg-[#9a9aa0]" };
+  const fill: Record<Severity, string> = { High: "bg-[var(--bad)]", Medium: "bg-[var(--wait)]", Low: "bg-[#9aa3b2]" };
   return (
     <div className="mb-4">
       <div className="flex h-3 overflow-hidden rounded-full bg-line" role="img" aria-label={levels.map((l) => `${items.filter((i) => i.severity === l).length} ${l}`).join(", ")}>

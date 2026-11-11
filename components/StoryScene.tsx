@@ -58,7 +58,7 @@ export function planScene(scene: string, carry: string[]): Plan {
 // ---------- The drawing ----------
 
 const SKIN = ["#f2c9a5", "#d9a074", "#8d5a3b", "#f6d7b8", "#b9784d"];
-const HAIR = ["#2b2b33", "#5b3a29", "#8a5a2b", "#1c1c1e", "#a0522d"];
+const HAIR = ["#2b2b33", "#5b3a29", "#8a5a2b", "#0e1a2b", "#a0522d"];
 const SHIRT = ["#4f46e5", "#0ea5e9", "#16a34a", "#d97706", "#db2777", "#0891b2"];
 function hash(s: string) {
   let h = 7;
@@ -80,7 +80,7 @@ function Screen({ kind, x, y, w, h, accent }: { kind: Plan["screen"]; x: number;
     return (
       <g>
         <rect x={x + 3} y={y + 4} width={w - 6} height={5} rx={1.5} fill={accent} />
-        {[0, 1, 2].map((r) => [0, 1, 2].map((c) => <rect key={`${r}${c}`} x={x + 4 + c * ((w - 8) / 3)} y={y + 13 + r * 6} width={(w - 8) / 3 - 2} height={4} rx={1} fill={r === 1 && c === 1 ? accent : "#e4e4de"} />))}
+        {[0, 1, 2].map((r) => [0, 1, 2].map((c) => <rect key={`${r}${c}`} x={x + 4 + c * ((w - 8) / 3)} y={y + 13 + r * 6} width={(w - 8) / 3 - 2} height={4} rx={1} fill={r === 1 && c === 1 ? accent : "#e5e9f1"} />))}
       </g>
     );
   if (kind === "mail")
@@ -99,7 +99,7 @@ function Screen({ kind, x, y, w, h, accent }: { kind: Plan["screen"]; x: number;
     );
   return (
     <g>
-      {[0, 1, 2].map((i) => <rect key={i} x={x + 4} y={y + 7 + i * 7} width={i === 2 ? w * 0.4 : w - 8} height={3} rx={1.5} fill="#d6d6cf" />)}
+      {[0, 1, 2].map((i) => <rect key={i} x={x + 4} y={y + 7 + i * 7} width={i === 2 ? w * 0.4 : w - 8} height={3} rx={1.5} fill="#d5dbe6" />)}
     </g>
   );
 }
@@ -116,13 +116,13 @@ function Person({ cx, name, mood, holding, plan, accent, flip }: { cx: number; n
       <circle cx={cx} cy={72} r={20} fill={skin} />
       {style === 2 && <circle cx={cx} cy={50} r={8} fill={hair} />}
       <path d={`M${cx - 21},72 A21,21 0 0 1 ${cx + 21},72 Q${cx + 8},60 ${cx - 21},72 Z`} fill={hair} />
-      <circle cx={cx - 7} cy={74} r={2.3} fill="#1c1c1e" />
-      <circle cx={cx + 7} cy={74} r={2.3} fill="#1c1c1e" />
-      {mood === "worried" && <path d={`M${cx - 11},67 l7,-2 M${cx + 11},67 l-7,-2`} stroke="#1c1c1e" strokeWidth={1.6} strokeLinecap="round" />}
-      <path d={mood === "happy" ? `M${cx - 7},82 Q${cx},90 ${cx + 7},82` : mood === "worried" ? `M${cx - 6},86 Q${cx},80 ${cx + 6},86` : `M${cx - 5},83 Q${cx},86 ${cx + 5},83`} fill="none" stroke="#1c1c1e" strokeWidth={1.8} strokeLinecap="round" />
+      <circle cx={cx - 7} cy={74} r={2.3} fill="#0e1a2b" />
+      <circle cx={cx + 7} cy={74} r={2.3} fill="#0e1a2b" />
+      {mood === "worried" && <path d={`M${cx - 11},67 l7,-2 M${cx + 11},67 l-7,-2`} stroke="#0e1a2b" strokeWidth={1.6} strokeLinecap="round" />}
+      <path d={mood === "happy" ? `M${cx - 7},82 Q${cx},90 ${cx + 7},82` : mood === "worried" ? `M${cx - 6},86 Q${cx},80 ${cx + 6},86` : `M${cx - 5},83 Q${cx},86 ${cx + 5},83`} fill="none" stroke="#0e1a2b" strokeWidth={1.8} strokeLinecap="round" />
       {holding && plan.device === "phone" && (
         <g transform={`rotate(${d * -8} ${cx + d * 30} 130)`}>
-          <rect x={cx + d * 30 - 12} y={106} width={24} height={40} rx={5} fill="#1c1c1e" />
+          <rect x={cx + d * 30 - 12} y={106} width={24} height={40} rx={5} fill="#0e1a2b" />
           <rect x={cx + d * 30 - 10} y={109} width={20} height={34} rx={3} fill="#fff" />
           <Screen kind={plan.screen} x={cx + d * 30 - 10} y={109} w={20} h={34} accent={accent} />
           <circle cx={cx + d * 30 + d * 9} cy={146} r={6} fill={skin} />
@@ -130,16 +130,16 @@ function Person({ cx, name, mood, holding, plan, accent, flip }: { cx: number; n
       )}
       {holding && plan.device === "laptop" && (
         <g>
-          <rect x={cx + d * 30 - 22} y={118} width={44} height={28} rx={3} fill="#1c1c1e" />
+          <rect x={cx + d * 30 - 22} y={118} width={44} height={28} rx={3} fill="#0e1a2b" />
           <rect x={cx + d * 30 - 20} y={120} width={40} height={24} rx={2} fill="#fff" />
           <Screen kind={plan.screen} x={cx + d * 30 - 20} y={120} w={40} h={24} accent={accent} />
-          <rect x={cx + d * 30 - 28} y={146} width={56} height={5} rx={2.5} fill="#9a9aa0" />
+          <rect x={cx + d * 30 - 28} y={146} width={56} height={5} rx={2.5} fill="#9aa3b2" />
         </g>
       )}
       {name && (
         <g>
           <rect x={cx - 26} y={156} width={52} height={17} rx={8.5} fill="#fff" opacity={0.95} />
-          <text x={cx} y={168} textAnchor="middle" fontSize={11} fontWeight={600} fill="#1c1c1e">{name}</text>
+          <text x={cx} y={168} textAnchor="middle" fontSize={11} fontWeight={600} fill="#0e1a2b">{name}</text>
         </g>
       )}
     </g>

@@ -34,7 +34,7 @@ function FindingCard({ f, n }: { f: Finding; n: number }) {
 }
 
 const LABELS = ["Checked", "My guess", "Test idea only"] as const;
-const LABEL_BAR: Record<string, string> = { Checked: "bg-[var(--ok)]", "My guess": "bg-[var(--wait)]", "Test idea only": "bg-[#9a9aa0]" };
+const LABEL_BAR: Record<string, string> = { Checked: "bg-[var(--ok)]", "My guess": "bg-[var(--wait)]", "Test idea only": "bg-[#9aa3b2]" };
 const LABEL_HELP: Record<string, string> = { Checked: "has a source", "My guess": "I worked it out", "Test idea only": "made up for testing" };
 
 // How much of the research is backed by a source, in one bar

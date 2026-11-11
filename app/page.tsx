@@ -40,7 +40,7 @@ function MiniProgress({ phases }: { phases: Record<string, string> }) {
     <ol aria-hidden="true" className="flex gap-1">
       {PHASES.map((p) => {
         const s = phases[p.name] ?? "Not started";
-        const colour = s === "Approved" ? "bg-[var(--ok)]" : s === "Working on it" ? "bg-accent" : s === "Ready for you" || s === "Changes asked" ? "bg-[var(--wait)]" : "bg-[#e3e3ea]";
+        const colour = s === "Approved" ? "bg-[var(--ok)]" : s === "Working on it" ? "bg-accent" : s === "Ready for you" || s === "Changes asked" ? "bg-[var(--wait)]" : "bg-[#e4e8f0]";
         return <li key={p.n} className={`h-1.5 flex-1 rounded-full ${colour}`} />;
       })}
     </ol>
@@ -214,7 +214,7 @@ export default function Home() {
 
         {/* 1. Greeting */}
         <header className="text-center">
-          <h1 className="text-[40px] font-medium leading-tight tracking-tight">
+          <h1 className="font-display text-[44px] font-semibold leading-tight">
             Hello,{" "}
             <span className="text-accent" suppressHydrationWarning>
               {nameLoaded && name.trim() ? name.trim() : "there"}
@@ -325,7 +325,7 @@ export default function Home() {
                 aria-expanded={menuOpen}
                 aria-label="Add documents or a Figma link"
                 title="Add documents or a Figma link"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-[#e3e3ee] bg-white text-[#55555b] transition-colors duration-150 hover:bg-[#f4f4fa] hover:text-ink"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-[#e3e3ee] bg-white text-[#4d5a6e] transition-colors duration-150 hover:bg-[#f4f4fa] hover:text-ink"
               >
                 <Icon name="plus" />
               </button>

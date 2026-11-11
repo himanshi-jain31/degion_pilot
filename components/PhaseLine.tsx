@@ -16,7 +16,7 @@ export function PhaseLine({ phases, selected, onSelect }: { phases: Record<strin
           const dot = done ? "bg-[var(--ok)] text-white" : s === "Working on it" ? "bg-accent text-white" : s === "Ready for you" || s === "Changes asked" ? "bg-[var(--wait-soft)] text-[var(--wait-ink)] ring-1 ring-[var(--wait)]" : "bg-line text-muted";
           return (
             <li key={p.n} className="flex items-center gap-1">
-              {i > 0 && <span aria-hidden="true" className={`h-px w-4 sm:w-8 ${phases[PHASES[i - 1].name] === "Approved" ? "bg-[var(--ok)]" : "bg-[#dcdcd5]"}`} />}
+              {i > 0 && <span aria-hidden="true" className={`h-px w-4 sm:w-8 ${phases[PHASES[i - 1].name] === "Approved" ? "bg-[var(--ok)]" : "bg-[#dbe0ea]"}`} />}
               <button
                 onClick={() => onSelect(p.n)}
                 aria-current={active ? "step" : undefined}

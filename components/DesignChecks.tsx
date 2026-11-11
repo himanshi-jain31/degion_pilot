@@ -68,9 +68,9 @@ function Ring({ percent }: { percent: number }) {
   const p = Math.max(0, Math.min(100, percent));
   return (
     <svg width="68" height="68" viewBox="0 0 68 68" aria-hidden="true" className="shrink-0">
-      <circle cx="34" cy="34" r={r} fill="none" stroke="#ecece8" strokeWidth="7" />
+      <circle cx="34" cy="34" r={r} fill="none" stroke="#e7eaf1" strokeWidth="7" />
       <circle cx="34" cy="34" r={r} fill="none" stroke={p >= 80 ? "#16a34a" : p >= 50 ? "#d97706" : "#dc2626"} strokeWidth="7" strokeLinecap="round" strokeDasharray={`${(p / 100) * c} ${c}`} transform="rotate(-90 34 34)" />
-      <text x="34" y="39" textAnchor="middle" fontSize="15" fontWeight="600" fill="#1c1c1e">{p}%</text>
+      <text x="34" y="39" textAnchor="middle" fontSize="15" fontWeight="600" fill="#0e1a2b">{p}%</text>
     </svg>
   );
 }
@@ -148,7 +148,7 @@ export function DesignChecks({ out, projectId, versionId }: { out: DesignOutput;
         <ul className="grid gap-3 lg:grid-cols-2">
           <Quick icon="eye" title="Colour contrast" text={c.contrast} />
           <Quick icon="phone" title="Size of buttons" text={c.tap_sizes}>
-            {px && <span aria-hidden="true" className="flex h-[68px] w-[68px] shrink-0 flex-col items-center justify-center rounded-2xl bg-[#f4f4f0]"><span className="text-[22px] font-semibold leading-none">{px}</span><span className="text-[12px] text-muted">px tall</span></span>}
+            {px && <span aria-hidden="true" className="flex h-[68px] w-[68px] shrink-0 flex-col items-center justify-center rounded-2xl bg-[#f3f5f9]"><span className="text-[22px] font-semibold leading-none">{px}</span><span className="text-[12px] text-muted">px tall</span></span>}
           </Quick>
           <Quick icon="alert" title="Pushy or tricky design" text={c.manipulative_design} />
           <Quick icon="palette" title="How well it matches your style" text={c.style_match.replace(/\(?my own estimate\)?/i, "").trim()}>

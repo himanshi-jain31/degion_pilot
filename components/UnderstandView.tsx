@@ -17,7 +17,7 @@ export const TONE: Record<Tone, { bg: string; fg: string; edge: string }> = {
   amber: { bg: "#fff7e6", fg: "#92400e", edge: "#f5dca8" },
   rose: { bg: "#fef2f2", fg: "#b91c1c", edge: "#f6cccc" },
   sky: { bg: "#ecf6ff", fg: "#075985", edge: "#c8e3f8" },
-  slate: { bg: "#f4f4f0", fg: "#3f3f46", edge: "#e4e4de" },
+  slate: { bg: "#f3f5f9", fg: "#3f3f46", edge: "#e5e9f1" },
 };
 
 export function Section({ title, children, icon, tone = "indigo", hint }: { title: string; children: React.ReactNode; icon?: IconName; tone?: Tone; hint?: string }) {
@@ -71,8 +71,8 @@ export function PlanView({ out }: { out: PhaseOutput }) {
         ) : (
           <ul className="space-y-2">
             {out.plan.will_skip.map((s, i) => (
-              <li key={i} className="rounded-xl border border-dashed border-[#d6d6cf] bg-[#f6f6f2] p-3">
-                <p className="text-[15px] font-medium text-muted line-through decoration-[#b5b5ad]">{s.item}</p>
+              <li key={i} className="rounded-xl border border-dashed border-[#d5dbe6] bg-[#f5f7fb] p-3">
+                <p className="text-[15px] font-medium text-muted line-through decoration-[#b3bccb]">{s.item}</p>
                 <p className="mt-0.5 text-[14px] text-muted">{s.why}</p>
               </li>
             ))}

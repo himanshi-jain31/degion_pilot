@@ -60,17 +60,44 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
     <div className="fade-in space-y-8">
       {/* A. Project identity */}
       <section aria-label="This project" className="card">
-        <div className="flex flex-wrap items-center gap-3">
-          <h2 className="section-title !mb-0">Overview</h2>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <h2 className="eyebrow">Project overview</h2>
           <span className={`pill ${state === "Working on it" ? "pill-info" : state === "All approved" ? "pill-ok" : state === "Waiting for you" ? "pill-wait" : "pill-idle"}`}>{state}</span>
+          <span className="note ml-auto whitespace-nowrap">{approved} of 6 steps approved</span>
         </div>
-        <div className="mt-4 flex items-center gap-4">
-          <div className="h-2 flex-1 overflow-hidden rounded-full bg-line" role="progressbar" aria-valuemin={0} aria-valuemax={6} aria-valuenow={approved} aria-label="Steps approved">
-            <div className="h-full rounded-full bg-[var(--ok)] transition-all duration-300" style={{ width: `${(approved / 6) * 100}%` }} />
-          </div>
-          <span className="note whitespace-nowrap">{approved} of 6 steps approved</span>
-        </div>
-        <p className="note mt-3">Last changed {new Date(newest(project)).toLocaleString()}</p>
+
+        {/* The six steps as glowing nodes joined by hairlines. Click one to open it. */}
+        <ol className="mt-6 flex" aria-label={`The 6 steps, ${approved} approved`}>
+          {PHASES.map((ph, i) => {
+            const st = project.phases[ph.name] ?? "Not started";
+            const done = st === "Approved";
+            const current = !done && next.phase === ph.n;
+            return (
+              <li key={ph.n} className="relative flex-1">
+                {i < PHASES.length - 1 && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-[calc(50%+24px)] top-6 h-px w-[calc(100%-48px)] sm:left-[calc(50%+36px)] sm:top-[34px] sm:w-[calc(100%-72px)]"
+                    style={{ background: done ? "linear-gradient(90deg, rgba(22,163,74,0.55), rgba(22,163,74,0.18))" : "linear-gradient(90deg, #d5dbe6, #e6e9f0)" }}
+                  />
+                )}
+                <button onClick={() => onOpenPhase(ph.n)} aria-label={`${ph.n}. ${ph.name}: ${st}`} className="group flex w-full flex-col items-center gap-2.5 rounded-2xl px-1 pb-1 text-center">
+                  <span className={`flex h-12 w-12 items-center justify-center rounded-full bg-white/70 ring-1 transition-transform duration-200 group-hover:-translate-y-0.5 sm:h-[68px] sm:w-[68px] ${current ? "halo-pulse ring-[rgba(79,70,229,0.35)]" : done ? "ring-[rgba(22,163,74,0.25)]" : "ring-[#e6e9f0]"}`}>
+                    <span className={`relative flex h-9 w-9 items-center justify-center rounded-full shadow-[0_1px_2px_rgba(15,27,45,0.08),0_6px_14px_-6px_rgba(40,70,140,0.25)] sm:h-11 sm:w-11 ${done ? "bg-[var(--ok-soft)] text-[var(--ok-ink)]" : current ? "bg-white text-[var(--accent)]" : "bg-white text-[#8a94a6]"}`}>
+                      <Icon name={PHASE_ICON[ph.n]} size={20} />
+                      {done && <span aria-hidden="true" className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--ok)] text-white ring-2 ring-white"><Icon name="check" size={10} /></span>}
+                    </span>
+                  </span>
+                  <span className="hidden min-w-0 sm:block">
+                    <span className={`block truncate text-[14px] font-medium ${current ? "text-ink" : done ? "text-ink" : "text-muted"}`}>{ph.name}</span>
+                    <span className="block text-[12px] text-muted">{st}</span>
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+        <p className="note mt-5 border-t border-line pt-4">Last changed {new Date(newest(project)).toLocaleString()}</p>
       </section>
 
       {/* F. Next step: one clear action */}
@@ -104,7 +131,7 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
                 {left.map((q) => (
                   <li key={q.id}>
                     <p className="note mb-1">{q.question}</p>
-                    <p className="ml-6 inline-block max-w-full rounded-2xl rounded-tl-sm border border-dashed border-[#d6d6cf] px-3.5 py-2 text-[15px] leading-snug text-muted">You left this to me, so it is one of my guesses.</p>
+                    <p className="ml-6 inline-block max-w-full rounded-2xl rounded-tl-sm border border-dashed border-[#d5dbe6] px-3.5 py-2 text-[15px] leading-snug text-muted">You left this to me, so it is one of my guesses.</p>
                   </li>
                 ))}
               </ul>
@@ -119,7 +146,7 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
                 {groups.map((g) => {
                   const items = project.thingsIGuessed.filter((x) => x.label === g.label);
                   if (items.length === 0) return null;
-                  const dot = g.label === "Checked" ? "bg-[var(--ok)]" : g.label === "My guess" ? "bg-[var(--wait)]" : "bg-[#9a9aa0]";
+                  const dot = g.label === "Checked" ? "bg-[var(--ok)]" : g.label === "My guess" ? "bg-[var(--wait)]" : "bg-[#9aa3b2]";
                   return (
                     <div key={g.label}>
                       <p className="mb-2 flex items-center gap-2 text-[15px] font-medium"><span aria-hidden="true" className={`h-2.5 w-2.5 rounded-full ${dot}`} />{g.label}<span className="note font-normal">{g.text}</span></p>
@@ -164,7 +191,7 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
                   <p className="label-small mt-4">You get</p>
                   <ul className="mb-4 mt-2 flex flex-wrap gap-2">
                     {info.makes.map((m) => (
-                      <li key={m.label} className="flex items-center gap-2 rounded-full bg-[#f4f4f0] py-1.5 pl-2.5 pr-3 text-[13px] leading-snug text-ink"><Icon name={m.icon as IconName} size={15} className="text-[var(--accent-ink)]" />{m.label}</li>
+                      <li key={m.label} className="flex items-center gap-2 rounded-full bg-[#f3f5f9] py-1.5 pl-2.5 pr-3 text-[13px] leading-snug text-ink"><Icon name={m.icon as IconName} size={15} className="text-[var(--accent-ink)]" />{m.label}</li>
                     ))}
                   </ul>
                   <p className="mt-auto border-t border-line pt-3 text-[14px] leading-snug text-muted">

@@ -119,7 +119,7 @@ function QuickQuestions() {
           <div className="flex items-center gap-3">
             <ol aria-hidden="true" className="flex flex-1 gap-1.5">
               {questions.map((q, i) => (
-                <li key={q.id} className={`h-1.5 flex-1 rounded-full ${i < step ? "bg-[var(--ok)]" : i === step ? "bg-accent" : "bg-[#e3e3ea]"}`} />
+                <li key={q.id} className={`h-1.5 flex-1 rounded-full ${i < step ? "bg-[var(--ok)]" : i === step ? "bg-accent" : "bg-[#e4e8f0]"}`} />
               ))}
             </ol>
             <p className="text-soft whitespace-nowrap text-sm">

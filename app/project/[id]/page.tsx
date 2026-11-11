@@ -317,10 +317,10 @@ function ProjectPage() {
                     <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent text-white"><Icon name={PHASE_ICON[info.n]} size={24} /></span>
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                        <h2 className="text-[30px] font-medium leading-tight tracking-tight">{info.name}</h2>
+                        <h2 className="font-display text-[32px] font-semibold leading-tight">{info.name}</h2>
                         <span className={STATUS_COLOUR[status]}>{status}</span>
                       </div>
-                      <p className="label-small mt-0.5">Step {info.n} of 6</p>
+                      <p className="eyebrow mt-1.5">Step {info.n} of 6</p>
                       <p className="mt-2 max-w-xl text-[17px] text-muted">{PHASE_INFO[info.n].goal}</p>
                     </div>
                   </div>
@@ -331,8 +331,8 @@ function ProjectPage() {
                       ["Your decision", status === "Approved"],
                     ].map(([label, done], i) => (
                       <li key={String(label)} className="flex items-center gap-2">
-                        {i > 0 && <span aria-hidden="true" className={`h-px w-6 ${done ? "bg-[var(--ok)]" : "bg-[#dcdcd5]"}`} />}
-                        <span className={`flex items-center gap-1.5 rounded-full px-3 py-1 ${done ? "bg-[var(--ok-soft)] text-[var(--ok-ink)]" : "bg-[#f1f1ed] text-muted"}`}>
+                        {i > 0 && <span aria-hidden="true" className={`h-px w-6 ${done ? "bg-[var(--ok)]" : "bg-[#dbe0ea]"}`} />}
+                        <span className={`flex items-center gap-1.5 rounded-full px-3 py-1 ${done ? "bg-[var(--ok-soft)] text-[var(--ok-ink)]" : "bg-[#f1f3f8] text-muted"}`}>
                           <span aria-hidden="true">{done ? "✓" : i + 1}</span>
                           {label}
                         </span>
@@ -453,8 +453,8 @@ function ProjectPage() {
                     )}
 
                     {latest && latest.status !== "working" && (
-                      <details className="group rounded-2xl border border-dashed border-[#d6d6cf] p-5 sm:px-8 sm:py-6">
-                        <summary className="flex cursor-pointer select-none list-none items-center gap-3 rounded-xl py-1 [&::-webkit-details-marker]:hidden"><span aria-hidden="true" className="step-badge !bg-[#f1f1ed] !text-muted">↺</span><span className="section-title">What I did</span><span className="note ml-auto">History</span></summary>
+                      <details className="group rounded-2xl border border-dashed border-[#d5dbe6] p-5 sm:px-8 sm:py-6">
+                        <summary className="flex cursor-pointer select-none list-none items-center gap-3 rounded-xl py-1 [&::-webkit-details-marker]:hidden"><span aria-hidden="true" className="step-badge !bg-[#f1f3f8] !text-muted">↺</span><span className="section-title">What I did</span><span className="note ml-auto">History</span></summary>
                         <div className="mt-5 border-t border-line pt-6"><WhatIDid versions={versions} /></div>
                       </details>
                     )}
@@ -499,7 +499,7 @@ function WhatIDid({ versions }: { versions: PhaseVersion[] }) {
             {latestDone.output.what_i_did.map((t, i, all) => (
               <li key={i} className="relative flex gap-3 pb-3 last:pb-0">
                 {i < all.length - 1 && <span aria-hidden="true" className="absolute left-[11px] top-6 h-[calc(100%-1rem)] w-px bg-line" />}
-                <span aria-hidden="true" className="z-10 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#f1f1ed] text-[12px] text-muted ring-4 ring-white">{i + 1}</span>
+                <span aria-hidden="true" className="z-10 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#f1f3f8] text-[12px] text-muted ring-4 ring-white">{i + 1}</span>
                 <p className="text-[15px] leading-snug">{t}</p>
               </li>
             ))}

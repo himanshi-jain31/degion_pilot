@@ -73,7 +73,7 @@ export function StructureMap({ nodes }: { nodes: StructureNode[] }) {
             const a = byId.get(p.parent!)!;
             const x1 = px(a) + colW[a.depth], y1 = py(a) + NODE_H / 2, x2 = px(p), y2 = py(p) + NODE_H / 2, mx = (x1 + x2) / 2;
             const lit = trail.has(p.id);
-            return <path key={p.id} d={`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`} fill="none" stroke={lit ? "#4f46e5" : "#cfcfc8"} strokeWidth={lit ? 2.5 : 1.75} />;
+            return <path key={p.id} d={`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`} fill="none" stroke={lit ? "#4f46e5" : "#cfd6e2"} strokeWidth={lit ? 2.5 : 1.75} />;
           })}
           {placed.map((p) => {
             const on = selected === p.id;
@@ -84,14 +84,14 @@ export function StructureMap({ nodes }: { nodes: StructureNode[] }) {
               <g key={p.id} transform={`translate(${px(p)},${py(p)})`}>
                 <rect
                   width={colW[p.depth]} height={NODE_H} rx={14}
-                  fill={isRoot ? "#1c1c1e" : on ? "#4f46e5" : top ? "#eef0ff" : "#fff"}
-                  stroke={lit && !isRoot ? "#4f46e5" : isRoot ? "#1c1c1e" : top ? "#c9ceff" : "#d6d6cf"} strokeWidth={lit && !isRoot ? 2 : 1.25}
+                  fill={isRoot ? "#0e1a2b" : on ? "#4f46e5" : top ? "#eef0ff" : "#fff"}
+                  stroke={lit && !isRoot ? "#4f46e5" : isRoot ? "#0e1a2b" : top ? "#c9ceff" : "#d5dbe6"} strokeWidth={lit && !isRoot ? 2 : 1.25}
                   tabIndex={0} role="button" aria-pressed={on} aria-label={p.node.page}
                   style={{ cursor: "pointer" }}
                   onClick={() => setSelected(on ? null : p.id)}
                   onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelected(on ? null : p.id); } }}
                 />
-                <text x={colW[p.depth] / 2} y={NODE_H / 2 + 6} textAnchor="middle" fontSize={17} fontWeight={isRoot || top ? 600 : 500} fill={isRoot || on ? "#fff" : "#1c1c1e"} style={{ pointerEvents: "none" }}>
+                <text x={colW[p.depth] / 2} y={NODE_H / 2 + 6} textAnchor="middle" fontSize={17} fontWeight={isRoot || top ? 600 : 500} fill={isRoot || on ? "#fff" : "#0e1a2b"} style={{ pointerEvents: "none" }}>
                   {p.node.page}
                 </text>
               </g>
@@ -204,7 +204,7 @@ function EmotionCurve({ stages, colour }: { stages: Stage[]; colour: string }) {
   const pts: [number, number][] = stages.map((s, i) => [((i + 0.5) / n) * 100, topPct(scoreOf(s).value)]);
   const id = `fill-${colour.replace("#", "")}`;
   return (
-    <div className="relative h-44 overflow-hidden rounded-xl bg-[#fafaf7]" role="img" aria-label={`How the person feels: ${stages.map((s, i) => `${i + 1}, ${s.feeling}`).join("; ")}`}>
+    <div className="relative h-44 overflow-hidden rounded-xl bg-[#f9fafd]" role="img" aria-label={`How the person feels: ${stages.map((s, i) => `${i + 1}, ${s.feeling}`).join("; ")}`}>
       <div aria-hidden="true" className="absolute inset-x-0 top-[12%] border-t border-dashed border-line" />
       <div aria-hidden="true" className="absolute inset-x-0 top-1/2 border-t border-dashed border-line" />
       <div aria-hidden="true" className="absolute inset-x-0 top-[88%] border-t border-dashed border-line" />
@@ -260,7 +260,7 @@ function JourneyBlock({ title, subtitle, stages, future, colour }: { title: stri
               <span className="font-medium">{i + 1}. {s.stage || `Step ${i + 1}`}</span>
             </div>
             <div><Label>Does</Label><p>{s.step}</p></div>
-            {s.thought && <div><Label>Thinks</Label><p className="rounded-lg bg-[#f6f6f2] px-2.5 py-2 italic">&ldquo;{s.thought}&rdquo;</p></div>}
+            {s.thought && <div><Label>Thinks</Label><p className="rounded-lg bg-[#f5f7fb] px-2.5 py-2 italic">&ldquo;{s.thought}&rdquo;</p></div>}
             <div><Label>Feels</Label><p className="font-medium">{face(s)} {s.feeling}</p></div>
             {!future && s.pain && <div className="rounded-lg bg-[var(--bad-soft)] px-2.5 py-2 text-[var(--bad-ink)]"><Label>Problem</Label><p>{s.pain}</p></div>}
             {future && s.improves && <div className="rounded-lg bg-[var(--ok-soft)] px-2.5 py-2 text-[var(--ok-ink)]"><Label>Fixes</Label><p>{s.improves}</p></div>}
@@ -284,7 +284,7 @@ function Compare({ today, future }: { today: Stage[]; future: Stage[] }) {
           const f = future[i];
           const up = scoreOf(f).value - scoreOf(t).value;
           return (
-            <li key={i} className="min-w-0 rounded-xl bg-[#f6f6f2] p-2 text-center sm:p-3">
+            <li key={i} className="min-w-0 rounded-xl bg-[#f5f7fb] p-2 text-center sm:p-3">
               <p className="mb-2 truncate text-[12px] font-medium text-muted sm:text-[13px]">{t.stage || `Step ${i + 1}`}</p>
               <p className="text-[22px] leading-none sm:text-[26px]" aria-label={`Today ${t.feeling}, future ${f.feeling}`}>{face(t)}<span aria-hidden="true" className="mx-0.5 text-[14px] text-muted">→</span>{face(f)}</p>
               <p className={`mt-2 text-[12px] font-medium ${up > 0 ? "text-[var(--ok-ink)]" : up < 0 ? "text-[var(--bad-ink)]" : "text-muted"}`}>{up > 0 ? "Better" : up < 0 ? "Worse" : "Same"}</p>
@@ -308,7 +308,7 @@ export function JourneyMap({ journeys, onMakeFuller }: { journeys: IdeateOutput[
           {onMakeFuller && <button onClick={onMakeFuller} className="btn btn-primary">Make the journeys fuller</button>}
         </div>
       )}
-      {today.length > 0 && <JourneyBlock title="Today" subtitle="How the person gets this done now" stages={today} colour="#6b6b70" />}
+      {today.length > 0 && <JourneyBlock title="Today" subtitle="How the person gets this done now" stages={today} colour="#5d6a7c" />}
       {today.length > 0 && today.length === future.length && <Compare today={today} future={future} />}
       {future.length > 0 && <JourneyBlock title="In the future" subtitle="The same stages with the new product" stages={future} colour="#4f46e5" future />}
       {guessed && <p className="note">Some faces are my rough reading of the feeling words, because no score was given.</p>}

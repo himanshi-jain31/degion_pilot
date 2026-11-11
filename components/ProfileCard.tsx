@@ -25,7 +25,7 @@ function split(full: string) {
 function Fact({ icon, label, children }: { icon: "target" | "pin"; label: string; children: string }) {
   return (
     <div className="flex items-start gap-3">
-      <span aria-hidden="true" className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#f4f4f0] text-ink"><Icon name={icon} size={17} /></span>
+      <span aria-hidden="true" className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#f3f5f9] text-ink"><Icon name={icon} size={17} /></span>
       <p className="min-w-0 text-[15px] leading-snug"><span className="block text-[12px] font-medium uppercase tracking-wide text-muted">{label}</span>{children}</p>
     </div>
   );

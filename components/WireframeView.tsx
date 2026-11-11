@@ -72,7 +72,7 @@ function ScreenMap({ out }: { out: WireframeOutput }) {
                 return (
                   <li key={x.id}>
                     <button onClick={() => setOpen(open === x.id ? null : x.id)} aria-pressed={open === x.id} className={`flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-opacity ${open === x.id ? "border-[var(--accent)] bg-accent-soft" : "border-line bg-card"} ${dim ? "opacity-40" : ""}`}>
-                      <span aria-hidden="true" className="mt-0.5 flex h-14 w-10 shrink-0 flex-col gap-1 rounded-md border border-[#d6d6cf] bg-[#f3f3ee] p-1"><span className="h-1.5 rounded-sm bg-[#d6d6cf]" /><span className="h-3 rounded-sm bg-[#e4e4de]" /><span className="h-1.5 w-2/3 rounded-sm bg-[#d6d6cf]" /></span>
+                      <span aria-hidden="true" className="mt-0.5 flex h-14 w-10 shrink-0 flex-col gap-1 rounded-md border border-[#d5dbe6] bg-[#f3f3ee] p-1"><span className="h-1.5 rounded-sm bg-[#d5dbe6]" /><span className="h-3 rounded-sm bg-[#e5e9f1]" /><span className="h-1.5 w-2/3 rounded-sm bg-[#d5dbe6]" /></span>
                       <span className="min-w-0 text-[15px]">
                         <span className="block font-medium">{i + 1}. {x.name}</span>
                         {x.states.length > 0 && <span className="mt-1 flex flex-wrap gap-1">{x.states.map((st) => <span key={st} className="pill pill-idle !text-[12px]">{st}</span>)}</span>}

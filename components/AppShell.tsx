@@ -35,7 +35,7 @@ function Item({ href, label, icon, active, accent }: { href: string; label: stri
         aria-label={label}
         aria-current={active ? "page" : undefined}
         className={`flex h-11 w-11 items-center justify-center rounded-xl transition-colors duration-150 ${
-          accent ? "bg-accent text-white hover:bg-[var(--accent-hover)]" : active ? "bg-card text-accent shadow-[0_1px_2px_rgba(28,28,30,0.08)]" : "text-[#55555b] hover:bg-white/70 hover:text-ink"
+          accent ? "bg-accent text-white hover:bg-[var(--accent-hover)]" : active ? "bg-card text-accent shadow-[0_1px_2px_rgba(28,28,30,0.08)]" : "text-[#4d5a6e] hover:bg-white/70 hover:text-ink"
         }`}
       >
         <Icon name={icon} />

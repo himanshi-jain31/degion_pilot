@@ -31,7 +31,7 @@ export function DirectionCard({ d, recommended, selected, pick }: { d: IdeateOut
         <div className="mt-4">
           <p className="label-small mb-1.5 !text-[12px] uppercase tracking-wide">Key screens</p>
           <ul className="flex flex-wrap gap-1.5">
-            {d.key_screens.map((k) => <li key={k} className="rounded-full bg-[#f4f4f0] px-2.5 py-1 text-[13px] leading-snug">{k}</li>)}
+            {d.key_screens.map((k) => <li key={k} className="rounded-full bg-[#f3f5f9] px-2.5 py-1 text-[13px] leading-snug">{k}</li>)}
           </ul>
         </div>
       )}
