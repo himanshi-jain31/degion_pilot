@@ -19,7 +19,6 @@ import { GuessList } from "@/components/Guesses";
 import { AppShell } from "@/components/AppShell";
 import { Icon, PHASE_ICON } from "@/components/Icons";
 import { Overview } from "@/components/Overview";
-import { PhaseLine } from "@/components/PhaseLine";
 import { DeleteProject, ProjectName } from "@/components/ProjectName";
 import { capFirst } from "@/lib/names";
 import { ActionBar, BackLink, Loading, Notice, primaryClass, quietClass } from "@/components/ui";
@@ -215,10 +214,9 @@ function ProjectPage() {
   return (
     <AppShell>
     <div className="mx-auto w-full max-w-[2200px] px-4 pb-56 pt-8 sm:pb-40 lg:px-6">
-      <header className="mb-8">
+      <header className="mb-6">
         <BackLink />
         <ProjectName projectId={id} title={project.title} onRenamed={refresh} />
-        <PhaseLine phases={project.phases} selected={view === "phase" ? sel : null} onSelect={choosePhase} />
       </header>
 
       <div className="flex flex-col gap-6 lg:flex-row">
@@ -469,7 +467,7 @@ function ProjectPage() {
         <aside aria-label="Things I guessed" className="lg:w-72 lg:shrink-0 xl:w-80">
           <div className="rounded-2xl border bg-card p-4 sm:p-5" style={{ borderColor: "var(--line)" }}>
             <h2 className="flex items-center gap-2.5 whitespace-nowrap text-[17px] font-medium">
-              <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--wait-soft)] text-[var(--wait-ink)]"><Icon name="help" size={18} /></span>
+              <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#f3f5f9] text-[var(--muted)]"><Icon name="help" size={18} /></span>
               Things I guessed
             </h2>
             <p className="note mt-1">{project.thingsIGuessed.length === 0 ? "Nothing yet." : `${project.thingsIGuessed.length} ${project.thingsIGuessed.length === 1 ? "thing" : "things"} for you to confirm or correct`}</p>

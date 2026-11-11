@@ -19,7 +19,7 @@ const STATUS_PILL: Record<string, string> = { Confirmed: "pill-ok", Wrong: "pill
 export function GuessCard({ g }: { g: Guess }) {
   const { kind, main, check } = split(g.text);
   return (
-    <li className="rounded-2xl border border-[var(--line)] bg-[#fffaf0] p-4">
+    <li className="rounded-2xl border border-[var(--line)] bg-white p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className={`pill ${LABEL_PILL[g.label] ?? "pill-wait"} !px-2.5 !py-0.5 !text-[12px]`}>{g.label}</span>
         {g.status && <span className={`pill ${STATUS_PILL[g.status] ?? "pill-idle"} !px-2.5 !py-0.5 !text-[12px]`}>{g.status}</span>}

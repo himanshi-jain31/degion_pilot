@@ -52,53 +52,30 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
 
   return (
     <div className="fade-in space-y-8">
-      {/* A. Project identity */}
-      <section aria-label="This project" className="card">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <h2 className="eyebrow">Project overview</h2>
-          <span className={`pill ${state === "Working on it" ? "pill-info" : state === "All approved" ? "pill-ok" : state === "Waiting for you" ? "pill-wait" : "pill-idle"}`}>{state}</span>
-          <span className="note ml-auto whitespace-nowrap">{approved} of 6 steps approved</span>
+      {/* The one thing to do next. This is the focal point of the page. */}
+      <section
+        aria-label="What to do next"
+        className="relative overflow-hidden rounded-2xl p-6 text-white sm:p-8"
+        style={{ background: "radial-gradient(640px 260px at 92% -30%, rgba(129,120,255,0.42), transparent 70%), linear-gradient(135deg, #0e1a2b 0%, #1a2744 100%)", boxShadow: "0 18px 40px -18px rgba(14,26,43,0.55)" }}
+      >
+        <p className="eyebrow !text-white/60">Next step</p>
+        <h2 className="font-display mt-3 max-w-3xl text-[26px] font-semibold leading-tight sm:text-[32px]">{next.text}</h2>
+        <div className="mt-7 flex flex-wrap items-center gap-x-8 gap-y-5">
+          <button onClick={() => onOpenPhase(next.phase)} className="btn btn-on-dark">
+            {next.button}
+            <span aria-hidden="true">→</span>
+          </button>
+          <div className="flex min-w-[240px] flex-1 items-center gap-3">
+            <ol className="flex flex-1 gap-1.5" role="progressbar" aria-valuemin={0} aria-valuemax={6} aria-valuenow={approved} aria-label="Steps approved">
+              {PHASES.map((ph) => {
+                const st = project.phases[ph.name] ?? "Not started";
+                return <li key={ph.n} className={`h-1.5 flex-1 rounded-full ${st === "Approved" ? "bg-[#4ade80]" : ph.n === next.phase ? "bg-white/70" : "bg-white/15"}`} />;
+              })}
+            </ol>
+            <span className="whitespace-nowrap text-[14px] text-white/70">{approved} of 6 approved</span>
+          </div>
         </div>
-
-        {/* The six steps as glowing nodes joined by hairlines. Click one to open it. */}
-        <ol className="mt-6 flex" aria-label={`The 6 steps, ${approved} approved`}>
-          {PHASES.map((ph, i) => {
-            const st = project.phases[ph.name] ?? "Not started";
-            const done = st === "Approved";
-            const current = !done && next.phase === ph.n;
-            return (
-              <li key={ph.n} className="relative flex-1">
-                {i < PHASES.length - 1 && (
-                  <span
-                    aria-hidden="true"
-                    className="absolute left-[calc(50%+24px)] top-6 h-px w-[calc(100%-48px)] sm:left-[calc(50%+36px)] sm:top-[34px] sm:w-[calc(100%-72px)]"
-                    style={{ background: done ? "linear-gradient(90deg, rgba(22,163,74,0.55), rgba(22,163,74,0.18))" : "linear-gradient(90deg, #d5dbe6, #e6e9f0)" }}
-                  />
-                )}
-                <button onClick={() => onOpenPhase(ph.n)} aria-label={`${ph.n}. ${ph.name}: ${st}`} className="group flex w-full flex-col items-center gap-2.5 rounded-2xl px-1 pb-1 text-center">
-                  <span className={`flex h-12 w-12 items-center justify-center rounded-full bg-white/70 ring-1 transition-transform duration-200 group-hover:-translate-y-0.5 sm:h-[68px] sm:w-[68px] ${current ? "halo-pulse ring-[rgba(79,70,229,0.35)]" : done ? "ring-[rgba(22,163,74,0.25)]" : "ring-[#e6e9f0]"}`}>
-                    <span className={`relative flex h-9 w-9 items-center justify-center rounded-full shadow-[0_1px_2px_rgba(15,27,45,0.08),0_6px_14px_-6px_rgba(40,70,140,0.25)] sm:h-11 sm:w-11 ${done ? "bg-[var(--ok-soft)] text-[var(--ok-ink)]" : current ? "bg-white text-[var(--accent)]" : "bg-white text-[#8a94a6]"}`}>
-                      <Icon name={PHASE_ICON[ph.n]} size={20} />
-                      {done && <span aria-hidden="true" className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--ok)] text-white ring-2 ring-white"><Icon name="check" size={10} /></span>}
-                    </span>
-                  </span>
-                  <span className="hidden min-w-0 sm:block">
-                    <span className={`block truncate text-[14px] font-medium ${current ? "text-ink" : done ? "text-ink" : "text-muted"}`}>{ph.name}</span>
-                    <span className="block text-[12px] text-muted">{st}</span>
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ol>
-        <p className="note mt-5 border-t border-line pt-4">Last changed {new Date(newest(project)).toLocaleString()}</p>
-      </section>
-
-      {/* F. Next step: one clear action */}
-      <section aria-label="What to do next" className="rounded-2xl border border-[var(--accent)]/30 bg-accent-soft p-6">
-        <p className="label-small text-[var(--accent-ink)]">What to do next</p>
-        <p className="mt-1 text-lg">{next.text}</p>
-        <button onClick={() => onOpenPhase(next.phase)} className="btn btn-primary mt-4">{next.button}</button>
+        <p className="mt-5 text-[13px] text-white/45">{state} · last changed {new Date(newest(project)).toLocaleString()}</p>
       </section>
 
       {/* B. What I understood */}

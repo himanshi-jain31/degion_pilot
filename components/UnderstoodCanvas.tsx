@@ -64,7 +64,7 @@ export function UnderstoodCanvas({ requirement, files, shortVersion, u, hideNote
           <span aria-hidden="true" className="-my-5 flex h-10 w-10 rotate-90 items-center justify-center rounded-full bg-accent text-[18px] text-white shadow-md md:-mx-5 md:my-0 md:rotate-0">→</span>
         </div>
 
-        <div className="relative p-6 pt-10 sm:p-8 md:pl-12" style={{ background: "radial-gradient(circle at 1px 1px, rgba(79,70,229,0.16) 1px, transparent 0) 0 0/18px 18px, linear-gradient(135deg, #eef0ff 0%, #ffffff 75%)" }}>
+        <div className="relative p-6 pt-10 sm:p-8 md:pl-12" style={{ background: "linear-gradient(135deg, #f6f7ff 0%, #ffffff 70%)" }}>
           <p className="text-[12px] font-medium uppercase tracking-wide text-[var(--accent-ink)]">What I understood</p>
           {statement ? (
             <p className="mt-2 text-[26px] font-medium leading-tight tracking-tight sm:text-[30px]">{statement}</p>
