@@ -410,7 +410,7 @@ function ProjectPage() {
                             />
                           )}
                           {sel === 4 && <WireframeWork out={shown.output as WireframeOutput} projectId={id} versionId={shown.id} />}
-                          {sel === 5 && <PrototypeWork out={shown.output as DesignOutput} projectId={id} versionId={shown.id} style={project.designStyle} />}
+                          {sel === 5 && <PrototypeWork out={shown.output as DesignOutput} projectId={id} versionId={shown.id} />}
                           {sel === 6 && (
                             <TestingWork out={shown.output as TestingOutput} projectId={id} notesCount={roundNotes} round={round} onRefresh={refresh} screens={screenNames} />
                           )}

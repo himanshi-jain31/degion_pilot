@@ -1,51 +1,15 @@
 "use client";
 
-import type { DesignOutput, DesignStyle } from "@/lib/storage";
+import type { DesignOutput } from "@/lib/storage";
 import { FramePreview } from "@/components/WireframeView";
 import { List, Section } from "@/components/UnderstandView";
+import { DesignChecks } from "@/components/DesignChecks";
 import { ActionBar, primaryClass } from "@/components/ui";
 
 const urls = (id: string, key: "version" | "final", value = "1") => {
   const q = `${key}=${value}`;
   return { view: `/api/projects/${id}/prototype?${q}`, download: `/api/projects/${id}/prototype?${q}&download=1` };
 };
-
-function Checks({ out }: { out: DesignOutput }) {
-  const c = out.design_checks;
-  const rows: [string, string][] = [
-    ["Colour contrast", c.contrast],
-    ["Size of buttons", c.tap_sizes],
-    ["Pushy or tricky design", c.manipulative_design],
-    ["How well it matches your style", c.style_match],
-  ];
-  return (
-    <Section title="Design checks" icon="check" tone="green">
-      <p className="text-sm text-neutral-600">
-        These are my own checks, not a full audit. The numbers in the first box were worked out from your colours.
-      </p>
-      {out.computed_checks.length > 0 && (
-        <div className="mt-3 rounded-lg border border-green-200 bg-green-50 p-3">
-          <p className="text-sm font-medium">Worked out from your colours (Checked)</p>
-          <List items={out.computed_checks} />
-        </div>
-      )}
-      <ul className="mt-3 space-y-2">
-        {rows.map(([k, v]) => (
-          <li key={k} className="rounded-lg border border-neutral-200 p-3">
-            <p className="text-sm font-medium">{k} <span className="font-normal text-neutral-600">(My guess)</span></p>
-            <p className="text-sm">{v || "Nothing reported."}</p>
-          </li>
-        ))}
-      </ul>
-      {c.off_style_items.length > 0 && (
-        <div className="mt-3">
-          <p className="text-sm font-medium">Things I had to add that are not in your style</p>
-          <List items={c.off_style_items} />
-        </div>
-      )}
-    </Section>
-  );
-}
 
 function CoverNote({ out }: { out: DesignOutput }) {
   const n = out.cover_note;
@@ -69,31 +33,7 @@ function CoverNote({ out }: { out: DesignOutput }) {
 }
 
 // The Work tab for Phase 5
-type StyleLite = Pick<DesignStyle, "colours" | "headingFont" | "bodyFont" | "otherFont" | "corners">;
-
-// The colours and fonts the team saved as the design style (only shown when one was saved)
-function StyleStrip({ style }: { style: StyleLite | null }) {
-  if (!style) return null;
-  const c = style.colours;
-  const swatches = c ? [["Main", c.primary], ["Background", c.background], ["Text", c.text], ...(c.accent ? [["Accent", c.accent]] : [])] : [];
-  return (
-    <Section title="Design style used" icon="palette" tone="indigo">
-      {swatches.length > 0 && (
-        <ul className="flex flex-wrap gap-3">
-          {swatches.map(([n, hex]) => (
-            <li key={n} className="flex items-center gap-2 text-[14px]">
-              <span aria-hidden="true" className="h-9 w-9 rounded-lg border border-line" style={{ background: hex }} />
-              <span>{n}<span className="note block">{hex}</span></span>
-            </li>
-          ))}
-        </ul>
-      )}
-      <p className="note mt-3">Fonts: {style.otherFont ?? `${style.headingFont} for headings, ${style.bodyFont} for text`} · Corners: {style.corners}</p>
-    </Section>
-  );
-}
-
-export function PrototypeWork({ out, projectId, versionId, style = null }: { out: DesignOutput; projectId: string; versionId: string; style?: StyleLite | null }) {
+export function PrototypeWork({ out, projectId, versionId }: { out: DesignOutput; projectId: string; versionId: string }) {
   const u = urls(projectId, "version", versionId);
   return (
     <div>
@@ -113,8 +53,7 @@ export function PrototypeWork({ out, projectId, versionId, style = null }: { out
           <List items={out.warnings} />
         </Section>
       )}
-      {out.style_given && <StyleStrip style={style} />}
-      <Checks out={out} />
+      <DesignChecks out={out} projectId={projectId} versionId={versionId} />
       <CoverNote out={out} />
     </div>
   );
@@ -148,7 +87,7 @@ export function FinalResult({ out, projectId, versionId, testingDone, onNext }: 
         </a>
       </ActionBar>
       <CoverNote out={out} />
-      <Checks out={out} />
+      <DesignChecks out={out} projectId={projectId} versionId={versionId} />
     </div>
   );
 }
