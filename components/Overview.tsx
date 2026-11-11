@@ -59,19 +59,19 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
       <section
         aria-label="What to do next"
         className="relative overflow-hidden rounded-2xl p-6 sm:p-8"
-        style={{ background: "linear-gradient(135deg, #ffffff 0%, #f1f6ff 38%, #d9e7ff 72%, #c7dbff 100%)", boxShadow: "0 1px 2px rgba(15,27,45,0.05)" }}
+        style={{ background: "linear-gradient(135deg, #e6efff 0%, #cfe0ff 45%, #b4cffc 100%)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.9)" }}
       >
         {/* soft diagonal light, like a sheen across glass */}
-        <span aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.6) 49%, transparent 58%), linear-gradient(115deg, transparent 63%, rgba(255,255,255,0.4) 67%, transparent 71%)" }} />
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(115deg, transparent 38%, rgba(255,255,255,0.55) 48%, transparent 58%), linear-gradient(115deg, transparent 62%, rgba(255,255,255,0.35) 66%, transparent 70%)" }} />
         <span className="absolute right-5 top-5 z-10 rounded-xl bg-white px-4 py-2 text-[15px] font-medium shadow-[0_6px_16px_-6px_rgba(15,27,45,0.28)]">Next step</span>
 
         <div className="relative z-10">
           <h2 className="font-display max-w-2xl pr-28 text-[30px] font-semibold leading-tight sm:text-[38px]">{lead}</h2>
-          {more && <p className="text-soft mt-2 max-w-xl text-[17px] leading-snug">{more}</p>}
+          {more && <p className="mt-2 max-w-xl text-[17px] leading-snug text-[#33405f]">{more}</p>}
 
           <p className="mt-8 flex items-baseline gap-2" aria-label={`${approved} of 6 steps approved`}>
             <span className="font-display text-[56px] font-semibold leading-none">{approved}</span>
-            <span className="text-[17px] text-[#3f4a66]">/ 6 steps approved</span>
+            <span className="text-[17px] text-[#2f3b5a]">/ 6 steps approved</span>
           </p>
           <ol className="mt-3 flex max-w-md gap-1.5" role="progressbar" aria-valuemin={0} aria-valuemax={6} aria-valuenow={approved} aria-label="Steps approved">
             {PHASES.map((ph) => {
@@ -85,7 +85,7 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
               {next.button}
               <span aria-hidden="true">→</span>
             </button>
-            <p className="text-[13px] text-[#4a5675]">{state} · last changed {new Date(newest(project)).toLocaleString()}</p>
+            <p className="text-[13px] text-[#3a4768]">{state} · last changed {new Date(newest(project)).toLocaleString()}</p>
           </div>
         </div>
       </section>
