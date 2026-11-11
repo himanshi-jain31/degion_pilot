@@ -58,12 +58,12 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
       {/* The one thing to do next. This is the focal point of the page. */}
       <section
         aria-label="What to do next"
-        className="relative overflow-hidden rounded-2xl border border-[var(--line)] p-6 sm:p-8"
-        style={{ background: "radial-gradient(520px 220px at 100% 0%, rgba(176,190,255,0.32), transparent 70%), radial-gradient(420px 200px at 0% 115%, rgba(186,222,255,0.30), transparent 70%), #ffffff", boxShadow: "0 1px 2px rgba(15,27,45,0.04), 0 14px 36px -14px rgba(40,70,140,0.16)" }}
+        className="relative overflow-hidden rounded-2xl border p-6 sm:p-8"
+        style={{ borderColor: "rgba(79,70,229,0.22)", background: "radial-gradient(560px 240px at 100% 0%, rgba(255,255,255,0.75), transparent 70%), linear-gradient(135deg, #e9ecff 0%, #e2e9ff 50%, #dcefff 100%)", boxShadow: "0 1px 2px rgba(79,70,229,0.10), 0 22px 46px -18px rgba(79,70,229,0.34)" }}
       >
-        <p className="eyebrow">Next step</p>
+        <p className="eyebrow !text-[var(--accent-ink)]">Next step</p>
         <h2 className="font-display mt-3 max-w-3xl text-[26px] font-semibold leading-snug sm:text-[30px]">{lead}</h2>
-        {more && <p className="text-soft mt-2 max-w-2xl text-[17px] leading-snug">{more}</p>}
+        {more && <p className="mt-2 max-w-2xl text-[17px] leading-snug text-[#3f4a66]">{more}</p>}
         <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-5">
           <button onClick={() => onOpenPhase(next.phase)} className="btn btn-primary">
             {next.button}
@@ -73,13 +73,13 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
             <ol className="flex flex-1 gap-1.5" role="progressbar" aria-valuemin={0} aria-valuemax={6} aria-valuenow={approved} aria-label="Steps approved">
               {PHASES.map((ph) => {
                 const st = project.phases[ph.name] ?? "Not started";
-                return <li key={ph.n} className={`h-1.5 flex-1 rounded-full ${st === "Approved" ? "bg-[var(--ok)]" : ph.n === next.phase ? "bg-[var(--accent)]/45" : "bg-[#e6e9f0]"}`} />;
+                return <li key={ph.n} className={`h-1.5 flex-1 rounded-full ${st === "Approved" ? "bg-[var(--ok)]" : ph.n === next.phase ? "bg-[var(--accent)]/50" : "bg-white/70"}`} />;
               })}
             </ol>
-            <span className="note whitespace-nowrap">{approved} of 6 approved</span>
+            <span className="whitespace-nowrap text-[14px] text-[#4a5675]">{approved} of 6 approved</span>
           </div>
         </div>
-        <p className="note mt-5 border-t border-[var(--line)] pt-4">{state} · last changed {new Date(newest(project)).toLocaleString()}</p>
+        <p className="mt-5 border-t pt-4 text-[13px] text-[#5a6788]" style={{ borderColor: "rgba(79,70,229,0.14)" }}>{state} · last changed {new Date(newest(project)).toLocaleString()}</p>
       </section>
 
       {/* B. What I understood */}
