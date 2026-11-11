@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AppShell, Icon } from "@/components/AppShell";
 import { Icon as LineIcon } from "@/components/Icons";
+import { RotatingLine } from "@/components/RotatingLine";
 import { Kbd, Loading, Notice, primaryClass, secondaryClass, useDraft, useKey } from "@/components/ui";
 import { PHASES } from "@/lib/phases";
 import { useName } from "@/lib/name";
@@ -237,7 +238,7 @@ export default function Home() {
               </Link>
             )}
           </h1>
-          <p className="text-soft mt-2 text-xl">What would you like to design today?</p>
+          <RotatingLine />
 
           {/* 2. Status line: only when something is ready for you. It scrolls to the cards. */}
           {needYou.length > 0 && (

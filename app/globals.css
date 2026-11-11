@@ -406,3 +406,18 @@ a.button-link {
   font-weight: 500;
   box-shadow: 0 6px 16px -6px rgba(15, 27, 45, 0.28);
 }
+
+/* The rotating line under the greeting: each sentence rises in softly and fades out */
+@keyframes line-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes line-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-8px); }
+}
+.line-in { animation: line-in 0.45s ease-out both; }
+.line-out { animation: line-out 0.26s ease-in both; }
+@media (prefers-reduced-motion: reduce) {
+  .line-in, .line-out { animation: none; }
+}
