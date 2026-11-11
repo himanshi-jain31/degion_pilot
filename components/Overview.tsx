@@ -3,7 +3,6 @@
 import { PHASES, PHASE_INFO } from "@/lib/phases";
 import { Icon, PHASE_ICON, type IconName } from "@/components/Icons";
 import type { PhaseStatus, Project, UnderstandOutput } from "@/lib/storage";
-import { GuessList } from "@/components/Guesses";
 import { Tile, UnderstoodCanvas } from "@/components/UnderstoodCanvas";
 
 type OverviewProject = Pick<Project, "title" | "requirement" | "createdAt" | "phases" | "versions" | "thingsIGuessed" | "quickQuestions" | "answers"> & {
@@ -50,11 +49,6 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
     .filter((q) => project.answers[q.id] && project.answers[q.id] !== "You decide")
     .map((q) => ({ q: q.question, a: project.answers[q.id] }));
   const left = (project.quickQuestions?.questions ?? []).filter((q) => project.answers[q.id] === "You decide");
-  const groups: { label: "Checked" | "My guess" | "Test idea only"; text: string }[] = [
-    { label: "Checked", text: "Has a source" },
-    { label: "My guess", text: "I worked this out. Please confirm or correct it." },
-    { label: "Test idea only", text: "Made up so we can test. Not real." },
-  ];
 
   return (
     <div className="fade-in space-y-8">
@@ -114,9 +108,9 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
       </section>
 
       {/* C. Told to me vs guessed */}
-      <section aria-label="What is known and what is guessed">
-        <h2 className="section-title mb-4">What you told me, and what I guessed</h2>
-        <div className="grid gap-4 lg:grid-cols-2">
+      <section aria-label="What you told me">
+        <h2 className="section-title mb-4">What you told me</h2>
+        <div className={`grid gap-4 ${u && u.open_questions.length > 0 ? "lg:grid-cols-2" : ""}`}>
           <Tile title="You told me" icon="message" tone="sky" hint={told.length + left.length > 0 ? `${told.length + left.length} answers` : undefined}>
             {told.length === 0 && left.length === 0 ? (
               <p className="note">No answers yet.</p>
@@ -138,31 +132,18 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
             )}
           </Tile>
 
-          <Tile title="Things I guessed" icon="help" tone="amber" hint={project.thingsIGuessed.length > 0 ? `${project.thingsIGuessed.length} guesses` : undefined}>
-            {project.thingsIGuessed.length === 0 ? (
-              <p className="note">Nothing yet. Anything I guess will show up here.</p>
-            ) : (
-              <div className="space-y-4">
-                {groups.map((g) => {
-                  const items = project.thingsIGuessed.filter((x) => x.label === g.label);
-                  if (items.length === 0) return null;
-                  const dot = g.label === "Checked" ? "bg-[var(--ok)]" : g.label === "My guess" ? "bg-[var(--wait)]" : "bg-[#9aa3b2]";
-                  return (
-                    <div key={g.label}>
-                      <p className="mb-2 flex items-center gap-2 text-[15px] font-medium"><span aria-hidden="true" className={`h-2.5 w-2.5 rounded-full ${dot}`} />{g.label}<span className="note font-normal">{g.text}</span></p>
-                      <GuessList items={items} />
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-            {u && u.open_questions.length > 0 && (
-              <div className="mt-5 rounded-2xl p-3" style={{ background: "#fef2f2" }}>
-                <p className="mb-1.5 flex items-center gap-2 text-[15px] font-medium text-[var(--bad-ink)]"><Icon name="help" size={16} />Still to find out</p>
-                <ul className="space-y-1 text-[15px] leading-snug text-[var(--bad-ink)]">{u.open_questions.map((q, i) => <li key={i} className="flex gap-2"><span aria-hidden="true">?</span>{q}</li>)}</ul>
-              </div>
-            )}
-          </Tile>
+          {u && u.open_questions.length > 0 && (
+            <Tile title="Still to find out" icon="help" tone="rose" hint={`${u.open_questions.length} open`}>
+              <ul className="space-y-2">
+                {u.open_questions.map((q, i) => (
+                  <li key={i} className="flex items-start gap-3 rounded-xl bg-[var(--bad-soft)] px-3 py-2.5 text-[15px] leading-snug text-[var(--bad-ink)]">
+                    <span aria-hidden="true" className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-[12px] font-semibold">?</span>{q}
+                  </li>
+                ))}
+              </ul>
+              <p className="note mt-3">Everything I guessed is in the &ldquo;Things I guessed&rdquo; panel.</p>
+            </Tile>
+          )}
         </div>
       </section>
 
