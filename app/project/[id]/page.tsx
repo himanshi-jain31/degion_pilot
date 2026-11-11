@@ -15,6 +15,7 @@ import { DesignStylePanel } from "@/components/DesignStylePanel";
 import { IdeateWork } from "@/components/IdeateView";
 import { CheckIn } from "@/components/CheckIn";
 import { Progress } from "@/components/Progress";
+import { AppShell } from "@/components/AppShell";
 import { Icon, PHASE_ICON } from "@/components/Icons";
 import { Overview } from "@/components/Overview";
 import { PhaseLine } from "@/components/PhaseLine";
@@ -120,7 +121,8 @@ function ProjectPage() {
 
   if (loadError)
     return (
-      <main id="main" tabIndex={-1} className="mx-auto max-w-xl px-5 py-16">
+      <AppShell>
+      <main id="main" tabIndex={-1} className="mx-auto max-w-xl px-5 pb-16 pt-20">
         <h1 className="mb-4 text-2xl font-semibold">{loadError.missing ? "I can't find this project" : "I couldn't open this project"}</h1>
         <Notice
           tone="error"
@@ -135,12 +137,15 @@ function ProjectPage() {
           {loadError.missing ? "It may have been deleted. Your other projects are on Home." : loadError.text}
         </Notice>
       </main>
+      </AppShell>
     );
   if (!project)
     return (
-      <main id="main" tabIndex={-1} className="mx-auto max-w-xl px-5 py-16">
+      <AppShell>
+      <main id="main" tabIndex={-1} className="mx-auto max-w-xl px-5 pb-16 pt-20">
         <Loading onReload={refresh}>Working on it... opening your project.</Loading>
       </main>
+      </AppShell>
     );
 
   const info = PHASES.find((p) => p.n === sel)!;
@@ -207,7 +212,8 @@ function ProjectPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[2200px] px-4 pb-40 pt-2 lg:px-6">
+    <AppShell>
+    <div className="mx-auto w-full max-w-[2200px] px-4 pb-56 pt-8 sm:pb-40 lg:px-6">
       <header className="mb-8">
         <BackLink />
         <ProjectName projectId={id} title={project.title} onRenamed={refresh} />
@@ -304,7 +310,7 @@ function ProjectPage() {
           )}
           {view === "phase" && (
             <>
-              <div className="relative overflow-hidden rounded-3xl border border-line bg-card p-6 shadow-[0_1px_2px_rgba(28,28,30,0.04),0_8px_28px_rgba(79,70,229,0.06)] sm:p-8">
+              <div className="shell-card relative overflow-hidden p-6 sm:p-8">
                 <div className="relative">
                   <div className="flex items-start gap-4">
                     <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent text-white"><Icon name={PHASE_ICON[info.n]} size={24} /></span>
@@ -388,7 +394,7 @@ function ProjectPage() {
                           </p>
                         )}
 
-                        <details open={!shown.approved} className="group rounded-3xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,30,0.03)] sm:p-8">
+                        <details open={!shown.approved} className="group shell-card p-5 sm:p-8">
                           <summary className="flex cursor-pointer select-none list-none items-center gap-3 [&::-webkit-details-marker]:hidden"><span className="step-badge">1</span><span className="section-title">My plan</span><span className="note ml-auto group-open:hidden">Show</span></summary>
                           <div className="mt-6 border-t border-line pt-6">
                           <PlanView out={shown.output} />
@@ -416,7 +422,7 @@ function ProjectPage() {
                           )}
                         </section>
 
-                        <section id="checkin" ref={setCheckinEl} aria-label="Check-in" className="scroll-mt-6 rounded-3xl border border-[#dfe2ff] bg-[#fbfbff] p-5 shadow-[0_1px_2px_rgba(79,70,229,0.05)] sm:p-8">
+                        <section id="checkin" ref={setCheckinEl} aria-label="Check-in" className="scroll-mt-6 rounded-2xl border border-[#dfe2ff] bg-[#fbfbff] p-5 shadow-[0_1px_2px_rgba(40,40,80,0.04),0_8px_24px_rgba(79,70,229,0.07)] sm:p-8">
                           <h3 className="mb-6 flex items-center gap-3 border-b border-[#e6e8ff] pb-5"><span className="step-badge">3</span><span className="section-title">Your decision: Check-in</span></h3>
                           {sel === 6 && !(shown.output as TestingOutput).results_analysis ? (
                             <Notice>The check-in comes after the testing. Download the test kit above, run your sessions, then add your notes.</Notice>
@@ -446,7 +452,7 @@ function ProjectPage() {
                     )}
 
                     {latest && latest.status !== "working" && (
-                      <details className="group rounded-3xl border border-dashed border-[#d6d6cf] p-5 sm:px-8 sm:py-6">
+                      <details className="group rounded-2xl border border-dashed border-[#d6d6cf] p-5 sm:px-8 sm:py-6">
                         <summary className="flex cursor-pointer select-none list-none items-center gap-3 rounded-xl py-1 [&::-webkit-details-marker]:hidden"><span aria-hidden="true" className="step-badge !bg-[#f1f1ed] !text-muted">↺</span><span className="section-title">What I did</span><span className="note ml-auto">History</span></summary>
                         <div className="mt-5 border-t border-line pt-6"><WhatIDid versions={versions} /></div>
                       </details>
@@ -460,7 +466,7 @@ function ProjectPage() {
 
         {/* Things I guessed */}
         <aside aria-label="Things I guessed" className="lg:w-64 lg:shrink-0 xl:w-72">
-          <div className="rounded-3xl border bg-card p-5" style={{ borderColor: "#f5dca8" }}>
+          <div className="rounded-2xl border bg-card p-5" style={{ borderColor: "#f5dca8" }}>
             <h2 className="flex items-center gap-3 text-[18px] font-medium">
               <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--wait-soft)] text-[var(--wait-ink)]"><Icon name="help" size={19} /></span>
               Things I guessed
@@ -490,6 +496,7 @@ function ProjectPage() {
 
       {mainAction()}
     </div>
+    </AppShell>
   );
 }
 
@@ -504,7 +511,7 @@ function WhatIDid({ versions }: { versions: PhaseVersion[] }) {
             {latestDone.output.what_i_did.map((t, i, all) => (
               <li key={i} className="relative flex gap-3 pb-3 last:pb-0">
                 {i < all.length - 1 && <span aria-hidden="true" className="absolute left-[11px] top-6 h-[calc(100%-1rem)] w-px bg-line" />}
-                <span aria-hidden="true" className="z-10 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#f1f1ed] text-[12px] text-muted ring-4 ring-canvas">{i + 1}</span>
+                <span aria-hidden="true" className="z-10 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#f1f1ed] text-[12px] text-muted ring-4 ring-white">{i + 1}</span>
                 <p className="text-[15px] leading-snug">{t}</p>
               </li>
             ))}

@@ -1,5 +1,6 @@
 "use client";
 
+import { AppShell } from "@/components/AppShell";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ActionBar, BackLink, Kbd, Loading, Notice, isTypingTarget, primaryClass, quietClass, useKey } from "@/components/ui";
@@ -91,7 +92,8 @@ function QuickQuestions() {
   });
 
   return (
-    <main id="main" tabIndex={-1} className="mx-auto w-full max-w-2xl px-6 pb-40 pt-8">
+    <AppShell>
+    <main id="main" tabIndex={-1} className="fade-in mx-auto w-full max-w-2xl px-6 pb-56 pt-16 sm:pb-40 sm:pt-20">
       <BackLink />
 
       {loading && (
@@ -111,20 +113,28 @@ function QuickQuestions() {
       {!loading && quick && current && (
         <section className="mt-6" aria-live="polite">
           {step === 0 && quick.request_summary && (
-            <p className="mb-6 rounded-lg bg-neutral-100 p-3 text-neutral-800">Here is what I understood: {quick.request_summary}</p>
+            <p className="mb-6 rounded-2xl border border-[#d9ddff] bg-[var(--accent-soft)] p-4 text-[var(--accent-ink)]"><span className="font-medium">Here is what I understood:</span> {quick.request_summary}</p>
           )}
-          <p className="text-sm text-neutral-700">
-            Question {step + 1} of {questions.length}
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold">{current.question}</h1>
-          {current.why_it_matters && <p className="mt-1 text-sm text-neutral-700">{current.why_it_matters}</p>}
-          <div className="mt-5 flex flex-col gap-3">
+          <div className="shell-card p-6 sm:p-8">
+          <div className="flex items-center gap-3">
+            <ol aria-hidden="true" className="flex flex-1 gap-1.5">
+              {questions.map((q, i) => (
+                <li key={q.id} className={`h-1.5 flex-1 rounded-full ${i < step ? "bg-[var(--ok)]" : i === step ? "bg-accent" : "bg-[#e3e3ea]"}`} />
+              ))}
+            </ol>
+            <p className="text-soft whitespace-nowrap text-sm">
+              Question {step + 1} of {questions.length}
+            </p>
+          </div>
+          <h1 className="mt-6 text-[26px] font-medium leading-tight tracking-tight">{current.question}</h1>
+          {current.why_it_matters && <p className="text-soft mt-2">{current.why_it_matters}</p>}
+          <div className="mt-6 flex flex-col gap-3">
             {current.options.map((o, i) => (
               <button
                 key={o}
                 disabled={saving}
                 onClick={() => answer(current, o)}
-                className="flex items-center justify-between rounded-lg border border-neutral-500 px-4 py-3 text-left text-lg hover:bg-neutral-100 disabled:opacity-50"
+                className="flex items-center justify-between rounded-2xl border border-[#e3e3ee] bg-white/85 px-5 py-4 text-left text-[17px] transition-colors duration-150 hover:border-[#cfd2f5] hover:bg-white hover:shadow-[0_2px_8px_rgba(79,70,229,0.08)] disabled:opacity-50"
               >
                 <span>{o}</span>
                 <Kbd>{i + 1}</Kbd>
@@ -133,11 +143,12 @@ function QuickQuestions() {
             <button
               disabled={saving}
               onClick={() => answer(current, null)}
-              className="flex items-center justify-between rounded-lg border border-dashed border-neutral-500 px-4 py-3 text-left text-neutral-800 hover:bg-neutral-100 disabled:opacity-50"
+              className="flex items-center justify-between rounded-2xl border border-dashed border-[#c9c9d6] px-5 py-4 text-left text-[#4a4a52] transition-colors duration-150 hover:border-[#cfd2f5] hover:bg-white disabled:opacity-50"
             >
               <span>You decide</span>
               <Kbd>D</Kbd>
             </button>
+          </div>
           </div>
         </section>
       )}
@@ -154,16 +165,17 @@ function QuickQuestions() {
             Go back <Kbd>Esc</Kbd>
           </button>
         ) : (
-          <span className="text-sm text-neutral-700">Tap an answer. I move on by myself.</span>
+          <span className="text-soft text-sm">Tap an answer. I move on by myself.</span>
         )}
       </ActionBar>
     </main>
+    </AppShell>
   );
 }
 
 export default function Page() {
   return (
-    <Suspense fallback={<p className="p-10">Working on it...</p>}>
+    <Suspense fallback={<p className="p-10 pl-24">Working on it...</p>}>
       <QuickQuestions />
     </Suspense>
   );

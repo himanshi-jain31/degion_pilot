@@ -23,7 +23,7 @@ export const TONE: Record<Tone, { bg: string; fg: string; edge: string }> = {
 export function Section({ title, children, icon, tone = "indigo", hint }: { title: string; children: React.ReactNode; icon?: IconName; tone?: Tone; hint?: string }) {
   const t = TONE[tone];
   return (
-    <section className="mt-4 rounded-3xl border bg-card p-5 first:mt-0 sm:p-6" style={{ borderColor: t.edge }}>
+    <section className="mt-4 rounded-2xl border bg-card p-5 first:mt-0 sm:p-6" style={{ borderColor: t.edge }}>
       <h3 className="flex items-center gap-3 text-[18px] font-medium">
         {icon ? (
           <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl" style={{ background: t.bg, color: t.fg }}><Icon name={icon} size={19} /></span>
@@ -58,7 +58,7 @@ export function PlanView({ out }: { out: PhaseOutput }) {
           {steps.map((t, i) => (
             <li key={i} className="relative flex gap-4 pb-4 last:pb-0">
               {i < steps.length - 1 && <span aria-hidden="true" className="absolute left-[15px] top-8 h-[calc(100%-1.5rem)] w-px bg-[#d9d9f5]" />}
-              <span aria-hidden="true" className="z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-soft text-[14px] font-medium text-[var(--accent-ink)] ring-4 ring-canvas">{i + 1}</span>
+              <span aria-hidden="true" className="z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-soft text-[14px] font-medium text-[var(--accent-ink)] ring-4 ring-white">{i + 1}</span>
               <p className="pt-1 text-[16px] leading-snug">{t}</p>
             </li>
           ))}

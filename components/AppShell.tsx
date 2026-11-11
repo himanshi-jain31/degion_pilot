@@ -63,7 +63,7 @@ function Sidebar() {
       <ul className="flex items-center gap-2 max-sm:contents sm:flex-col">
         <Item href="/#new" label="New design" icon="plus" accent />
         <Item href="/" label="Home" icon="home" active={path === "/"} />
-        <Item href="/#projects" label="My projects" icon="projects" />
+        <Item href="/#projects" label="My projects" icon="projects" active={path.startsWith("/project")} />
         <Item href="/design-files" label="Design files" icon="files" active={path === "/design-files"} />
         <Item href="/help" label="Help" icon="help" active={path === "/help"} />
       </ul>

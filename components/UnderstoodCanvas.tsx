@@ -16,7 +16,7 @@ function parseStory(story: string) {
 export function Tile({ title, icon, tone, hint, className = "", children }: { title: string; icon: IconName; tone: Tone; hint?: string; className?: string; children: React.ReactNode }) {
   const t = TONE[tone];
   return (
-    <section className={`rounded-3xl border bg-card p-5 sm:p-6 ${className}`} style={{ borderColor: t.edge }} aria-label={title}>
+    <section className={`rounded-2xl border bg-card p-5 sm:p-6 ${className}`} style={{ borderColor: t.edge }} aria-label={title}>
       <h3 className="mb-4 flex items-center gap-3 text-[17px] font-medium">
         <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ background: t.bg, color: t.fg }}><Icon name={icon} size={19} /></span>
         {title}
@@ -30,7 +30,7 @@ export function Tile({ title, icon, tone, hint, className = "", children }: { ti
 // A little "ghost" tile for what is still to come, so the board never looks empty
 function Waiting({ title, icon, tone, className = "" }: { title: string; icon: IconName; tone: Tone; className?: string }) {
   return (
-    <section className={`flex min-h-32 flex-col items-center justify-center gap-2 rounded-3xl border border-dashed border-[#d6d6cf] bg-[#fafaf7] p-5 text-center ${className}`} aria-label={title}>
+    <section className={`flex min-h-32 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-[#d6d6cf] bg-[#fafaf7] p-5 text-center ${className}`} aria-label={title}>
       <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ background: TONE[tone].bg, color: TONE[tone].fg }}><Icon name={icon} size={19} /></span>
       <p className="font-medium">{title}</p>
       <p className="note">Appears when Understand has finished.</p>
@@ -46,7 +46,7 @@ export function UnderstoodCanvas({ requirement, files, shortVersion, u, hideNote
   return (
     <div className="space-y-4">
       {/* You said, then I understood */}
-      <div className="grid overflow-hidden rounded-3xl border border-line bg-card md:grid-cols-[minmax(0,2fr)_auto_minmax(0,3fr)]">
+      <div className="grid overflow-hidden rounded-2xl border border-line bg-card md:grid-cols-[minmax(0,2fr)_auto_minmax(0,3fr)]">
         <div className="relative bg-[#f6f6f2] p-6 sm:p-8">
           <span aria-hidden="true" className="absolute left-4 top-1 select-none font-serif text-[88px] leading-none text-[#dcdcd5]">&ldquo;</span>
           <p className="relative mt-8 text-[12px] font-medium uppercase tracking-wide text-muted">You said</p>
