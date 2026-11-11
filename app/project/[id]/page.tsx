@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { PHASES, BUILT_PHASES, PHASE_INFO } from "@/lib/phases";
 import type { IdeateOutput, PhaseVersion, Project, DesignOutput, ResearchOutput, TestingOutput, UnderstandOutput, WireframeOutput } from "@/lib/storage";
-import { Pill, PlanView, WorkView } from "@/components/UnderstandView";
+import { PlanView, WorkView } from "@/components/UnderstandView";
 import { ResearchWork } from "@/components/ResearchView";
 import { WireframeWork } from "@/components/WireframeView";
 import { FinalResult, PrototypeWork } from "@/components/PrototypeView";
@@ -15,6 +15,7 @@ import { DesignStylePanel } from "@/components/DesignStylePanel";
 import { IdeateWork } from "@/components/IdeateView";
 import { CheckIn } from "@/components/CheckIn";
 import { Progress } from "@/components/Progress";
+import { GuessList } from "@/components/Guesses";
 import { AppShell } from "@/components/AppShell";
 import { Icon, PHASE_ICON } from "@/components/Icons";
 import { Overview } from "@/components/Overview";
@@ -465,30 +466,17 @@ function ProjectPage() {
         </main>
 
         {/* Things I guessed */}
-        <aside aria-label="Things I guessed" className="lg:w-64 lg:shrink-0 xl:w-72">
-          <div className="rounded-2xl border bg-card p-5" style={{ borderColor: "#f5dca8" }}>
-            <h2 className="flex items-center gap-3 text-[18px] font-medium">
-              <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--wait-soft)] text-[var(--wait-ink)]"><Icon name="help" size={19} /></span>
+        <aside aria-label="Things I guessed" className="lg:w-72 lg:shrink-0 xl:w-80">
+          <div className="rounded-2xl border bg-card p-4 sm:p-5" style={{ borderColor: "#f5dca8" }}>
+            <h2 className="flex items-center gap-2.5 whitespace-nowrap text-[17px] font-medium">
+              <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--wait-soft)] text-[var(--wait-ink)]"><Icon name="help" size={18} /></span>
               Things I guessed
-              {project.thingsIGuessed.length > 0 && <span className="pill pill-wait ml-auto !text-[13px]">{project.thingsIGuessed.length}</span>}
             </h2>
+            <p className="note mt-1">{project.thingsIGuessed.length === 0 ? "Nothing yet." : `${project.thingsIGuessed.length} ${project.thingsIGuessed.length === 1 ? "thing" : "things"} for you to confirm or correct`}</p>
             {project.thingsIGuessed.length === 0 ? (
-              <p className="note mt-3">Nothing yet. Anything I guess will show up here.</p>
+              <p className="note mt-3">Anything I guess will show up here.</p>
             ) : (
-              <ul className="mt-4 space-y-2">
-                {project.thingsIGuessed.map((g) => (
-                  <li key={g.id} className="rounded-xl bg-[#fffaf0] p-3 text-[14px] leading-snug">
-                    {g.text}
-                    <Pill label={g.label} />
-                    {g.status && (
-                      <span className={`ml-2 ${g.status === "Confirmed" ? "pill pill-ok" : g.status === "Wrong" ? "pill pill-bad" : "pill pill-idle"} !text-[13px]`}>
-                        {g.status}
-                      </span>
-                    )}
-                    {g.evidence && <span className="note mt-1 block">From your notes: {g.evidence}</span>}
-                  </li>
-                ))}
-              </ul>
+              <div className="mt-4"><GuessList items={project.thingsIGuessed} /></div>
             )}
           </div>
         </aside>

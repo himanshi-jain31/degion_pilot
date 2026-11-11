@@ -3,6 +3,7 @@
 import { PHASES, PHASE_INFO } from "@/lib/phases";
 import { Icon, PHASE_ICON, type IconName } from "@/components/Icons";
 import type { PhaseStatus, Project, UnderstandOutput } from "@/lib/storage";
+import { GuessList } from "@/components/Guesses";
 import { Tile, UnderstoodCanvas } from "@/components/UnderstoodCanvas";
 
 type OverviewProject = Pick<Project, "title" | "requirement" | "createdAt" | "phases" | "versions" | "thingsIGuessed" | "quickQuestions" | "answers"> & {
@@ -122,14 +123,7 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
                   return (
                     <div key={g.label}>
                       <p className="mb-2 flex items-center gap-2 text-[15px] font-medium"><span aria-hidden="true" className={`h-2.5 w-2.5 rounded-full ${dot}`} />{g.label}<span className="note font-normal">{g.text}</span></p>
-                      <ul className="space-y-1.5">
-                        {items.map((x) => (
-                          <li key={x.id} className="rounded-xl bg-[#fffaf0] px-3 py-2 text-[15px] leading-snug">
-                            {x.text}
-                            {x.status && <span className={`ml-2 ${x.status === "Confirmed" ? "pill pill-ok" : x.status === "Wrong" ? "pill pill-bad" : "pill pill-idle"} !text-[13px]`}>{x.status}</span>}
-                          </li>
-                        ))}
-                      </ul>
+                      <GuessList items={items} />
                     </div>
                   );
                 })}
