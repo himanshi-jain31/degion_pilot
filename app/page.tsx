@@ -35,6 +35,12 @@ const SUGGESTIONS: { label: string; fill: string }[] = [
   { label: "Try a sample", fill: LEAVE_SAMPLE },
 ];
 
+// Until you add your name, the greeting uses a friendly word. It changes each day and stays the same all day.
+const FRIENDLY = ["maker", "dreamer", "trailblazer", "visionary", "pathfinder", "storyteller", "idea chaser", "problem solver", "creative mind", "pixel perfectionist", "design wizard", "curious one"];
+function friendlyName() {
+  return FRIENDLY[Math.floor(Date.now() / 86400000) % FRIENDLY.length];
+}
+
 // The tiny line of six steps on each card
 function MiniProgress({ phases }: { phases: Record<string, string> }) {
   return (
@@ -218,7 +224,7 @@ export default function Home() {
           <h1 className="font-display text-[44px] font-semibold leading-tight">
             Hello,{" "}
             <span className="text-accent" suppressHydrationWarning>
-              {nameLoaded && name.trim() ? name.trim() : "designer"}
+              {nameLoaded && name.trim() ? name.trim() : friendlyName()}
             </span>
             {nameLoaded && !name.trim() && (
               <Link
