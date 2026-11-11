@@ -21,7 +21,7 @@ import { Icon, PHASE_ICON } from "@/components/Icons";
 import { Overview } from "@/components/Overview";
 import { DeleteProject, ProjectName } from "@/components/ProjectName";
 import { capFirst } from "@/lib/names";
-import { ActionBar, BackLink, Loading, Notice, primaryClass, quietClass } from "@/components/ui";
+import { ActionBar, BackLink, Loading, Notice, primaryClass, useDraft } from "@/components/ui";
 
 type ProjectView = Omit<Project, "files" | "interviewNotes" | "testNotes"> & {
   testNotes: { name: string; uploadedAt: string; round: number }[];
@@ -50,6 +50,8 @@ function ProjectPage() {
   const [view, setView] = useState<"overview" | "phase" | "style" | "figma" | "final">("overview");
   const [actionError, setActionError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [foldedRaw, setFoldedRaw] = useDraft("designpilot-guesses-folded"); // remembered between steps and projects
+  const folded = foldedRaw === "1";
 
   const refresh = useCallback(async () => {
     try {
@@ -465,18 +467,34 @@ function ProjectPage() {
         </main>
 
         {/* Things I guessed */}
-        <aside aria-label="Things I guessed" className="lg:w-72 lg:shrink-0 xl:w-80">
-          <div className="rounded-2xl border bg-card p-4 sm:p-5" style={{ borderColor: "var(--line)" }}>
-            <h2 className="flex items-center gap-2.5 whitespace-nowrap text-[17px] font-medium">
-              <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#f3f5f9] text-[var(--muted)]"><Icon name="help" size={18} /></span>
-              Things I guessed
-            </h2>
-            <p className="note mt-1">{project.thingsIGuessed.length === 0 ? "Nothing yet." : `${project.thingsIGuessed.length} ${project.thingsIGuessed.length === 1 ? "thing" : "things"} for you to confirm or correct`}</p>
-            {project.thingsIGuessed.length === 0 ? (
-              <p className="note mt-3">Anything I guess will show up here.</p>
-            ) : (
-              <div className="mt-4"><GuessList items={project.thingsIGuessed} /></div>
-            )}
+        <aside aria-label="Things I guessed" className={`lg:shrink-0 lg:transition-[width] lg:duration-200 ${folded ? "lg:w-16" : "lg:w-72 xl:w-80"}`}>
+          <div className={`rounded-2xl border bg-card ${folded ? "p-3 lg:px-2" : "p-4 sm:p-5"}`} style={{ borderColor: "var(--line)" }}>
+            <button
+              onClick={() => setFoldedRaw(folded ? "" : "1")}
+              aria-expanded={!folded}
+              aria-controls="guesses-body"
+              title={folded ? "Show things I guessed" : "Fold away"}
+              className={`flex w-full items-center gap-2.5 text-left ${folded ? "lg:flex-col lg:gap-2" : ""}`}
+            >
+              <span aria-hidden="true" className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#f3f5f9] text-[var(--muted)]">
+                <Icon name="help" size={18} />
+                {folded && project.thingsIGuessed.length > 0 && <span className="absolute -right-2 -top-2 hidden h-5 min-w-5 items-center justify-center rounded-full bg-[var(--wait)] px-1 text-[11px] font-semibold text-white ring-2 ring-white lg:flex">{project.thingsIGuessed.length}</span>}
+              </span>
+              <span className={`min-w-0 flex-1 whitespace-nowrap text-[17px] font-medium ${folded ? "lg:hidden" : ""}`}>Things I guessed</span>
+              {project.thingsIGuessed.length > 0 && <span className={`pill pill-wait !text-[12px] ${folded ? "" : "lg:hidden"}`}>{project.thingsIGuessed.length}</span>}
+              <span aria-hidden="true" className="text-[18px] leading-none text-muted">
+                <span className="lg:hidden">{folded ? "⌄" : "⌃"}</span>
+                <span className="hidden lg:inline">{folded ? "‹" : "›"}</span>
+              </span>
+            </button>
+            <div id="guesses-body" hidden={folded}>
+              <p className="note mt-1">{project.thingsIGuessed.length === 0 ? "Nothing yet." : `${project.thingsIGuessed.length} ${project.thingsIGuessed.length === 1 ? "thing" : "things"} for you to confirm or correct`}</p>
+              {project.thingsIGuessed.length === 0 ? (
+                <p className="note mt-3">Anything I guess will show up here.</p>
+              ) : (
+                <div className="mt-4"><GuessList items={project.thingsIGuessed} /></div>
+              )}
+            </div>
           </div>
         </aside>
       </div>
