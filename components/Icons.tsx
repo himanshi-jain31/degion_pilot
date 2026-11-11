@@ -30,6 +30,7 @@ const PATHS: Record<string, ReactNode> = {
   alert: <><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><path d="M12 9v4M12 17h.01" /></>,
 };
 
+export const ICON_PATHS = PATHS;
 export type IconName = keyof typeof PATHS;
 
 export function Icon({ name, size = 16, className = "" }: { name: IconName; size?: number; className?: string }) {
