@@ -43,7 +43,7 @@ export function RotatingLine() {
 
   useEffect(() => {
     if (paused || still) return;
-    const t = setInterval(() => goTo((index + 1) % LINES.length), 4200);
+    const t = setInterval(() => goTo((index + 1) % LINES.length), 3000);
     return () => clearInterval(t);
   });
 
