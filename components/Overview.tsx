@@ -59,7 +59,7 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
       <section
         aria-label="What to do next"
         className="relative overflow-hidden rounded-2xl p-6 sm:p-8"
-        style={{ background: "linear-gradient(135deg, #e6efff 0%, #cfe0ff 45%, #b4cffc 100%)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.9)" }}
+        style={{ background: "linear-gradient(135deg, #eef4ff 0%, #dbe8ff 45%, #c6dbfd 100%)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.9)" }}
       >
         {/* soft diagonal light, like a sheen across glass */}
         <span aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(115deg, transparent 38%, rgba(255,255,255,0.55) 48%, transparent 58%), linear-gradient(115deg, transparent 62%, rgba(255,255,255,0.35) 66%, transparent 70%)" }} />
