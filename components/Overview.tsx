@@ -3,7 +3,7 @@
 import { PHASES, PHASE_INFO } from "@/lib/phases";
 import { Icon, PHASE_ICON, type IconName } from "@/components/Icons";
 import type { PhaseStatus, Project, UnderstandOutput } from "@/lib/storage";
-import { Pill } from "@/components/UnderstandView";
+import { UnderstoodCanvas } from "@/components/UnderstoodCanvas";
 
 type OverviewProject = Pick<Project, "title" | "requirement" | "createdAt" | "phases" | "versions" | "thingsIGuessed" | "quickQuestions" | "answers"> & {
   files: { name: string }[];
@@ -81,61 +81,8 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
 
       {/* B. What I understood */}
       <section aria-label="What I understood">
-        <h2 className="section-title">What I understood</h2>
-        <div className="card space-y-5">
-          <div>
-            <p className="label-small">In your words</p>
-            <p className="mt-1 whitespace-pre-wrap">{project.requirement}</p>
-            {project.files.length > 0 && <p className="note mt-2">Documents: {project.files.map((f) => f.name).join(", ")}</p>}
-          </div>
-          {project.quickQuestions?.request_summary && (
-            <div>
-              <p className="label-small">My short version</p>
-              <p className="mt-1">{project.quickQuestions.request_summary}</p>
-            </div>
-          )}
-          {u ? (
-            <>
-              <div>
-                <p className="label-small">The brief</p>
-                <p className="mt-1">{u.brief.one_line}</p>
-                {u.brief.full && <p className="note mt-1">{u.brief.full}</p>}
-              </div>
-              {u.users.length > 0 && (
-                <div>
-                  <p className="label-small">Who it is for</p>
-                  <ul className="mt-2 grid gap-3 sm:grid-cols-2">
-                    {u.users.map((x, i) => (
-                      <li key={i} className="rounded-xl border border-line p-3 text-[15px]">
-                        <strong className="font-medium">{x.name}</strong><Pill label={x.label} />
-                        <span className="note mt-1 block">{x.note}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {u.requirements.length > 0 && (
-                <div>
-                  <p className="label-small">What it needs to do</p>
-                  <ul className="mt-2 space-y-1.5 text-[15px]">
-                    {u.requirements.map((r) => (
-                      <li key={r.id}><span className="text-muted">{r.id}</span> {r.story}<Pill label={r.label} /></li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {u.success_measures.length > 0 && (
-                <div>
-                  <p className="label-small">How we will know it worked</p>
-                  <ul className="mt-2 list-disc space-y-1 pl-5 text-[15px]">{u.success_measures.map((s, i) => <li key={i}>{s}</li>)}</ul>
-                </div>
-              )}
-            </>
-          ) : (
-            <p className="note">The full brief, users and requirements appear here once Understand has finished.</p>
-          )}
-          <p className="note">To change something, open Understand and use the Check-in. Your note there is applied when I redo the step.</p>
-        </div>
+        <h2 className="section-title mb-4">What I understood</h2>
+        <UnderstoodCanvas requirement={project.requirement} files={project.files} shortVersion={project.quickQuestions?.request_summary} u={u} />
       </section>
 
       {/* C. Told to me vs guessed */}
