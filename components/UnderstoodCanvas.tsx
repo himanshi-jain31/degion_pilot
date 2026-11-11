@@ -148,16 +148,14 @@ export function UnderstoodCanvas({ requirement, files, shortVersion, u, hideNote
                         <Pill label={r.label} />
                       </div>
                       {r.done_checks.length > 0 && (
-                        <details className="group mt-3 pl-11">
-                          <summary className="flex cursor-pointer select-none list-none items-center gap-1.5 text-[14px] font-medium [&::-webkit-details-marker]:hidden" style={{ color: TONE.green.fg }}>
-                            <span aria-hidden="true" className="transition-transform group-open:rotate-90">›</span>Done when ({r.done_checks.length})
-                          </summary>
-                          <ul className="mt-2 space-y-1.5">
+                        <div className="mt-3 pl-11">
+                          <p className="mb-1.5 text-[12px] font-medium uppercase tracking-wide" style={{ color: TONE.green.fg }}>Done when</p>
+                          <ul className="space-y-1.5">
                             {r.done_checks.map((c, i) => (
-                              <li key={i} className="flex items-start gap-2 rounded-lg px-2 py-1.5 text-[14px] leading-snug" style={{ background: TONE.green.bg }}><Icon name="check" size={15} className="mt-0.5" />{c}</li>
+                              <li key={i} className="flex items-start gap-2 rounded-lg px-2.5 py-1.5 text-[14px] leading-snug" style={{ background: TONE.green.bg, color: TONE.green.fg }}><Icon name="check" size={15} className="mt-0.5" />{c}</li>
                             ))}
                           </ul>
-                        </details>
+                        </div>
                       )}
                     </li>
                   );
