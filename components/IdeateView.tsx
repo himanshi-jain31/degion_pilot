@@ -1,4 +1,5 @@
 import type { IdeateOutput } from "@/lib/storage";
+import { Storyboard } from "@/components/Storyboard";
 import { FlowDiagram, JourneyMap, StructureMap } from "@/components/Diagrams";
 import { Section } from "@/components/UnderstandView";
 
@@ -88,14 +89,7 @@ export function IdeateWork({ out, onMakeJourneysFuller }: { out: IdeateOutput; o
 
       {out.storyboard.length > 0 && (
         <Section title="Storyboard" icon="file-text" tone="amber">
-          <div className="grid gap-3 sm:grid-cols-3">
-            {out.storyboard.map((f) => (
-              <div key={f.frame} className="rounded-lg border border-neutral-200 p-3 text-sm">
-                <p className="text-xs text-neutral-600">Frame {f.frame}</p>
-                <p className="mt-1">{f.scene}</p>
-              </div>
-            ))}
-          </div>
+          <Storyboard frames={out.storyboard} />
         </Section>
       )}
 
