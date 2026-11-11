@@ -14,8 +14,8 @@ const LINES = [
   "Let's make something people love to use.",
 ];
 
-// A line that fades from one sentence to the next. It pauses when you point at it,
-// and it stays still if your computer is set to reduce motion (the dots still work).
+// A line that fades from one sentence to the next by itself. It pauses while you point at it,
+// and it stays still if your computer is set to reduce motion.
 export function RotatingLine() {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
@@ -54,19 +54,6 @@ export function RotatingLine() {
       <p aria-live="off" className="text-soft mt-2 flex min-h-[2lh] items-center justify-center text-xl">
         <span key={index} className={leaving ? "line-out" : still ? "" : "line-in"}>{LINES[index]}</span>
       </p>
-      <div className="mt-2 flex items-center justify-center gap-2" role="group" aria-label="Choose a line">
-        {LINES.map((l, i) => (
-          <button
-            key={l}
-            onClick={() => goTo(i)}
-            aria-label={`Show line ${i + 1}: ${l}`}
-            aria-current={i === index}
-            className="group flex h-4 w-4 items-center justify-center rounded-full"
-          >
-            <span className={`block rounded-full transition-all duration-300 ${i === index ? "h-1.5 w-5 bg-accent" : "h-1.5 w-1.5 bg-[#cdd3e0] group-hover:bg-[#9aa3b2]"}`} />
-          </button>
-        ))}
-      </div>
     </div>
   );
 }
