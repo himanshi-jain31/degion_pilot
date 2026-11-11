@@ -51,7 +51,7 @@ function ProjectPage() {
   const [actionError, setActionError] = useState("");
   const [busy, setBusy] = useState(false);
   const [foldedRaw, setFoldedRaw] = useDraft("designpilot-guesses-folded"); // remembered between steps and projects
-  const folded = foldedRaw === "1";
+  const folded = foldedRaw !== "0"; // folded unless you have opened it
 
   const refresh = useCallback(async () => {
     try {
@@ -470,7 +470,7 @@ function ProjectPage() {
         <aside aria-label="Things I guessed" className={`lg:shrink-0 lg:transition-[width] lg:duration-200 ${folded ? "lg:w-16" : "lg:w-72 xl:w-80"}`}>
           <div className={`rounded-2xl border bg-card ${folded ? "p-3 lg:px-2" : "p-4 sm:p-5"}`} style={{ borderColor: "var(--line)" }}>
             <button
-              onClick={() => setFoldedRaw(folded ? "" : "1")}
+              onClick={() => setFoldedRaw(folded ? "0" : "1")}
               aria-expanded={!folded}
               aria-controls="guesses-body"
               title={folded ? "Show things I guessed" : "Fold away"}
