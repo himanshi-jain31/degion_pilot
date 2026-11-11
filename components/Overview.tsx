@@ -59,27 +59,35 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
       <section
         aria-label="What to do next"
         className="relative overflow-hidden rounded-2xl p-6 sm:p-8"
-        style={{ border: "1.5px solid transparent", background: "radial-gradient(520px 200px at 100% 0%, rgba(196,203,255,0.28), transparent 70%) padding-box, linear-gradient(#ffffff, #ffffff) padding-box, linear-gradient(135deg, #9a94ff 0%, #8ec8ff 100%) border-box", boxShadow: "0 1px 2px rgba(15,27,45,0.05)" }}
+        style={{ background: "linear-gradient(135deg, #ffffff 0%, #f1f6ff 38%, #d9e7ff 72%, #c7dbff 100%)", boxShadow: "0 1px 2px rgba(15,27,45,0.05)" }}
       >
-        <p className="eyebrow !text-[var(--accent-ink)]">Next step</p>
-        <h2 className="font-display mt-3 max-w-3xl text-[26px] font-semibold leading-snug sm:text-[30px]">{lead}</h2>
-        {more && <p className="text-soft mt-2 max-w-2xl text-[17px] leading-snug">{more}</p>}
-        <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-5">
-          <button onClick={() => onOpenPhase(next.phase)} className="btn btn-primary">
-            {next.button}
-            <span aria-hidden="true">→</span>
-          </button>
-          <div className="flex min-w-[240px] flex-1 items-center gap-3">
-            <ol className="flex flex-1 gap-1.5" role="progressbar" aria-valuemin={0} aria-valuemax={6} aria-valuenow={approved} aria-label="Steps approved">
-              {PHASES.map((ph) => {
-                const st = project.phases[ph.name] ?? "Not started";
-                return <li key={ph.n} className={`h-1.5 flex-1 rounded-full ${st === "Approved" ? "bg-[var(--ok)]" : ph.n === next.phase ? "bg-[var(--accent)]/45" : "bg-[#e6e9f0]"}`} />;
-              })}
-            </ol>
-            <span className="note whitespace-nowrap">{approved} of 6 approved</span>
+        {/* soft diagonal light, like a sheen across glass */}
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.6) 49%, transparent 58%), linear-gradient(115deg, transparent 63%, rgba(255,255,255,0.4) 67%, transparent 71%)" }} />
+        <span className="absolute right-5 top-5 z-10 rounded-xl bg-white px-4 py-2 text-[15px] font-medium shadow-[0_6px_16px_-6px_rgba(15,27,45,0.28)]">Next step</span>
+
+        <div className="relative z-10">
+          <h2 className="font-display max-w-2xl pr-28 text-[30px] font-semibold leading-tight sm:text-[38px]">{lead}</h2>
+          {more && <p className="text-soft mt-2 max-w-xl text-[17px] leading-snug">{more}</p>}
+
+          <p className="mt-8 flex items-baseline gap-2" aria-label={`${approved} of 6 steps approved`}>
+            <span className="font-display text-[56px] font-semibold leading-none">{approved}</span>
+            <span className="text-[17px] text-[#3f4a66]">/ 6 steps approved</span>
+          </p>
+          <ol className="mt-3 flex max-w-md gap-1.5" role="progressbar" aria-valuemin={0} aria-valuemax={6} aria-valuenow={approved} aria-label="Steps approved">
+            {PHASES.map((ph) => {
+              const st = project.phases[ph.name] ?? "Not started";
+              return <li key={ph.n} className={`h-1.5 flex-1 rounded-full ${st === "Approved" ? "bg-[var(--ok)]" : ph.n === next.phase ? "bg-[var(--accent)]" : "bg-white/80"}`} />;
+            })}
+          </ol>
+
+          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <button onClick={() => onOpenPhase(next.phase)} className="btn btn-dark min-w-[240px]">
+              {next.button}
+              <span aria-hidden="true">→</span>
+            </button>
+            <p className="text-[13px] text-[#4a5675]">{state} · last changed {new Date(newest(project)).toLocaleString()}</p>
           </div>
         </div>
-        <p className="note mt-5 border-t border-[var(--line)] pt-4">{state} · last changed {new Date(newest(project)).toLocaleString()}</p>
       </section>
 
       {/* B. What I understood */}

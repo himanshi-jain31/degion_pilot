@@ -139,6 +139,15 @@ body {
   background: var(--accent-hover);
   box-shadow: 0 1px 2px rgba(15, 27, 45, 0.16), 0 6px 14px -8px rgba(79, 70, 229, 0.55);
 }
+/* Dark main action, for the one highlighted card */
+.btn-dark {
+  background: #0e1a2b;
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(15, 27, 45, 0.25);
+}
+.btn-dark:hover:not(:disabled) {
+  background: #1a2744;
+}
 /* Second action: white with a hairline edge */
 .btn-secondary {
   background: var(--card);
