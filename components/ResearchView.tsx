@@ -32,7 +32,7 @@ function Donut({ findings }: { findings: Finding[] }) {
   const pieces = LABELS.map((l) => ({ l, n: findings.filter((f) => f.label === l).length })).filter((p) => p.n > 0);
   const starts = pieces.map((_, i) => pieces.slice(0, i).reduce((sum, p) => sum + (p.n / total) * c, 0));
   return (
-    <svg width="148" height="148" viewBox="0 0 120 120" role="img" aria-label={LABELS.map((l) => `${findings.filter((f) => f.label === l).length} ${l}`).join(", ")} className="shrink-0">
+    <svg viewBox="0 0 120 120" role="img" aria-label={LABELS.map((l) => `${findings.filter((f) => f.label === l).length} ${l}`).join(", ")} className="h-[112px] w-[112px] shrink-0 xl:h-[148px] xl:w-[148px]">
       <circle cx="60" cy="60" r={r} fill="none" stroke="#eef0f6" strokeWidth="12" />
       {pieces.map((p, i) => {
         const len = Math.max((p.n / total) * c - 3, 0);
@@ -121,14 +121,14 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
     <div>
       <Section title="What I found" icon="search" tone="sky" hint={`${total} ${total === 1 ? "finding" : "findings"}`}>
         {/* The picture first: how much is backed by a source, and what it covers */}
-        <div className="grid gap-6 lg:grid-cols-[auto_1fr_1fr] lg:items-center">
-          <div className="flex items-center gap-5">
+        <div className="grid gap-5 md:grid-cols-[auto_minmax(0,1fr)_minmax(0,0.85fr)] md:items-center xl:gap-8">
+          <div className="flex items-center gap-3 xl:gap-5">
             <Donut findings={out.findings} />
             <ul className="space-y-2.5">
               {LABELS.map((l) => (
                 <li key={l} className="flex items-center gap-2.5">
                   <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full" style={{ background: LABEL_COLOUR[l] }} />
-                  <span className="text-[22px] font-semibold leading-none">{counts[l]}</span>
+                  <span className="text-[20px] font-semibold leading-none xl:text-[22px]">{counts[l]}</span>
                   <span className="text-[14px] leading-tight"><span className="block font-medium">{l}</span><span className="text-[12px] text-muted">{LABEL_HELP[l]}</span></span>
                 </li>
               ))}
@@ -141,15 +141,15 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
               {perType.map(({ t, n }) => (
                 <li key={t} className="flex items-center gap-3 text-[14px]">
                   <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f3f5f9] text-[var(--muted)]"><Icon name={typeIcon(t)} size={15} /></span>
-                  <span className="w-32 shrink-0 truncate">{capFirst(t)}</span>
-                  <span className="h-2 flex-1 rounded-full bg-[#eef0f6]"><span className="block h-2 rounded-full bg-[var(--accent)]/70" style={{ width: `${(n / maxType) * 100}%` }} /></span>
+                  <span className="w-24 shrink-0 truncate xl:w-32">{capFirst(t)}</span>
+                  <span className="h-2 min-w-0 flex-1 rounded-full bg-[#eef0f6]"><span className="block h-2 rounded-full bg-[var(--accent)]/70" style={{ width: `${(n / maxType) * 100}%` }} /></span>
                   <span className="w-5 text-right font-medium">{n}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className={`flex gap-3 rounded-2xl p-4 text-[15px] leading-snug ${counts.Checked === 0 ? "bg-[var(--wait-soft)] text-[var(--wait-ink)]" : "bg-[var(--ok-soft)] text-[var(--ok-ink)]"}`}>
+          <div className={`flex gap-3 rounded-2xl p-4 text-[14px] leading-snug xl:text-[15px] ${counts.Checked === 0 ? "bg-[var(--wait-soft)] text-[var(--wait-ink)]" : "bg-[var(--ok-soft)] text-[var(--ok-ink)]"}`}>
             <Icon name={counts.Checked === 0 ? "alert" : "check"} size={20} className="mt-0.5" />
             <p>
               {counts.Checked === 0
