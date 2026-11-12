@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Icon } from "@/components/Icons";
 import { checkFigmaFileLink } from "@/lib/figmaLink";
 import { buildSvg, type XScreen } from "@/lib/figmaSvg";
 import { Kbd, primaryClass, secondaryClass } from "@/components/ui";
@@ -133,6 +134,7 @@ export function OpenInFigma({ getFrame, projectId, size }: { getFrame: () => HTM
   return (
     <>
       <button ref={opener} onClick={() => setOpen(true)} aria-haspopup="dialog" className="btn btn-secondary !min-h-10 !px-4 !text-[15px]">
+        <Icon name="figma" size={17} />
         Open in Figma
       </button>
       {open && (

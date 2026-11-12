@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { OpenInFigma } from "@/components/FigmaExport";
+import { Icon } from "@/components/Icons";
 import type { WireframeOutput } from "@/lib/storage";
 import { List, Section } from "@/components/UnderstandView";
 
@@ -12,26 +13,37 @@ export function FramePreview({ url, downloadUrl, title, figmaProjectId }: { url:
   const linkClass = "btn btn-secondary !min-h-10 !px-4 !text-[15px]";
   return (
     <div>
-      <div className="flex flex-wrap items-center gap-2">
-        {(["phone", "laptop"] as const).map((s) => (
-          <button
-            key={s}
-            onClick={() => setSize(s)}
-            aria-pressed={size === s}
-            className={`btn !min-h-10 !px-4 !text-[15px] ${size === s ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent-ink)]" : "btn-secondary"}`}
-          >
-            {s === "phone" ? "Phone size" : "Laptop size"}
-          </button>
-        ))}
-        <a href={url} target="_blank" rel="noopener noreferrer" className={linkClass}>
-          Open in new tab
-        </a>
-        {downloadUrl && (
-          <a href={downloadUrl} className={linkClass}>
-            Download
+      {/* Left: the size and "Open in new tab", with a thin line between them. Right: Download and Open in Figma. */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          {(["phone", "laptop"] as const).map((s) => (
+            <button
+              key={s}
+              onClick={() => setSize(s)}
+              aria-pressed={size === s}
+              className={`btn !min-h-10 !px-4 !text-[15px] ${size === s ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent-ink)]" : "btn-secondary"}`}
+            >
+              <Icon name={s === "phone" ? "phone" : "laptop"} size={17} />
+              {s === "phone" ? "Phone size" : "Laptop size"}
+            </button>
+          ))}
+          <span role="separator" aria-orientation="vertical" className="mx-1 h-6 w-px bg-[#dcdce4]" />
+          <a href={url} target="_blank" rel="noopener noreferrer" className={linkClass}>
+            <Icon name="external" size={17} />
+            Open in new tab
           </a>
+        </div>
+        {(downloadUrl || figmaProjectId) && (
+          <div className="flex flex-wrap items-center gap-2">
+            {downloadUrl && (
+              <a href={downloadUrl} className={linkClass}>
+                <Icon name="download" size={17} />
+                Download
+              </a>
+            )}
+            {figmaProjectId && <OpenInFigma getFrame={() => frame.current} projectId={figmaProjectId} size={size} />}
+          </div>
         )}
-        {figmaProjectId && <OpenInFigma getFrame={() => frame.current} projectId={figmaProjectId} size={size} />}
       </div>
       <div className="mt-4 overflow-x-auto rounded-2xl border border-line bg-[#efefe9] p-4">
         <iframe
