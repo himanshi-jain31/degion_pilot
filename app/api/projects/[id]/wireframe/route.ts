@@ -1,3 +1,4 @@
+import { EXPORT_JS } from "@/lib/exportJs";
 import { loadProject, WireframeOutput } from "@/lib/storage";
 
 // Serves a finished wireframe as its own page. The headers lock it in a sandbox:
@@ -9,7 +10,9 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
   const version = project?.versions
     .filter((v) => v.phase === 4 && v.status === "done" && (!wanted || v.id === wanted))
     .at(-1);
-  const html = version ? (version.output as WireframeOutput).html : "";
+  let html = version ? (version.output as WireframeOutput).html : "";
+  // files made before the "Open in Figma" button get its measuring script added when they are shown
+  if (html && !html.includes("dp-export")) html = html.replace("</body>", `<script>${EXPORT_JS}</script></body>`);
   if (!html) return new Response("This wireframe is not ready yet.", { status: 404 });
   return new Response(html, {
     headers: {

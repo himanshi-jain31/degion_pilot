@@ -1,5 +1,6 @@
 import { FriendlyError, MODEL_PHASE, askForText } from "@/lib/ai";
 import { stripDesignerNotes } from "@/lib/checks";
+import { EXPORT_JS } from "@/lib/exportJs";
 import { NAV_JS, NAV_LAYOUT_CSS, esc, joinSections, menuOptions, sanitizeFragment } from "@/lib/wireframes";
 import type { Screen } from "@/lib/storage";
 import type Anthropic from "@anthropic-ai/sdk";
@@ -84,6 +85,6 @@ export function assemblePrototype(opts: { screens: Screen[]; fragments: string[]
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Prototype</title><style>${css}</style></head><body>
 <div class="proto-bar"><span>Prototype. Not the final product.</span><select id="jump" aria-label="Jump to a screen">${menuOptions(opts.screens)}</select></div>
 ${sections.join("\n")}
-<script>${NAV_JS}</script></body></html>`;
+<script>${NAV_JS}${EXPORT_JS}</script></body></html>`;
   return { html, warnings };
 }

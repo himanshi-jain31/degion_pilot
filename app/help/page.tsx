@@ -45,6 +45,13 @@ export default function HelpPage() {
           </ul>
         </section>
 
+        <section className="shell-card mt-6 p-6" aria-labelledby="figma-help">
+          <h2 id="figma-help" className="section-title">Open the design in Figma</h2>
+          <p className="mt-2">
+            When your Visual design is ready, click <strong>Open in Figma</strong> next to the preview. Paste your Figma file link. I copy every screen as editable shapes and text, and open your file. Click once on the empty canvas and press <kbd className="kbd">Cmd V</kbd> (Ctrl V on Windows). Then edit by hand. I never change your Figma file myself.
+          </p>
+        </section>
+
         <section className="shell-card mt-6 p-6" aria-labelledby="keys">
           <h2 id="keys" className="section-title">Keyboard shortcuts</h2>
           <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2">

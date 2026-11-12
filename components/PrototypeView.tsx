@@ -45,7 +45,7 @@ export function PrototypeWork({ out, projectId, versionId }: { out: DesignOutput
       <Section title="Try the prototype" icon="phone" tone="indigo">
         <p className="text-sm text-neutral-600">Click through it like a real product. Use the menu in the dark bar to jump to any screen.</p>
         <div className="mt-3">
-          <FramePreview url={u.view} downloadUrl={u.download} title="Prototype preview" />
+          <FramePreview url={u.view} downloadUrl={u.download} title="Prototype preview" figmaProjectId={projectId} />
         </div>
       </Section>
       {out.warnings.length > 0 && (
@@ -79,7 +79,7 @@ export function FinalResult({ out, projectId, versionId, testingDone, onNext }: 
         )}
       </div>
       <Section title="Your working prototype" icon="phone" tone="indigo">
-        <FramePreview url={u.view} title="Final prototype" />
+        <FramePreview url={u.view} title="Final prototype" figmaProjectId={projectId} />
       </Section>
       <ActionBar>
         <a href={u.download} className={`${primaryClass} button-link`}>

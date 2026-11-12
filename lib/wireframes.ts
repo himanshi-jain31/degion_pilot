@@ -1,5 +1,6 @@
 import { FriendlyError, MODEL_PHASE, askForText } from "@/lib/ai";
 import { stripDesignerNotes } from "@/lib/checks";
+import { EXPORT_JS } from "@/lib/exportJs";
 import type { Screen } from "@/lib/storage";
 import type Anthropic from "@anthropic-ai/sdk";
 
@@ -171,6 +172,6 @@ export function assemble(screens: Screen[], fragments: string[]): { html: string
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Wireframe</title><style>${CSS}</style></head><body>
 <div class="menu"><strong>Wireframe</strong><select id="jump" aria-label="Jump to a screen">${menuOptions(screens)}</select></div>
 ${sections.join("\n")}
-<script>${JS}</script></body></html>`;
+<script>${JS}${EXPORT_JS}</script></body></html>`;
   return { html, warnings };
 }

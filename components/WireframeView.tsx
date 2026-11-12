@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { OpenInFigma } from "@/components/FigmaExport";
 import type { WireframeOutput } from "@/lib/storage";
 import { List, Section } from "@/components/UnderstandView";
 
 // A sandboxed frame with phone and laptop sizes, "Open in new tab" and (optionally) "Download"
-export function FramePreview({ url, downloadUrl, title }: { url: string; downloadUrl?: string; title: string }) {
+export function FramePreview({ url, downloadUrl, title, figmaProjectId }: { url: string; downloadUrl?: string; title: string; figmaProjectId?: string }) {
   const [size, setSize] = useState<"phone" | "laptop">("phone");
+  const frame = useRef<HTMLIFrameElement>(null);
   const linkClass = "btn btn-secondary !min-h-10 !px-4 !text-[15px]";
   return (
     <div>
@@ -29,9 +31,11 @@ export function FramePreview({ url, downloadUrl, title }: { url: string; downloa
             Download
           </a>
         )}
+        {figmaProjectId && <OpenInFigma getFrame={() => frame.current} projectId={figmaProjectId} size={size} />}
       </div>
       <div className="mt-4 overflow-x-auto rounded-2xl border border-line bg-[#efefe9] p-4">
         <iframe
+          ref={frame}
           title={title}
           src={url}
           sandbox="allow-scripts"

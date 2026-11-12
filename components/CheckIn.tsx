@@ -122,7 +122,7 @@ export function CheckIn(props: {
 
         {previewUrl && (
           <div className="mt-6">
-            <FramePreview url={previewUrl} downloadUrl={version.phase === 5 ? `${previewUrl}&download=1` : undefined} title={version.phase === 5 ? "Prototype preview" : "Wireframe preview"} />
+            <FramePreview url={previewUrl} downloadUrl={version.phase === 5 ? `${previewUrl}&download=1` : undefined} title={version.phase === 5 ? "Prototype preview" : "Wireframe preview"} figmaProjectId={version.phase === 5 ? props.projectId : undefined} />
           </div>
         )}
 
