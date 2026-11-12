@@ -312,32 +312,34 @@ function ProjectPage() {
           )}
           {view === "phase" && (
             <>
-              <div className="glass-card rounded-2xl p-6 sm:p-8">
-                <span className="glass-badge"><span aria-hidden="true" className={`h-2 w-2 rounded-full ${STATUS_DOT[status] ?? "bg-[#9aa3b2]"}`} />{status}</span>
-                <div className="relative z-10">
-                  <div className="flex items-start gap-4">
+              <div className="glass-card rounded-2xl px-5 py-5 sm:px-8 sm:py-6">
+                <div className="relative z-10 flex flex-wrap items-center justify-between gap-x-8 gap-y-4">
+                  <div className="flex min-w-0 items-center gap-4">
                     <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent text-white"><Icon name={PHASE_ICON[info.n]} size={24} /></span>
-                    <div className="min-w-0 pr-28 sm:pr-40">
-                      <h2 className="font-display text-[32px] font-semibold leading-tight sm:text-[36px]">{info.name}</h2>
-                      <p className="eyebrow mt-1.5">Step {info.n} of 6</p>
-                      <p className="text-soft mt-2 max-w-xl text-[17px]">{PHASE_INFO[info.n].goal}</p>
+                    <div className="min-w-0">
+                      <p className="eyebrow">Step {info.n} of 6</p>
+                      <h2 className="font-display text-[28px] font-semibold leading-tight sm:text-[32px]">{info.name}</h2>
+                      <p className="text-soft mt-0.5 text-[16px] leading-snug">{PHASE_INFO[info.n].goal}</p>
                     </div>
                   </div>
-                  <ol className="mt-6 flex flex-wrap items-center gap-2 text-[14px]" aria-label="Where this step is">
-                    {[
-                      ["Plan", !!shown?.output || latest?.status === "working"],
-                      ["Made", !!shown?.output && latest?.status !== "working"],
-                      ["Your decision", status === "Approved"],
-                    ].map(([label, done], i) => (
-                      <li key={String(label)} className="flex items-center gap-2">
-                        {i > 0 && <span aria-hidden="true" className={`h-px w-6 ${done ? "bg-[var(--ok)]" : "bg-white/80"}`} />}
-                        <span className={`flex items-center gap-1.5 rounded-full px-3 py-1 ${done ? "bg-white text-[var(--ok-ink)]" : "bg-white/60 text-[#3f4b62]"}`}>
-                          <span aria-hidden="true">{done ? "✓" : i + 1}</span>
-                          {label}
-                        </span>
-                      </li>
-                    ))}
-                  </ol>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <ol className="flex flex-wrap items-center gap-2 text-[14px]" aria-label="Where this step is">
+                      {[
+                        ["Plan", !!shown?.output || latest?.status === "working"],
+                        ["Made", !!shown?.output && latest?.status !== "working"],
+                        ["Your decision", status === "Approved"],
+                      ].map(([label, done], i) => (
+                        <li key={String(label)} className="flex items-center gap-2">
+                          {i > 0 && <span aria-hidden="true" className={`h-px w-5 ${done ? "bg-[var(--ok)]" : "bg-white/80"}`} />}
+                          <span className={`flex items-center gap-1.5 rounded-full px-3 py-1 ${done ? "bg-white text-[var(--ok-ink)]" : "bg-white/60 text-[#3f4b62]"}`}>
+                            <span aria-hidden="true">{done ? "✓" : i + 1}</span>
+                            {label}
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                    <span className="glass-pill"><span aria-hidden="true" className={`h-2 w-2 rounded-full ${STATUS_DOT[status] ?? "bg-[#9aa3b2]"}`} />{status}</span>
+                  </div>
                 </div>
               </div>
 

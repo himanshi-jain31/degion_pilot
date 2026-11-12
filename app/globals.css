@@ -390,6 +390,18 @@ a.button-link {
     linear-gradient(115deg, transparent 62%, rgba(255, 255, 255, 0.35) 66%, transparent 70%);
 }
 .glass-card .text-soft { color: #3f4b62; }
+/* The same white pill, sitting in a row instead of floating */
+.glass-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  background: #fff;
+  padding: 7px 14px;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 6px 16px -6px rgba(15, 27, 45, 0.28);
+}
 /* The small white pill that floats at the top right of a glass card */
 .glass-badge {
   position: absolute;
