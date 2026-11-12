@@ -4,15 +4,15 @@ import { useState } from "react";
 import type { Finding, ResearchOutput } from "@/lib/storage";
 import { Icon, type IconName } from "@/components/Icons";
 import { ProfileGrid } from "@/components/ProfileCard";
-import { Section, TONE } from "@/components/UnderstandView";
+import { Section, TONE, type Tone } from "@/components/UnderstandView";
 import { capFirst } from "@/lib/names";
 
 const isWebLink = (u: string) => /^https?:\/\//i.test(u);
 
 const LABELS = ["Checked", "My guess", "Test idea only"] as const;
-const LABEL_COLOUR: Record<string, string> = { Checked: "#16a34a", "My guess": "#d97706", "Test idea only": "#9aa3b2" };
+const LABEL_COLOUR: Record<string, string> = { Checked: "#16a34a", "My guess": "#d97706", "Test idea only": "#8b9bd9" };
 const LABEL_HELP: Record<string, string> = { Checked: "has a source", "My guess": "I worked it out", "Test idea only": "made up for testing" };
-const LABEL_PILL: Record<string, string> = { Checked: "pill-ok", "My guess": "pill-wait", "Test idea only": "pill-idle" };
+const LABEL_PILL: Record<string, string> = { Checked: "pill-ok", "My guess": "pill-wait", "Test idea only": "pill-test" };
 
 // One icon for each kind of finding, picked from its name
 function typeIcon(t: string): IconName {
@@ -23,6 +23,17 @@ function typeIcon(t: string): IconName {
   if (/number|quant|data|stat/.test(s)) return "chart";
   if (/access/.test(s)) return "eye";
   return "search";
+}
+
+// Each kind of finding has its own soft colour from the app palette
+function typeTone(t: string): Tone {
+  const s = t.toLowerCase();
+  if (/compet/.test(s)) return "indigo";
+  if (/pattern/.test(s)) return "sky";
+  if (/people|qual|say/.test(s)) return "green";
+  if (/number|quant|data|stat/.test(s)) return "amber";
+  if (/access/.test(s)) return "rose";
+  return "slate";
 }
 
 // A ring that shows how many findings are backed by a source, and how many are only guesses
@@ -47,10 +58,11 @@ function Donut({ findings }: { findings: Finding[] }) {
 // Three small bars for how much to trust a finding
 function Trust({ level }: { level: Finding["confidence"] }) {
   const n = level === "High" ? 3 : level === "Medium" ? 2 : 1;
+  const colour = level === "High" ? "#16a34a" : level === "Medium" ? "#d97706" : "#e07a7a";
   return (
     <span className="flex items-center gap-1.5 text-[12px] text-muted" aria-label={`Trust: ${level}`}>
       <span aria-hidden="true" className="flex items-end gap-0.5">
-        {[1, 2, 3].map((i) => <span key={i} className={`w-1 rounded-sm ${i <= n ? "bg-ink" : "bg-[#dfe3ec]"}`} style={{ height: 4 + i * 3 }} />)}
+        {[1, 2, 3].map((i) => <span key={i} className="w-1 rounded-sm" style={{ height: 4 + i * 3, background: i <= n ? colour : "#dfe3ec" }} />)}
       </span>
       Trust: {level}
     </span>
@@ -62,8 +74,8 @@ function FindingCard({ f, n }: { f: Finding; n: number }) {
     <li id={`finding-${n}`} className="flex scroll-mt-24 flex-col gap-3 rounded-2xl border border-[var(--line)] bg-white p-4 transition target:ring-2 target:ring-[var(--accent)] hover:shadow-md">
       <div className="flex items-center justify-between gap-2">
         <span className="flex min-w-0 items-center gap-2">
-          <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f3f5f9] text-[var(--muted)]"><Icon name={typeIcon(f.type)} size={15} /></span>
-          <span className="truncate text-[13px] font-medium text-muted">{capFirst(f.type || "Finding")}</span>
+          <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg" style={{ background: TONE[typeTone(f.type)].bg, color: TONE[typeTone(f.type)].fg }}><Icon name={typeIcon(f.type)} size={15} /></span>
+          <span className="truncate text-[13px] font-medium" style={{ color: TONE[typeTone(f.type)].fg }}>{capFirst(f.type || "Finding")}</span>
         </span>
         <span className={`pill ${LABEL_PILL[f.label] ?? "pill-wait"} shrink-0 !px-2.5 !py-0.5 !text-[12px]`}>{f.label}</span>
       </div>
@@ -140,9 +152,9 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
             <ul className="space-y-2.5">
               {perType.map(({ t, n }) => (
                 <li key={t} className="flex items-center gap-3 text-[14px]">
-                  <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f3f5f9] text-[var(--muted)]"><Icon name={typeIcon(t)} size={15} /></span>
+                  <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg" style={{ background: TONE[typeTone(t)].bg, color: TONE[typeTone(t)].fg }}><Icon name={typeIcon(t)} size={15} /></span>
                   <span className="w-24 shrink-0 truncate xl:w-32">{capFirst(t)}</span>
-                  <span className="h-2 min-w-0 flex-1 rounded-full bg-[#eef0f6]"><span className="block h-2 rounded-full bg-[var(--accent)]/70" style={{ width: `${(n / maxType) * 100}%` }} /></span>
+                  <span className="h-2 min-w-0 flex-1 rounded-full bg-[#eef0f6]"><span className="block h-2 rounded-full" style={{ width: `${(n / maxType) * 100}%`, background: TONE[typeTone(t)].fg, opacity: 0.55 }} /></span>
                   <span className="w-5 text-right font-medium">{n}</span>
                 </li>
               ))}
@@ -162,7 +174,7 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--line)] pt-5">
           <div className="flex flex-wrap gap-2" role="group" aria-label="Show a topic">
             {["All", ...types].map((t) => (
-              <button key={t} onClick={() => setType(t)} aria-pressed={type === t} className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[14px] transition-colors ${type === t ? "border-[#c7cbf5] bg-[#f4f5ff] text-[var(--accent-ink)]" : "border-[var(--line)] bg-white text-muted hover:text-ink"}`}>
+              <button key={t} onClick={() => setType(t)} aria-pressed={type === t} className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[14px] transition-colors ${type === t ? "border-transparent font-medium" : "border-[var(--line)] bg-white text-muted hover:text-ink"}`} style={type === t ? { background: t === "All" ? "#eef0ff" : TONE[typeTone(t)].bg, color: t === "All" ? "#4338ca" : TONE[typeTone(t)].fg } : undefined}>
                 {t !== "All" && <Icon name={typeIcon(t)} size={14} />}
                 {t === "All" ? "All" : capFirst(t)}
                 <span className="text-[12px] opacity-70">{t === "All" ? total : perType.find((x) => x.t === t)?.n}</span>

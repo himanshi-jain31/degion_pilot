@@ -12,7 +12,7 @@ function split(text: string) {
   return { kind: "guess" as const, main: text, check: "" };
 }
 
-const LABEL_PILL: Record<string, string> = { Checked: "pill-ok", "My guess": "pill-wait", "Test idea only": "pill-idle" };
+const LABEL_PILL: Record<string, string> = { Checked: "pill-ok", "My guess": "pill-wait", "Test idea only": "pill-test" };
 const STATUS_PILL: Record<string, string> = { Confirmed: "pill-ok", Wrong: "pill-bad", Open: "pill-idle" };
 
 // One guess as a small card: the two chips always sit in the same row at the top, the words below, how to check at the bottom

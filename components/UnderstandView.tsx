@@ -5,7 +5,7 @@ import type { PhaseOutput, UnderstandOutput } from "@/lib/storage";
 
 export function Pill({ label }: { label: string }) {
   // Checked has a source (green), My guess is inferred (amber), Test idea only is made up for testing (grey)
-  const kind = label === "Checked" ? "pill-ok" : label === "Test idea only" ? "pill-idle" : "pill-wait";
+  const kind = label === "Checked" ? "pill-ok" : label === "Test idea only" ? "pill-test" : "pill-wait";
   return <span className={`pill ${kind} ml-2 !text-[13px] align-middle`}>{label}</span>;
 }
 

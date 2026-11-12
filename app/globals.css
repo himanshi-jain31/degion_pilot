@@ -221,6 +221,7 @@ body {
 .pill-wait { background: var(--wait-soft); color: var(--wait-ink); --dot: var(--wait); }
 .pill-bad { background: var(--bad-soft); color: var(--bad-ink); --dot: var(--bad); }
 .pill-info { background: var(--accent-soft); color: var(--accent-ink); --dot: var(--accent); }
+.pill-test { background: #eceffc; color: #3f4f86; --dot: #8b9bd9; }
 .pill-idle { background: #f1f3f8; color: var(--muted); --dot: #9aa3b2; }
 
 /* ---- The calm Home look: white fading into a pale lavender and blue wash on the right ---- */
