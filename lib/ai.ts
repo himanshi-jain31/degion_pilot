@@ -162,11 +162,19 @@ export async function askForJson<T>(opts: {
 }
 
 function toFriendly(e: unknown): FriendlyError {
-  const status = (e as { status?: number })?.status;
+  const err = e as { status?: number; message?: string; error?: { error?: { message?: string } } };
+  const status = err?.status;
+  // the AI service says why in words; use it to tell the cases apart (the key itself is never shown)
+  const said = `${err?.error?.error?.message ?? ""} ${err?.message ?? ""}`.toLowerCase();
+  if (said.includes("credit balance")) {
+    return new FriendlyError("Your Claude account has no credit left. Open console.anthropic.com, go to Plans and Billing, add some credit, then click Try again. It can take a few minutes to show up.");
+  }
   if (status === 401) return new FriendlyError("The AI did not accept the key. Check the key in .env.local, save the file, then click Try again.");
   if (status === 404) return new FriendlyError("The AI model name was not found. Please tell the team so the name can be updated.");
   if (status === 429) return new FriendlyError("The AI is busy right now. Wait a minute and try again.");
-  if (status === 402 || status === 403) return new FriendlyError("The AI account may be out of credit or not allowed. Please check the account, then try again.");
+  if (status === 402 || status === 403) return new FriendlyError("The AI account may be out of credit or not allowed. Please check the account at console.anthropic.com, then try again.");
+  if (status === 400) return new FriendlyError("The AI refused the request. Please try again. If it keeps happening, tell the team.");
+  if (status && status >= 500) return new FriendlyError("The AI service is having a problem right now. Wait a minute and try again.");
   return new FriendlyError("I couldn't reach the AI. Check your internet and try again.");
 }
 
