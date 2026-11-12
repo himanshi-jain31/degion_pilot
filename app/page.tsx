@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AppShell, Icon } from "@/components/AppShell";
 import { Icon as LineIcon } from "@/components/Icons";
 import { RotatingLine } from "@/components/RotatingLine";
+import { HomeBackdrop } from "@/components/HomeBackdrop";
 import { Kbd, Loading, Notice, primaryClass, secondaryClass, useDraft, useKey } from "@/components/ui";
 import { PHASES } from "@/lib/phases";
 import { useName } from "@/lib/name";
@@ -216,7 +217,8 @@ export default function Home() {
 
   return (
     <AppShell>
-      <main id="main" tabIndex={-1} className="fade-in mx-auto flex min-h-screen w-full max-w-3xl flex-col px-6 pb-28 pt-16 sm:pt-20">
+      <HomeBackdrop />
+      <main id="main" tabIndex={-1} className="fade-in relative z-[1] mx-auto flex min-h-screen w-full max-w-3xl flex-col px-6 pb-28 pt-16 sm:pt-20">
         {dragging && (
           <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center bg-ink/60 text-xl font-medium text-white backdrop-blur-sm">
             Drop your files here to add them
