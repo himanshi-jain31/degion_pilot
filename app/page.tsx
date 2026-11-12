@@ -70,6 +70,9 @@ export default function Home() {
   const [dragging, setDragging] = useState(false);
   const [page, setPage] = useState(0);
   const [name, , nameLoaded] = useName();
+  // the clock is read after the page is on screen, not while it is being prepared
+  const [friendly, setFriendly] = useState("maker");
+  useEffect(() => setFriendly(friendlyName()), []);
   const fileInput = useRef<HTMLInputElement>(null);
   const box = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
@@ -225,7 +228,7 @@ export default function Home() {
           <h1 className="font-display text-[44px] font-semibold leading-tight">
             Hello,{" "}
             <span className="text-accent" suppressHydrationWarning>
-              {nameLoaded && name.trim() ? name.trim() : friendlyName()}
+              {nameLoaded && name.trim() ? name.trim() : friendly}
             </span>
             {nameLoaded && !name.trim() && (
               <Link
@@ -239,23 +242,6 @@ export default function Home() {
             )}
           </h1>
           <RotatingLine />
-
-          {/* 2. Status line: only when something is ready for you. It scrolls to the cards. */}
-          {needYou.length > 0 && (
-            <p className="mt-4">
-              <a
-                href="#projects"
-                onClick={(e) => {
-                  e.preventDefault();
-                  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-                  document.getElementById("projects")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
-                }}
-                className="pill pill-wait underline-offset-4 hover:underline"
-              >
-                {needYou.length === 1 ? "1 project needs you" : `${needYou.length} projects need you`}
-              </a>
-            </p>
-          )}
         </header>
 
         {status && !status.demo && !status.keySet && (
@@ -422,7 +408,23 @@ export default function Home() {
         )}
 
         {/* 5. Your projects */}
-        <section id="projects" className="mt-14 scroll-mt-8" aria-labelledby="your-projects">
+        <section id="projects" className="mt-14 scroll-mt-8 sm:-mx-16" aria-labelledby="your-projects">
+          {/* The status label sits right above the "Your projects" title: what needs you, then the projects. Hidden when nothing is ready. */}
+          {needYou.length > 0 && (
+            <p className="mb-3">
+              <a
+                href="#projects"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                  document.getElementById("your-projects")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+                }}
+                className="pill pill-wait underline-offset-4 hover:underline"
+              >
+                {needYou.length === 1 ? "1 project needs you" : `${needYou.length} projects need you`}
+              </a>
+            </p>
+          )}
           <h2 id="your-projects" className="section-title">
             Your projects
           </h2>
