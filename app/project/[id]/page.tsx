@@ -317,7 +317,7 @@ function ProjectPage() {
                   <div className="flex min-w-0 items-center gap-4">
                     <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent text-white"><Icon name={PHASE_ICON[info.n]} size={24} /></span>
                     <div className="min-w-0">
-                      <p className="eyebrow">Step {info.n} of 6</p>
+                      <p className="flex flex-wrap items-center gap-2.5"><span className="eyebrow">Step {info.n} of 6</span><span className={`${STATUS_COLOUR[status]} !px-2.5 !py-0 !text-[12px]`}>{status}</span></p>
                       <h2 className="font-display text-[28px] font-semibold leading-tight sm:text-[32px]">{info.name}</h2>
                       <p className="text-soft mt-0.5 text-[16px] leading-snug">{PHASE_INFO[info.n].goal}</p>
                     </div>
@@ -338,7 +338,6 @@ function ProjectPage() {
                         </li>
                       ))}
                     </ol>
-                    <span className="glass-pill"><span aria-hidden="true" className={`h-2 w-2 rounded-full ${STATUS_DOT[status] ?? "bg-[#9aa3b2]"}`} />{status}</span>
                   </div>
                 </div>
               </div>
