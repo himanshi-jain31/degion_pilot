@@ -396,9 +396,9 @@ function ProjectPage() {
                           </p>
                         )}
 
-                        <details open={!shown.approved} className="group shell-card p-5 sm:p-8">
-                          <summary className="flex cursor-pointer select-none list-none items-center gap-3 [&::-webkit-details-marker]:hidden"><span className="step-badge">1</span><span className="section-title">My plan</span><span className="note ml-auto group-open:hidden">Show</span></summary>
-                          <div className="mt-6 border-t border-line pt-6">
+                        <details className="group rounded-2xl border border-dashed border-[#d5dbe6] p-5 sm:px-8 sm:py-6">
+                          <summary className="flex cursor-pointer select-none list-none items-center gap-3 rounded-xl py-1 [&::-webkit-details-marker]:hidden"><span aria-hidden="true" className="step-badge !bg-[#f1f3f8] !text-muted">1</span><span className="section-title">My plan</span><span className="note ml-auto"><span className="group-open:hidden">Show</span><span className="hidden group-open:inline">Hide</span></span></summary>
+                          <div className="mt-5 border-t border-line pt-6">
                           <PlanView out={shown.output} />
                           </div>
                         </details>
