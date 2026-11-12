@@ -121,7 +121,7 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
     <div>
       <Section title="What I found" icon="search" tone="sky" hint={`${total} ${total === 1 ? "finding" : "findings"}`}>
         {/* The picture first: how much is backed by a source, and what it covers */}
-        <div className="grid gap-5 md:grid-cols-[auto_minmax(0,1fr)_minmax(0,0.85fr)] md:items-center xl:gap-8">
+        <div className="grid gap-6 md:grid-cols-2 md:items-center xl:gap-10">
           <div className="flex items-center gap-3 xl:gap-5">
             <Donut findings={out.findings} />
             <ul className="space-y-2.5">
@@ -149,15 +149,14 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
             </ul>
           </div>
 
-          <div className={`flex gap-3 rounded-2xl p-4 text-[14px] leading-snug xl:text-[15px] ${counts.Checked === 0 ? "bg-[var(--wait-soft)] text-[var(--wait-ink)]" : "bg-[var(--ok-soft)] text-[var(--ok-ink)]"}`}>
-            <Icon name={counts.Checked === 0 ? "alert" : "check"} size={20} className="mt-0.5" />
-            <p>
-              {counts.Checked === 0
-                ? "None of these has a source yet. Treat them as ideas to check, not facts."
-                : `${counts.Checked} of ${total} ${counts.Checked === 1 ? "has" : "have"} a source you can open.`}
-            </p>
-          </div>
         </div>
+
+        <p className={`mt-6 flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-[14px] leading-snug ${counts.Checked === 0 ? "bg-[var(--wait-soft)] text-[var(--wait-ink)]" : "bg-[var(--ok-soft)] text-[var(--ok-ink)]"}`}>
+          <Icon name={counts.Checked === 0 ? "alert" : "check"} size={17} className="shrink-0" />
+          {counts.Checked === 0
+            ? "None of these has a source yet. Treat them as ideas to check, not facts."
+            : `${counts.Checked} of ${total} ${counts.Checked === 1 ? "has" : "have"} a source you can open.`}
+        </p>
 
         {/* Pick what to look at */}
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--line)] pt-5">
