@@ -58,7 +58,7 @@ function Sidebar() {
   return (
     <nav
       aria-label="Main"
-      className="fixed z-40 flex items-center border-line bg-white/70 backdrop-blur max-sm:inset-x-0 max-sm:bottom-0 max-sm:justify-around max-sm:border-t max-sm:px-2 max-sm:py-2 sm:inset-y-0 sm:left-0 sm:w-[72px] sm:flex-col sm:justify-between sm:border-r sm:py-5"
+      className="fixed z-40 flex items-center border-line bg-white/70 backdrop-blur max-sm:inset-x-0 max-sm:bottom-0 max-sm:justify-around max-sm:border-t max-sm:px-2 max-sm:py-2 sm:inset-y-0 sm:left-0 sm:w-[72px] sm:flex-col sm:justify-between sm:border-r sm:pb-20 sm:pt-5"
     >
       <ul className="flex items-center gap-2 max-sm:contents sm:flex-col">
         <Item href="/#new" label="New design" icon="plus" accent />
