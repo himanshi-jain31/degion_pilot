@@ -415,9 +415,12 @@ export default function Home() {
 
         {/* 5. Your projects */}
         <section id="projects" className="mt-14 scroll-mt-8 sm:-mx-16" aria-labelledby="your-projects">
-          {/* The status label sits right above the "Your projects" title: what needs you, then the projects. Hidden when nothing is ready. */}
-          {needYou.length > 0 && (
-            <p className="mb-3">
+          {/* The title and the status label share one line: "Your projects" and, next to it, how many need you. The label is hidden when nothing is ready. */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <h2 id="your-projects" className="section-title">
+              Your projects
+            </h2>
+            {needYou.length > 0 && (
               <a
                 href="#projects"
                 onClick={(e) => {
@@ -429,11 +432,8 @@ export default function Home() {
               >
                 {needYou.length === 1 ? "1 project needs you" : `${needYou.length} projects need you`}
               </a>
-            </p>
-          )}
-          <h2 id="your-projects" className="section-title">
-            Your projects
-          </h2>
+            )}
+          </div>
           <div className="mt-4">
             {listError ? (
               <Notice tone="error" action={<button onClick={loadProjects} className={secondaryClass}>Try again</button>}>
