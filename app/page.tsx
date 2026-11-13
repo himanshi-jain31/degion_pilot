@@ -219,12 +219,15 @@ export default function Home() {
   return (
     <AppShell>
       <HomeBackdrop />
-      <main id="main" tabIndex={-1} className="fade-in relative z-[1] mx-auto flex min-h-screen w-full max-w-3xl flex-col px-6 pb-28 pt-16 sm:pt-20">
+      <main id="main" tabIndex={-1} className="fade-in relative z-[1] mx-auto flex min-h-screen w-full max-w-3xl flex-col px-6 pb-24 pt-[54px] sm:pb-0">
         {dragging && (
           <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center bg-ink/60 text-xl font-medium text-white backdrop-blur-sm">
             Drop your files here to add them
           </div>
         )}
+
+        {/* Everything from the greeting to the project cards sits in one block that is centred up and down, so the space above and below is even */}
+        <div id="home-content" className="my-auto py-10">
 
         {/* 1. Greeting */}
         <header className="text-center">
@@ -414,7 +417,7 @@ export default function Home() {
         )}
 
         {/* 5. Your projects */}
-        <section id="projects" className="mt-14 scroll-mt-8 sm:-mx-16" aria-labelledby="your-projects">
+        <section id="projects" className="mt-[75px] scroll-mt-8 sm:-mx-16" aria-labelledby="your-projects">
           {/* The title and the status label share one line: "Your projects" and, next to it, how many need you. The label is hidden when nothing is ready. */}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <h2 id="your-projects" className="section-title">
@@ -497,8 +500,9 @@ export default function Home() {
             )}
           </div>
         </section>
+        </div>
 
-        <p className="text-soft mt-auto pt-16 text-center text-xs">
+        <p id="home-footer" className="text-soft pb-3 pt-6 text-center text-xs">
           DesignPilot can make mistakes. Check important details before sharing.
         </p>
       </main>
