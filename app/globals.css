@@ -258,6 +258,23 @@ body {
   cursor: pointer;
   transition: background-color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
 }
+.chip {
+  gap: 10px;
+  padding-left: 8px;
+}
+.chip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  transition: transform 0.16s ease;
+}
+.chip:hover .chip-icon {
+  transform: scale(1.08);
+}
 .chip:hover {
   background: #fff;
   border-color: #cfd2f5;

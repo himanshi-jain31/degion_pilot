@@ -30,11 +30,12 @@ const LEAVE_SAMPLE =
   "Employees find it confusing to apply for leave in our HR app. They don't know how many days they have left, and managers miss approval requests. Design a simpler leave request and approval flow for employees and managers.";
 
 // Suggestions fill the box when clicked
-const SUGGESTIONS: { label: string; fill: string }[] = [
-  { label: "Redesign a flow", fill: "I want to redesign an existing flow: " },
-  { label: "Start from one line", fill: "My idea in one line: " },
-  { label: "Improve my screens", fill: "I want to improve my current screens: " },
-  { label: "Try a sample", fill: LEAVE_SAMPLE },
+// Each suggestion has a small picture so you can tell at a glance what it is for
+const SUGGESTIONS: { label: string; fill: string; icon: "route" | "lightbulb" | "layout" | "sparkles"; bg: string; ink: string }[] = [
+  { label: "Redesign a flow", fill: "I want to redesign an existing flow: ", icon: "route", bg: "#eef0ff", ink: "#4338ca" },
+  { label: "Start from one line", fill: "My idea in one line: ", icon: "lightbulb", bg: "#fff3dc", ink: "#92400e" },
+  { label: "Improve my screens", fill: "I want to improve my current screens: ", icon: "layout", bg: "#e3f2ff", ink: "#075985" },
+  { label: "Try a sample", fill: LEAVE_SAMPLE, icon: "sparkles", bg: "#f2eaff", ink: "#6d28d9" },
 ];
 
 // Until you add your name, the greeting uses a friendly word. It changes each day and stays the same all day.
@@ -376,6 +377,9 @@ export default function Home() {
         <div className="mt-4 flex flex-wrap justify-center gap-2 lg:flex-nowrap" role="group" aria-label="Ideas to start from">
           {SUGGESTIONS.map((s) => (
             <button key={s.label} type="button" onClick={() => fillWith(s.fill)} className="chip whitespace-nowrap">
+              <span aria-hidden="true" className="chip-icon" style={{ background: s.bg, color: s.ink }}>
+                <LineIcon name={s.icon} size={15} />
+              </span>
               {s.label}
             </button>
           ))}
