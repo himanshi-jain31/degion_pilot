@@ -7,24 +7,11 @@ import { AppShell, Icon } from "@/components/AppShell";
 import { Icon as LineIcon } from "@/components/Icons";
 import { RotatingLine } from "@/components/RotatingLine";
 import { HomeBackdrop } from "@/components/HomeBackdrop";
+import { ProjectCard, type ProjectRow } from "@/components/ProjectCard";
 import { Kbd, Loading, Notice, primaryClass, secondaryClass, useDraft, useKey } from "@/components/ui";
-import { PHASES } from "@/lib/phases";
 import { useName } from "@/lib/name";
-import { capFirst } from "@/lib/names";
 
-type ProjectRow = {
-  id: string;
-  title: string;
-  createdAt: string;
-  updatedAt: string;
-  fileCount: number;
-  madeInDemo: boolean;
-  phases: Record<string, string>;
-  next: { text: string; tone: "waiting" | "working" | "done" | "idle"; phase: string; status: string; badge: string; step: string };
-};
 type Result = { id: string; skipped: string[]; figmaProblem?: string; files: { name: string; kind: string; note: string; characters: number }[] };
-
-const TONE: Record<string, string> = { waiting: "pill pill-wait", working: "pill pill-info", done: "pill pill-ok", idle: "pill pill-idle" };
 
 const LEAVE_SAMPLE =
   "Employees find it confusing to apply for leave in our HR app. They don't know how many days they have left, and managers miss approval requests. Design a simpler leave request and approval flow for employees and managers.";
@@ -42,19 +29,6 @@ const SUGGESTIONS: { label: string; fill: string; icon: "route" | "lightbulb" | 
 const FRIENDLY = ["maker", "dreamer", "trailblazer", "visionary", "pathfinder", "storyteller", "idea chaser", "problem solver", "creative mind", "pixel perfectionist", "design wizard", "curious one"];
 function friendlyName() {
   return FRIENDLY[Math.floor(Date.now() / 86400000) % FRIENDLY.length];
-}
-
-// The tiny line of six steps on each card
-function MiniProgress({ phases }: { phases: Record<string, string> }) {
-  return (
-    <ol aria-hidden="true" className="flex gap-1">
-      {PHASES.map((p) => {
-        const s = phases[p.name] ?? "Not started";
-        const colour = s === "Approved" ? "bg-[var(--ok)]" : s === "Working on it" ? "bg-accent" : s === "Ready for you" || s === "Changes asked" ? "bg-[var(--wait)]" : "bg-[#e4e8f0]";
-        return <li key={p.n} className={`h-1.5 flex-1 rounded-full ${colour}`} />;
-      })}
-    </ol>
-  );
 }
 
 export default function Home() {
@@ -436,6 +410,11 @@ export default function Home() {
                 {needYou.length === 1 ? "1 project needs you" : `${needYou.length} projects need you`}
               </a>
             )}
+            {projects && projects.length > 3 && (
+              <Link href="/projects" className="ml-auto text-[15px] text-accent underline-offset-4 hover:underline">
+                See all {projects.length} projects
+              </Link>
+            )}
           </div>
           <div className="mt-4">
             {listError ? (
@@ -452,33 +431,11 @@ export default function Home() {
             ) : (
               <>
                 <ul key={page} className="fade-in grid gap-4 sm:grid-cols-3">
-                  {shownCards.map((p) => {
-                    const n = PHASES.find((ph) => ph.name === p.next.phase)?.n ?? 1;
-                    return (
-                      <li key={p.id}>
-                        <Link
-                          href={`/project/${p.id}`}
-                          aria-label={`Open ${capFirst(p.title)}. ${p.next.phase}, step ${n} of 6: ${p.next.badge}. ${p.next.step}`}
-                          className="shell-card flex h-full flex-col gap-3 p-5 transition-shadow duration-150 hover:shadow-[0_2px_4px_rgba(40,40,80,0.05),0_12px_28px_rgba(60,60,120,0.10)]"
-                        >
-                          <span className="flex items-start justify-between gap-3">
-                            <span className="line-clamp-2 min-w-0 flex-1 text-base font-medium leading-snug [overflow-wrap:anywhere]">{capFirst(p.title)}</span>
-                            <span className={`${TONE[p.next.tone]} shrink-0 !px-2.5 !text-[13px]`}>{p.next.badge}</span>
-                          </span>
-                          <MiniProgress phases={p.phases} />
-                          <span className="text-soft text-sm">
-                            {p.next.phase}, step {n} of 6
-                          </span>
-                          <span className="mt-auto flex items-start gap-2 text-sm leading-snug">
-                            <svg aria-hidden="true" className="mt-0.5 shrink-0 text-accent" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M5 12h14M13 6l6 6-6 6" />
-                            </svg>
-                            <span>{p.next.step}</span>
-                          </span>
-                        </Link>
-                      </li>
-                    );
-                  })}
+                  {shownCards.map((p) => (
+                    <li key={p.id}>
+                      <ProjectCard p={p} />
+                    </li>
+                  ))}
                 </ul>
                 {/* Dots only when there are more than 3 projects */}
                 {projects.length > 3 && pages > 1 && (

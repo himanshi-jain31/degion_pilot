@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 import { initialsOf, useName } from "@/lib/name";
 
 // Pages that use the slim icon bar on the left
-export const SHELL_PATHS = ["/", "/help", "/settings", "/design-files"];
+export const SHELL_PATHS = ["/", "/projects", "/help", "/settings", "/design-files"];
 
 const stroke = { fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round" } as const;
 const icons = {
@@ -63,7 +63,7 @@ function Sidebar() {
       <ul className="flex items-center gap-2 max-sm:contents sm:flex-col">
         <Item href="/#new" label="New design" icon="plus" accent />
         <Item href="/" label="Home" icon="home" active={path === "/"} />
-        <Item href="/#projects" label="My projects" icon="projects" active={path.startsWith("/project")} />
+        <Item href="/projects" label="My projects" icon="projects" active={path === "/projects"} />
         <Item href="/design-files" label="Design files" icon="files" active={path === "/design-files"} />
         <Item href="/help" label="Help" icon="help" active={path === "/help"} />
       </ul>
