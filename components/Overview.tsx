@@ -3,7 +3,6 @@
 import { PHASES, PHASE_INFO } from "@/lib/phases";
 import { Icon, PHASE_ICON, type IconName } from "@/components/Icons";
 import type { PhaseStatus, Project, UnderstandOutput } from "@/lib/storage";
-import { Tile, UnderstoodCanvas } from "@/components/UnderstoodCanvas";
 
 type OverviewProject = Pick<Project, "title" | "requirement" | "createdAt" | "phases" | "versions" | "thingsIGuessed" | "quickQuestions" | "answers"> & {
   files: { name: string }[];
@@ -48,11 +47,6 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
   const [lead, ...rest] = next.text.split(/(?<=[.!?])\s+/);
   const more = rest.join(" ");
 
-  const told = (project.quickQuestions?.questions ?? [])
-    .filter((q) => project.answers[q.id] && project.answers[q.id] !== "You decide")
-    .map((q) => ({ q: q.question, a: project.answers[q.id] }));
-  const left = (project.quickQuestions?.questions ?? []).filter((q) => project.answers[q.id] === "You decide");
-
   return (
     <div className="fade-in space-y-8">
       {/* The one thing to do next. This is the focal point of the page. */}
@@ -84,89 +78,70 @@ export function Overview({ project, onOpenPhase }: { project: OverviewProject; o
         </div>
       </section>
 
-      {/* B. What I understood */}
-      <section aria-label="What I understood">
-        <h2 className="section-title mb-4">What I understood</h2>
-        <UnderstoodCanvas requirement={project.requirement} files={project.files} shortVersion={project.quickQuestions?.request_summary} u={u} />
-      </section>
+      {/* Three small summaries. Full detail lives on the Understand page. */}
+      <section aria-label="At a glance">
+        <h2 className="section-title mb-4">At a glance</h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          <GlanceTile icon="sparkles" title="The idea" line="What you asked me to design" onOpen={() => onOpenPhase(1)} link="Read the full brief">
+            <p className="text-[16px] leading-snug">{u?.brief.one_line ?? project.quickQuestions?.request_summary ?? project.title}</p>
+          </GlanceTile>
 
-      {/* C. Told to me vs guessed */}
-      <section aria-label="What you told me">
-        <h2 className="section-title mb-4">What you told me</h2>
-        <div className={`grid gap-4 ${u && u.open_questions.length > 0 ? "lg:grid-cols-2" : ""}`}>
-          <Tile title="You told me" icon="message" tone="sky" hint={told.length + left.length > 0 ? `${told.length + left.length} answers` : undefined}>
-            {told.length === 0 && left.length === 0 ? (
-              <p className="note">No answers yet.</p>
+          <GlanceTile icon="users" title="Who it is for" line="The people I am designing for" onOpen={() => onOpenPhase(1)} link="See user profiles">
+            {u && u.users.length > 0 ? (
+              <ul className="flex flex-wrap gap-2">
+                {u.users.map((x) => (
+                  <li key={x.name} className="rounded-full bg-[#f3f5f9] px-3 py-1.5 text-[14px]">{x.name}</li>
+                ))}
+              </ul>
             ) : (
-              <ul className="space-y-3">
-                {told.map((t, i) => (
-                  <li key={i}>
-                    <p className="note mb-1">{t.q}</p>
-                    <p className="ml-6 inline-block max-w-full rounded-2xl rounded-tl-sm bg-[#ecf6ff] px-3.5 py-2 text-[15px] leading-snug text-[#075985]">{t.a}</p>
-                  </li>
-                ))}
-                {left.map((q) => (
-                  <li key={q.id}>
-                    <p className="note mb-1">{q.question}</p>
-                    <p className="ml-6 inline-block max-w-full rounded-2xl rounded-tl-sm border border-dashed border-[#d5dbe6] px-3.5 py-2 text-[15px] leading-snug text-muted">You left this to me, so it is one of my guesses.</p>
-                  </li>
-                ))}
-              </ul>
+              <p className="note">Shown after the Understand step.</p>
             )}
-          </Tile>
+          </GlanceTile>
 
-          {u && u.open_questions.length > 0 && (
-            <Tile title="Still to find out" icon="help" tone="rose" hint={`${u.open_questions.length} open`}>
-              <ul className="space-y-2">
-                {u.open_questions.map((q, i) => (
-                  <li key={i} className="flex items-start gap-3 rounded-xl bg-[var(--bad-soft)] px-3 py-2.5 text-[15px] leading-snug text-[var(--bad-ink)]">
-                    <span aria-hidden="true" className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-[12px] font-semibold">?</span>{q}
-                  </li>
-                ))}
-              </ul>
-              <p className="note mt-3">Everything I guessed is in the &ldquo;Things I guessed&rdquo; panel.</p>
-            </Tile>
-          )}
+          <GlanceTile icon="help" title="Still unsure" line="Things I could not answer yet" onOpen={() => onOpenPhase(1)} link="See the questions">
+            <p className="flex items-baseline gap-2">
+              <span className="font-display text-[40px] font-semibold leading-none">{u ? u.open_questions.length : 0}</span>
+              <span className="text-[15px] text-muted">{u && u.open_questions.length === 1 ? "open question" : "open questions"}</span>
+            </p>
+            <p className="note mt-2">{project.thingsIGuessed.length} things I guessed so far</p>
+          </GlanceTile>
         </div>
       </section>
 
-      {/* D + E. Roadmap and what each step gives you */}
+      {/* The 6 steps as one slim row */}
       <section aria-label="The 6 steps">
-        <h2 className="section-title">The 6 steps</h2>
-        <ol className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <h2 className="section-title mb-4">The 6 steps</h2>
+        <ol className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
           {PHASES.map((ph) => {
             const s = project.phases[ph.name] ?? "Not started";
-            const info = PHASE_INFO[ph.n];
-            const made = project.versions.some((v) => v.phase === ph.n && v.status === "done");
-            const prevOk = ph.n === 1 || project.phases[PHASES[ph.n - 2].name] === "Approved";
             return (
               <li key={ph.n} className="flex">
-                <article className="card relative flex w-full flex-col !p-5 transition-shadow duration-150 focus-within:shadow-md hover:shadow-md">
-                  <div className="flex items-center justify-between gap-3">
-                    <span aria-hidden="true" className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-soft text-[var(--accent-ink)]"><Icon name={PHASE_ICON[ph.n]} size={20} /></span>
-                    <span className={`${STATUS_PILL[s]} !text-[13px]`}>{s}</span>
-                  </div>
-                  <h3 className="mt-4 text-[18px] font-medium leading-snug">
-                    <button onClick={() => onOpenPhase(ph.n)} className="text-left after:absolute after:inset-0 after:content-['']">
-                      <span className="mr-1.5 text-[14px] font-normal text-muted">{ph.n}.</span>{ph.name}
-                    </button>
-                  </h3>
-                  <p className="mt-1 text-[15px] leading-relaxed text-muted">{info.goal}</p>
-                  <p className="label-small mt-4">You get</p>
-                  <ul className="mb-4 mt-2 flex flex-wrap gap-2">
-                    {info.makes.map((m) => (
-                      <li key={m.label} className="flex items-center gap-2 rounded-full bg-[#f3f5f9] py-1.5 pl-2.5 pr-3 text-[13px] leading-snug text-ink"><Icon name={m.icon as IconName} size={15} className="text-[var(--accent-ink)]" />{m.label}</li>
-                    ))}
-                  </ul>
-                  <p className="mt-auto border-t border-line pt-3 text-[14px] leading-snug text-muted">
-                    {s === "Approved" ? "✓ You said Go ahead." : made ? "Made. Waiting for your Go ahead." : prevOk ? "Waiting to start." : `Opens after you approve ${PHASES[ph.n - 2].name}.`}
-                  </p>
-                </article>
+                <button onClick={() => onOpenPhase(ph.n)} className="card flex w-full flex-col items-start gap-2 !p-4 text-left transition-shadow hover:shadow-md">
+                  <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft text-[var(--accent-ink)]"><Icon name={PHASE_ICON[ph.n]} size={18} /></span>
+                  <span className="text-[16px] font-medium leading-snug"><span className="mr-1 text-[13px] font-normal text-muted">{ph.n}.</span>{ph.name}</span>
+                  <span className={`${STATUS_PILL[s]} !text-[12px]`}>{s}</span>
+                </button>
               </li>
             );
           })}
         </ol>
       </section>
     </div>
+  );
+}
+
+function GlanceTile({ icon, title, line, link, onOpen, children }: { icon: IconName; title: string; line: string; link: string; onOpen: () => void; children: React.ReactNode }) {
+  return (
+    <article className="card flex flex-col !p-5">
+      <div className="flex items-center gap-3">
+        <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft text-[var(--accent-ink)]"><Icon name={icon} size={18} /></span>
+        <div>
+          <h3 className="text-[17px] font-medium leading-tight">{title}</h3>
+          <p className="note">{line}</p>
+        </div>
+      </div>
+      <div className="mt-4">{children}</div>
+      <button onClick={onOpen} className="mt-auto pt-4 text-left text-[14px] font-medium text-[var(--accent-ink)] hover:underline">{link} →</button>
+    </article>
   );
 }
