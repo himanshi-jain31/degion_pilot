@@ -423,9 +423,9 @@ function ProjectPage() {
                           )}
                         </section>
 
-                        <section id="checkin" ref={setCheckinEl} aria-label="Check-in" className="glass-card scroll-mt-6 rounded-2xl p-5 sm:p-8">
-                        <div className="relative z-10">
-                          <h3 className="mb-6 flex items-center gap-3 border-b border-white/70 pb-5"><span className="step-badge !bg-white">3</span><span className="section-title">Your decision: Check-in</span></h3>
+                        <section id="checkin" ref={setCheckinEl} aria-label="Check-in" className="scroll-mt-6 rounded-2xl border border-line bg-card p-5 sm:p-6">
+                        <div>
+                          <h3 className="mb-4 flex items-center gap-2 text-[18px] font-medium"><Icon name="check" size={18} className="text-[var(--accent-ink)]" />Check-in <span className="note font-normal">Your decision before we move on</span></h3>
                           {sel === 6 && !(shown.output as TestingOutput).results_analysis ? (
                             <Notice>The check-in comes after the testing. Download the test kit above, run your sessions, then add your notes.</Notice>
                           ) : (

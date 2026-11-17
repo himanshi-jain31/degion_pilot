@@ -17,7 +17,7 @@ export function CheckIn(props: {
   projectId: string;
   notesCount: number;
   onRefresh: () => Promise<void>;
-  onOpenWork: () => void;
+  onOpenWork?: () => void;
   isLatest: boolean;
   busy: boolean;
   onGo: (note: string, extra?: Extra) => Promise<boolean>;
@@ -26,7 +26,6 @@ export function CheckIn(props: {
   const { version, busy } = props;
   const [note, setNote] = useDraft(`designpilot-note-${props.projectId}-${version.id}`);
   const [mode, setMode] = useState<"none" | "note" | "notYet">("none");
-  const [detailsOpen, setDetailsOpen] = useState(false);
   const [hint, setHint] = useState("");
   const [talk, setTalk] = useState<"no" | "yes">("no");
   const [direction, setDirection] = useState("");
@@ -74,7 +73,6 @@ export function CheckIn(props: {
     if (version.approved || version.waitingForNotes) return;
     if (e.key === "Escape") {
       if (mode !== "none") setMode("none");
-      else if (detailsOpen) setDetailsOpen(false);
       setHint("");
       return;
     }
@@ -104,11 +102,11 @@ export function CheckIn(props: {
     version.phase === 4 ? `/api/projects/${props.projectId}/wireframe?version=${version.id}` : version.phase === 5 ? `/api/projects/${props.projectId}/prototype?version=${version.id}` : "";
 
   return (
-    <div className="fade-in space-y-6">
+    <div className="fade-in space-y-4">
       {version.version > 1 && changed && changed.length > 0 && (
-        <section className="card" style={{ background: "var(--accent-soft)", borderColor: "var(--line)" }}>
+        <section className="rounded-xl px-4 py-3" style={{ background: "var(--accent-soft)" }}>
           <h3 className="font-medium" style={{ color: "var(--accent-ink)" }}>What changed</h3>
-          <ul className="mt-2 list-disc space-y-1 pl-5" style={{ color: "var(--accent-ink)" }}>
+          <ul className="mt-1 list-disc space-y-0.5 pl-5 text-[15px]" style={{ color: "var(--accent-ink)" }}>
             {changed.map((t, i) => (
               <li key={i}>{t}</li>
             ))}
@@ -116,20 +114,20 @@ export function CheckIn(props: {
         </section>
       )}
 
-      <section className="card" aria-labelledby="made">
-        <h2 id="made" className="label-small">What I made</h2>
-        <p className="mt-3 whitespace-pre-line text-xl leading-relaxed">{c.what_i_made}</p>
+      <section aria-labelledby="made">
+        <h2 id="made" className="sr-only">What I made</h2>
+        <p className="whitespace-pre-line text-[17px] leading-relaxed">{c.what_i_made}</p>
 
         {previewUrl && (
-          <div className="mt-6">
+          <div className="mt-4">
             <FramePreview url={previewUrl} downloadUrl={version.phase === 5 ? `${previewUrl}&download=1` : undefined} title={version.phase === 5 ? "Prototype preview" : "Wireframe preview"} figmaProjectId={version.phase === 5 ? props.projectId : undefined} />
           </div>
         )}
 
-        {c.not_sure_about.length > 0 && (
-          <div className="mt-6 border-t border-line pt-6">
-            <h2 id="unsure" className="label-small">What I&apos;m not sure about</h2>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-base">
+        {c.not_sure_about.length > 0 && !(version.phase === 1 && ((version.output as { open_questions?: string[] }).open_questions?.length ?? 0) > 0) && (
+          <div className="mt-4 rounded-xl bg-[var(--wait-soft)] px-4 py-3 text-[var(--wait-ink)]">
+            <h3 id="unsure" className="label-small !text-inherit">Not sure about</h3>
+            <ul className="mt-1.5 list-disc space-y-1 pl-5 text-[15px] leading-snug">
               {c.not_sure_about.map((t, i) => (
                 <li key={i}>{t}</li>
               ))}
@@ -188,26 +186,6 @@ export function CheckIn(props: {
           </div>
         </fieldset>
       )}
-
-      {/* Details, one click away */}
-      <div>
-        <button onClick={() => setDetailsOpen((o) => !o)} aria-expanded={detailsOpen} className="btn btn-quiet !px-0">
-          {detailsOpen ? "Hide the details" : "See the details"}
-        </button>
-        {detailsOpen && (
-          <div className="card fade-in mt-2">
-            {c.another_view && (
-              <>
-                <h3 className="label-small">Another view</h3>
-                <p className="mt-2">{c.another_view}</p>
-              </>
-            )}
-            <button onClick={props.onOpenWork} className={`${secondaryClass} mt-4`}>
-              Open everything I made
-            </button>
-          </div>
-        )}
-      </div>
 
       {/* The feedback box appears when you need it, with the cursor in it */}
       {mode !== "none" && (

@@ -225,7 +225,7 @@ export function WorkView({ out }: { out: UnderstandOutput; requirement?: string;
 
       {(out.open_questions.length > 0 || watch.length > 0) && (
         <Block n={5} title="Before we go on" purpose="What still needs a look.">
-          <div className={`grid gap-4 ${out.open_questions.length > 0 && watch.length > 0 ? "lg:grid-cols-2" : ""}`}>
+          <div className={`grid items-start gap-4 ${out.open_questions.length > 0 && watch.length > 0 ? "lg:grid-cols-2" : ""}`}>
             {out.open_questions.length > 0 && (
               <div id="questions" className="scroll-mt-6 rounded-xl border-2 border-[#f3b3b3] p-4" style={{ background: TONE.rose.bg }}>
                 <p className="font-medium" style={{ color: TONE.rose.fg }}>Needs your answer</p>
