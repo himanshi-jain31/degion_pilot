@@ -45,8 +45,6 @@ function ProjectPage() {
   const [project, setProject] = useState<ProjectView | null>(null);
   const [loadError, setLoadError] = useState<{ text: string; missing: boolean } | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
-  const [checkinEl, setCheckinEl] = useState<HTMLElement | null>(null);
-  const [checkinSeen, setCheckinSeen] = useState(false);
   const [view, setView] = useState<"overview" | "phase" | "style" | "figma" | "final">("overview");
   const [actionError, setActionError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -90,14 +88,6 @@ function ProjectPage() {
   }, [project?.title]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sel = selected ?? 1;
-
-  // Knows when the Check-in is on screen, so the bottom button only shows when it is needed
-  useEffect(() => {
-    if (!checkinEl) return;
-    const o = new IntersectionObserver(([e]) => setCheckinSeen(e.isIntersecting), { threshold: 0.2 });
-    o.observe(checkinEl);
-    return () => o.disconnect();
-  }, [checkinEl]);
 
   function choosePhase(n: number) {
     setSelected(n);
@@ -209,7 +199,6 @@ function ProjectPage() {
         if (nextPhase) return <ActionBar><button onClick={() => choosePhase(nextPhase.n)} className={primaryClass}>Next: {nextPhase.name}</button></ActionBar>;
         return null;
       }
-      if (!(checkinEl && checkinSeen)) return <ActionBar><button onClick={() => document.getElementById("checkin")?.scrollIntoView({ behavior: "smooth" })} className={primaryClass}>Go to the check-in</button></ActionBar>;
     }
     return null; // the check-in shows its own buttons
   }
@@ -396,14 +385,13 @@ function ProjectPage() {
                         )}
 
                         <details className="group rounded-2xl border border-dashed border-[#d5dbe6] p-5 sm:px-8 sm:py-6">
-                          <summary className="flex cursor-pointer select-none list-none items-center gap-3 rounded-xl py-1 [&::-webkit-details-marker]:hidden"><span aria-hidden="true" className="step-badge !bg-[#f1f3f8] !text-muted">1</span><span className="section-title">My plan</span><span className="note ml-auto"><span className="group-open:hidden">Show</span><span className="hidden group-open:inline">Hide</span></span></summary>
+                          <summary className="flex cursor-pointer select-none list-none items-center gap-3 rounded-xl py-1 [&::-webkit-details-marker]:hidden"><span className="text-[17px] font-medium">My plan</span><span className="note ml-auto"><span className="group-open:hidden">Show</span><span className="hidden group-open:inline">Hide</span></span></summary>
                           <div className="mt-5 border-t border-line pt-6">
                           <PlanView out={shown.output} />
                           </div>
                         </details>
 
                         <section id="made" aria-label="What I made" className="scroll-mt-6">
-                          <h3 className="mb-4 flex items-center gap-3 px-1"><span className="step-badge">2</span><span className="section-title">What I made</span></h3>
                           {sel === 1 && <WorkView out={shown.output as UnderstandOutput} requirement={project.requirement} files={project.files} shortVersion={project.quickQuestions?.request_summary} />}
                           {sel === 2 && <ResearchWork out={shown.output as ResearchOutput} />}
                           {sel === 3 && (
@@ -423,9 +411,8 @@ function ProjectPage() {
                           )}
                         </section>
 
-                        <section id="checkin" ref={setCheckinEl} aria-label="Check-in" className="scroll-mt-6 rounded-2xl border border-line bg-card p-5 sm:p-6">
+                        <section id="checkin" aria-label="Check-in" className="scroll-mt-6">
                         <div>
-                          <h3 className="mb-4 flex items-center gap-2 text-[18px] font-medium"><Icon name="check" size={18} className="text-[var(--accent-ink)]" />Check-in <span className="note font-normal">Your decision before we move on</span></h3>
                           {sel === 6 && !(shown.output as TestingOutput).results_analysis ? (
                             <Notice>The check-in comes after the testing. Download the test kit above, run your sessions, then add your notes.</Notice>
                           ) : (
@@ -435,7 +422,6 @@ function ProjectPage() {
                               projectId={id}
                               notesCount={project.interviewNotes.length}
                               onRefresh={refresh}
-                              onOpenWork={() => document.getElementById("made")?.scrollIntoView({ behavior: "smooth" })}
                               isLatest={latest?.id === shown.id}
                               busy={busy}
                               onGo={async (note, extra) => {
@@ -456,7 +442,7 @@ function ProjectPage() {
 
                     {latest && latest.status !== "working" && (
                       <details className="group rounded-2xl border border-dashed border-[#d5dbe6] p-5 sm:px-8 sm:py-6">
-                        <summary className="flex cursor-pointer select-none list-none items-center gap-3 rounded-xl py-1 [&::-webkit-details-marker]:hidden"><span aria-hidden="true" className="step-badge !bg-[#f1f3f8] !text-muted">↺</span><span className="section-title">What I did</span><span className="note ml-auto">History</span></summary>
+                        <summary className="flex cursor-pointer select-none list-none items-center gap-3 rounded-xl py-1 [&::-webkit-details-marker]:hidden"><span className="text-[17px] font-medium">What I did</span><span className="note ml-auto">History</span></summary>
                         <div className="mt-5 border-t border-line pt-6"><WhatIDid versions={versions} /></div>
                       </details>
                     )}

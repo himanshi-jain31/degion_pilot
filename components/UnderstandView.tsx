@@ -190,7 +190,7 @@ export function WorkView({ out }: { out: UnderstandOutput; requirement?: string;
       )}
 
       {out.requirements.length > 0 && (
-        <Block n={3} title="What it must do" purpose="The must-haves. If one is wrong or missing, say so in the Check-in.">
+        <Block n={3} title="What it must do" purpose="The must-haves. If one is wrong or missing, use Add a note below.">
           <ul className="space-y-2">
             <FirstFew
               items={out.requirements}
@@ -229,7 +229,7 @@ export function WorkView({ out }: { out: UnderstandOutput; requirement?: string;
             {out.open_questions.length > 0 && (
               <div id="questions" className="scroll-mt-6 rounded-xl border-2 border-[#f3b3b3] p-4" style={{ background: TONE.rose.bg }}>
                 <p className="font-medium" style={{ color: TONE.rose.fg }}>Needs your answer</p>
-                <p className="note mb-3">Reply in the Check-in note, or say Go ahead and I will keep guessing.</p>
+                <p className="note mb-3">Use Add a note below, or choose Go ahead and I will keep guessing.</p>
                 <ol className="space-y-2">
                   {out.open_questions.map((q, i) => (
                     <li key={i} className="flex items-start gap-3 text-[16px] leading-snug" style={{ color: TONE.rose.fg }}>

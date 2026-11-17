@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { IdeateOutput, PhaseVersion, TestingOutput } from "@/lib/storage";
 import { DirectionCard } from "@/components/IdeateView";
-import { FramePreview } from "@/components/WireframeView";
 import { ActionBar, Kbd, isTypingTarget, primaryClass, quietClass, secondaryClass, useDraft, useKey } from "@/components/ui";
 
 export type Extra = { talkToUsers?: string; direction?: string; fix?: string };
@@ -17,7 +16,6 @@ export function CheckIn(props: {
   projectId: string;
   notesCount: number;
   onRefresh: () => Promise<void>;
-  onOpenWork?: () => void;
   isLatest: boolean;
   busy: boolean;
   onGo: (note: string, extra?: Extra) => Promise<boolean>;
@@ -98,9 +96,6 @@ export function CheckIn(props: {
   }
   if (version.waitingForNotes) return <WaitingForNotes projectId={props.projectId} notesCount={props.notesCount} onRefresh={props.onRefresh} busy={busy} onGo={props.onGo} note={note} />;
 
-  const previewUrl =
-    version.phase === 4 ? `/api/projects/${props.projectId}/wireframe?version=${version.id}` : version.phase === 5 ? `/api/projects/${props.projectId}/prototype?version=${version.id}` : "";
-
   return (
     <div className="fade-in space-y-4">
       {version.version > 1 && changed && changed.length > 0 && (
@@ -114,27 +109,16 @@ export function CheckIn(props: {
         </section>
       )}
 
-      <section aria-labelledby="made">
-        <h2 id="made" className="sr-only">What I made</h2>
-        <p className="whitespace-pre-line text-[17px] leading-relaxed">{c.what_i_made}</p>
-
-        {previewUrl && (
-          <div className="mt-4">
-            <FramePreview url={previewUrl} downloadUrl={version.phase === 5 ? `${previewUrl}&download=1` : undefined} title={version.phase === 5 ? "Prototype preview" : "Wireframe preview"} figmaProjectId={version.phase === 5 ? props.projectId : undefined} />
-          </div>
-        )}
-
-        {c.not_sure_about.length > 0 && !(version.phase === 1 && ((version.output as { open_questions?: string[] }).open_questions?.length ?? 0) > 0) && (
-          <div className="mt-4 rounded-xl bg-[var(--wait-soft)] px-4 py-3 text-[var(--wait-ink)]">
-            <h3 id="unsure" className="label-small !text-inherit">Not sure about</h3>
-            <ul className="mt-1.5 list-disc space-y-1 pl-5 text-[15px] leading-snug">
-              {c.not_sure_about.map((t, i) => (
-                <li key={i}>{t}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </section>
+      {c.not_sure_about.length > 0 && !(version.phase === 1 && ((version.output as { open_questions?: string[] }).open_questions?.length ?? 0) > 0) && (
+        <section aria-labelledby="unsure" className="rounded-xl bg-[var(--wait-soft)] px-4 py-3 text-[var(--wait-ink)]">
+          <h3 id="unsure" className="label-small !text-inherit">Not sure about</h3>
+          <ul className="mt-1.5 list-disc space-y-1 pl-5 text-[15px] leading-snug">
+            {c.not_sure_about.map((t, i) => (
+              <li key={i}>{t}</li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* The one choice that goes with Go ahead for steps 2, 3 and 6 */}
       {version.phase === 2 && (
