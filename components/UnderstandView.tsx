@@ -83,7 +83,7 @@ export function PlanView({ out }: { out: PhaseOutput }) {
 }
 
 // Show the first few items, keep the rest one click away
-function FirstFew<T>({ items, n = 4, render, noun }: { items: T[]; n?: number; render: (x: T, i: number) => React.ReactNode; noun: string }) {
+export function FirstFew<T>({ items, n = 4, render, noun }: { items: T[]; n?: number; render: (x: T, i: number) => React.ReactNode; noun: string }) {
   return (
     <>
       {items.slice(0, n).map((x, i) => render(x, i))}
@@ -103,7 +103,7 @@ function FirstFew<T>({ items, n = 4, render, noun }: { items: T[]; n?: number; r
 }
 
 // One numbered block: a plain question as the title, one line saying what it is for, then the content
-function Block({ n, title, purpose, children }: { n: number; title: string; purpose: string; children: React.ReactNode }) {
+export function Block({ n, title, purpose, children }: { n: number; title: string; purpose: string; children: React.ReactNode }) {
   return (
     <section aria-label={title} className="rounded-2xl border border-line bg-card p-5 sm:p-6">
       <div className="flex items-start gap-3">
