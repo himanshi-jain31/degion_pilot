@@ -9,7 +9,7 @@ Decide which of the outputs below this request needs. Say what you will do and w
 ## Outputs
 1. **Brief:** the problem in one sentence, then in a short paragraph.
 2. **Another way to see it:** at least one different reading of the problem.
-3. **Users:** who uses this, including people nobody mentioned (admins, support staff, new users, people using screen readers or large text).
+3. **Users:** only the people the profiles below do NOT cover: people nobody mentioned (admins, support staff, new users, people using screen readers or large text). Never repeat a person who has a profile. The screen shows each profile and each user as one card, so a repeat looks like a duplicate.
 4. **First user profiles:** 2 to 3 short profiles (goal, situation, frustrations). Mark them "first draft".
 5. **Requirements:** user stories ("As a ..., I can ..., so that ...") each with 1 to 3 done-checks.
 6. **Edge cases:** empty, error, loading, no permission, offline, very long text.

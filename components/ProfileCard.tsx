@@ -17,7 +17,7 @@ export function tone(name: string) {
 }
 
 // "Anna, employee" becomes the name Anna and the role employee
-function split(full: string) {
+export function split(full: string) {
   const [first, ...rest] = full.split(/,| - | – |\(/);
   return { name: first.trim() || full, role: rest.join(" ").replace(/\)$/, "").trim() };
 }

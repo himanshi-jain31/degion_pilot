@@ -159,9 +159,7 @@ export function demoUnderstand(feedback?: string) {
     brief: { one_line: "Staff can ask for time off and managers can answer.", full: "Staff find it hard to ask for time off and to see how many days they have left. Managers miss requests that are waiting for an answer. A simpler flow should let staff ask in a few taps and let managers answer from one list." },
     another_view: "Maybe the real problem is that managers cannot see who is away.",
     users: [
-      { name: "Staff", note: "ask for time off.", label: T },
-      { name: "Managers", note: "say yes or no.", label: T },
-      { name: "Admin (nobody mentioned)", note: "fixes mistakes and sets the rules.", label: T },
+      { name: "Admin, nobody mentioned", note: "Fixes mistakes and sets the rules.", label: T },
     ],
     user_profiles: [
       { name: "Anna, employee", goal: "Get time off with little fuss.", situation: "Usually on her phone.", frustrations: ["Slow email replies", "Not sure of her days left"], label: T },
