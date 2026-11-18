@@ -62,7 +62,7 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
       </p>
 
       {out.key_insights.length > 0 && (
-        <Block n={1} title="What we learned" purpose="The main points. These shape the ideas in the next step.">
+        <Block icon="lightbulb" tone="amber" title="Learnings" purpose="The main points. These shape the ideas in the next step.">
           <ul className="grid gap-3 md:grid-cols-2">
             {out.key_insights.map((k, i) => {
               const refs = k.based_on.map((b) => b.match(/\d+/)?.[0]).filter((x): x is string => !!x && Number(x) >= 1 && Number(x) <= total);
@@ -78,7 +78,7 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
       )}
 
       {total > 0 && (
-        <Block n={2} title="The proof behind it" purpose="What I found, and where each piece came from.">
+        <Block icon="search" tone="sky" title="Proof" purpose="What I found, and where each piece came from.">
           <ul className="space-y-2">
             <FirstFew items={out.findings.map((f, i) => ({ f, n: i + 1 }))} noun="findings" n={4} render={(x) => <Evidence key={x.n} f={x.f} n={x.n} />} />
           </ul>
@@ -86,7 +86,7 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
       )}
 
       {out.updated_user_profiles.length > 0 && (
-        <Block n={3} title="Who we are designing for, now" purpose="The same people as before, sharpened by what I found.">
+        <Block icon="users" tone="indigo" title="People" purpose="The same people as before, sharpened by what I found.">
           <ul className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {out.updated_user_profiles.map((p, i) => {
               const { name, role } = split(p.name);
@@ -107,7 +107,7 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
       )}
 
       {hasKit && (
-        <Block n={4} title="Next: talk to real people" purpose="A ready kit for when you meet users. You can do this after this step too.">
+        <Block icon="message" tone="green" title="Next steps" purpose="A ready kit for talking to real people. You can do this after this step too.">
           <div className="grid gap-3 md:grid-cols-2">
             {kit.goals.length > 0 && (
               <div className="rounded-xl bg-[#f7f9fc] p-4">
@@ -139,7 +139,7 @@ export function ResearchWork({ out }: { out: ResearchOutput }) {
       )}
 
       {out.could_not_find.length > 0 && (
-        <Block n={5} title="What I could not find" purpose="Gaps in the evidence. Nothing to answer, but worth knowing.">
+        <Block icon="help" tone="rose" title="Gaps" purpose="What I could not find. Nothing to answer, but worth knowing.">
           <ul className="space-y-2">
             {out.could_not_find.map((t, i) => (
               <li key={i} className="flex items-start gap-2.5 text-[15px] leading-snug"><Icon name="alert" size={16} className="mt-0.5 shrink-0 text-[#92400e]" />{capFirst(t)}</li>

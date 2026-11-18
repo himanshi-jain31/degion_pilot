@@ -196,7 +196,7 @@ function ProjectPage() {
     if (shown?.output && latest.status === "done") {
       if (latest.approved) {
         if (sel >= 5 && finalVersion) return <ActionBar><button onClick={() => setView("final")} className={primaryClass}>See the final result</button></ActionBar>;
-        if (nextPhase) return <ActionBar><button onClick={() => choosePhase(nextPhase.n)} className={primaryClass}>Next: {nextPhase.name}</button></ActionBar>;
+        if (nextPhase) return <ActionBar message="This step is approved. Ready for the next one."><button onClick={() => choosePhase(nextPhase.n)} className={primaryClass}>Next: {nextPhase.name}</button></ActionBar>;
         return null;
       }
     }

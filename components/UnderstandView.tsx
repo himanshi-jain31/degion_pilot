@@ -103,13 +103,14 @@ export function FirstFew<T>({ items, n = 4, render, noun }: { items: T[]; n?: nu
 }
 
 // One numbered block: a plain question as the title, one line saying what it is for, then the content
-export function Block({ n, title, purpose, children }: { n: number; title: string; purpose: string; children: React.ReactNode }) {
+export function Block({ icon, tone, title, purpose, children }: { icon: IconName; tone: Tone; title: string; purpose: string; children: React.ReactNode }) {
+  const t = TONE[tone];
   return (
     <section aria-label={title} className="rounded-2xl border border-line bg-card p-5 sm:p-6">
-      <div className="flex items-start gap-3">
-        <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-soft text-[14px] font-semibold text-[var(--accent-ink)]">{n}</span>
+      <div className="flex items-center gap-4">
+        <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl" style={{ background: t.bg, color: t.fg }}><Icon name={icon} size={24} /></span>
         <div>
-          <h3 className="text-[19px] font-medium leading-tight">{title}</h3>
+          <h3 className="text-[20px] font-semibold leading-tight">{title}</h3>
           <p className="note mt-0.5">{purpose}</p>
         </div>
       </div>
@@ -158,7 +159,7 @@ export function WorkView({ out }: { out: UnderstandOutput; requirement?: string;
         </a>
       )}
 
-      <Block n={1} title="What we are solving" purpose="The problem in plain words.">
+      <Block icon="compass" tone="indigo" title="The problem" purpose="What we are solving, in plain words.">
         <p className="text-[24px] font-medium leading-tight tracking-tight sm:text-[28px]">{statement || "I'm still reading your request."}</p>
         {out.brief.full && <p className="mt-3 max-w-3xl text-[16px] leading-relaxed text-muted">{out.brief.full}</p>}
         {out.another_view && (
@@ -169,7 +170,7 @@ export function WorkView({ out }: { out: UnderstandOutput; requirement?: string;
       </Block>
 
       {people.length > 0 && (
-        <Block n={2} title="Who it is for" purpose="The people we design for. Check we have the right ones.">
+        <Block icon="users" tone="sky" title="People" purpose="Who we design for. Check we have the right ones.">
           <ul className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {people.map((x, i) => {
               const [bg, fg] = avatarTone(x.name + x.role);
@@ -190,7 +191,7 @@ export function WorkView({ out }: { out: UnderstandOutput; requirement?: string;
       )}
 
       {out.requirements.length > 0 && (
-        <Block n={3} title="What it must do" purpose="The must-haves. If one is wrong or missing, use Add a note below.">
+        <Block icon="list-checks" tone="green" title="Must-haves" purpose="What it has to do. If one is wrong or missing, use Add a note below.">
           <ul className="space-y-2">
             <FirstFew
               items={out.requirements}
@@ -212,7 +213,7 @@ export function WorkView({ out }: { out: UnderstandOutput; requirement?: string;
       )}
 
       {out.success_measures.length > 0 && (
-        <Block n={4} title="What good looks like" purpose="How we will know it worked once people use it.">
+        <Block icon="target" tone="amber" title="Success" purpose="How we will know it worked once people use it.">
           <ul className="grid gap-3 md:grid-cols-2">
             {out.success_measures.map((m, i) => (
               <li key={i} className="flex items-start gap-3 rounded-xl border border-line p-4 text-[16px] font-medium leading-snug">
@@ -224,7 +225,7 @@ export function WorkView({ out }: { out: UnderstandOutput; requirement?: string;
       )}
 
       {(out.open_questions.length > 0 || watch.length > 0) && (
-        <Block n={5} title="Before we go on" purpose="What still needs a look.">
+        <Block icon="alert" tone="rose" title="To check" purpose="What still needs a look before we go on.">
           <div className={`grid items-start gap-4 ${out.open_questions.length > 0 && watch.length > 0 ? "lg:grid-cols-2" : ""}`}>
             {out.open_questions.length > 0 && (
               <div id="questions" className="scroll-mt-6 rounded-xl border-2 border-[#f3b3b3] p-4" style={{ background: TONE.rose.bg }}>

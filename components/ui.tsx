@@ -6,10 +6,18 @@ import { ReactNode, useCallback, useEffect, useState } from "react";
 // ---- Shared pieces that make every screen work the same way ----
 
 // The one place for the main action: bottom right, on every screen. Quieter choices sit to its left.
-export function ActionBar({ children }: { children: ReactNode }) {
+export function ActionBar({ children, message }: { children: ReactNode; message?: string }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--line)] bg-white/85 px-4 py-4 backdrop-blur max-sm:bottom-[62px] sm:left-[72px] lg:px-6">
-      <div className="mx-auto flex max-w-[2200px] flex-wrap items-center justify-end gap-3">{children}</div>
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 px-4 pb-4 pt-2 max-sm:bottom-[62px] sm:left-[72px] lg:px-6">
+      <div className="pointer-events-auto mx-auto flex max-w-[2200px] flex-wrap items-center gap-x-4 gap-y-3 rounded-2xl border border-[var(--line)] bg-[var(--ok-soft)] px-5 py-3 text-[var(--ok-ink)] shadow-md">
+        {message && (
+          <p className="flex min-w-0 flex-1 items-center gap-3 text-[15px] font-medium leading-snug">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+            {message}
+          </p>
+        )}
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-3">{children}</div>
+      </div>
     </div>
   );
 }

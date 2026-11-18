@@ -191,7 +191,7 @@ export function CheckIn(props: {
       )}
       {hint && <p role="alert" className="font-medium text-[var(--bad-ink)]">{hint}</p>}
 
-      <ActionBar>
+      <ActionBar message={mode === "none" ? "Happy with this? Choose Go ahead to move on, or tell me what to change." : mode === "notYet" ? "Tell me what to change, then send it." : "Add your note, then go ahead."}>
         {mode === "none" ? (
           <>
             <button onClick={() => setMode("note")} disabled={!canAct} className={quietClass}>
