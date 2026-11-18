@@ -384,12 +384,6 @@ function ProjectPage() {
                           </p>
                         )}
 
-                        <details className="group rounded-2xl border border-dashed border-[#d5dbe6] p-5 sm:px-8 sm:py-6">
-                          <summary className="flex cursor-pointer select-none list-none items-center gap-3 rounded-xl py-1 [&::-webkit-details-marker]:hidden"><span className="text-[17px] font-medium">My plan</span><span className="note ml-auto"><span className="group-open:hidden">Show</span><span className="hidden group-open:inline">Hide</span></span></summary>
-                          <div className="mt-5 border-t border-line pt-6">
-                          <PlanView out={shown.output} />
-                          </div>
-                        </details>
 
                         <section id="made" aria-label="What I made" className="scroll-mt-6">
                           {sel === 1 && <WorkView out={shown.output as UnderstandOutput} requirement={project.requirement} files={project.files} shortVersion={project.quickQuestions?.request_summary} />}
@@ -440,12 +434,22 @@ function ProjectPage() {
                       </>
                     )}
 
+                    <div className="space-y-2">
+                    {shown?.output && latest?.status !== "working" && (
+                        <details className="group rounded-xl border border-line bg-card/60 px-4 py-2.5">
+                          <summary className="flex cursor-pointer select-none list-none items-center gap-3 [&::-webkit-details-marker]:hidden"><span className="text-[14px] font-medium">My plan</span><span className="note ml-auto text-[13px]"><span className="group-open:hidden">Show</span><span className="hidden group-open:inline">Hide</span></span></summary>
+                          <div className="mt-3 border-t border-line pt-4">
+                          <PlanView out={shown.output} />
+                          </div>
+                        </details>
+                    )}
                     {latest && latest.status !== "working" && (
-                      <details className="group rounded-2xl border border-dashed border-[#d5dbe6] p-5 sm:px-8 sm:py-6">
-                        <summary className="flex cursor-pointer select-none list-none items-center gap-3 rounded-xl py-1 [&::-webkit-details-marker]:hidden"><span className="text-[17px] font-medium">What I did</span><span className="note ml-auto">History</span></summary>
-                        <div className="mt-5 border-t border-line pt-6"><WhatIDid versions={versions} /></div>
+                      <details className="group rounded-xl border border-line bg-card/60 px-4 py-2.5">
+                        <summary className="flex cursor-pointer select-none list-none items-center gap-3 [&::-webkit-details-marker]:hidden"><span className="text-[14px] font-medium">What I did</span><span className="note ml-auto text-[13px]">History</span></summary>
+                        <div className="mt-3 border-t border-line pt-4"><WhatIDid versions={versions} /></div>
                       </details>
                     )}
+                    </div>
                   </>
                 )}
               </div>
