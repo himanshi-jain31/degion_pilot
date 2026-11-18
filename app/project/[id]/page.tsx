@@ -195,9 +195,7 @@ function ProjectPage() {
       );
     if (shown?.output && latest.status === "done") {
       if (latest.approved) {
-        if (sel >= 5 && finalVersion) return <ActionBar><button onClick={() => setView("final")} className={primaryClass}>See the final result</button></ActionBar>;
-        if (nextPhase) return <ActionBar message="Ready for the next step."><button onClick={() => choosePhase(nextPhase.n)} className={primaryClass}>Next: {nextPhase.name}</button></ActionBar>;
-        return null;
+        return null; // the Next button sits in the step header instead
       }
     }
     return null; // the check-in shows its own buttons
@@ -327,6 +325,14 @@ function ProjectPage() {
                         </li>
                       ))}
                     </ol>
+                    {latest?.approved && latest.status === "done" && (sel >= 5 ? finalVersion : nextPhase) && (
+                      <button
+                        onClick={() => (sel >= 5 ? setView("final") : choosePhase(nextPhase!.n))}
+                        className="btn btn-primary !min-h-0 !px-4 !py-2 !text-[14px]"
+                      >
+                        {sel >= 5 ? "See the final result" : `Next: ${nextPhase!.name}`} <span aria-hidden="true">→</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
