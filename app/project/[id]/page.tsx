@@ -309,7 +309,7 @@ function ProjectPage() {
                       <p className="text-soft mt-0.5 text-[16px] leading-snug">{PHASE_INFO[info.n].goal}</p>
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-4">
                     <ol className="flex flex-wrap items-center gap-2 text-[14px]" aria-label="Where this step is">
                       {[
                         ["Plan", !!shown?.output || latest?.status === "working"],
@@ -326,12 +326,15 @@ function ProjectPage() {
                       ))}
                     </ol>
                     {latest?.approved && latest.status === "done" && (sel >= 5 ? finalVersion : nextPhase) && (
+                      <>
+                      <span aria-hidden="true" className="mx-2 hidden h-12 w-px bg-[#9fb2dd] xl:block" />
                       <button
                         onClick={() => (sel >= 5 ? setView("final") : choosePhase(nextPhase!.n))}
-                        className="btn btn-primary !min-h-0 !px-4 !py-2 !text-[14px]"
+                        className="btn btn-primary !min-h-0 !px-5 !py-2.5 !text-[15px]"
                       >
                         {sel >= 5 ? "See the final result" : `Next: ${nextPhase!.name}`} <span aria-hidden="true">→</span>
                       </button>
+                      </>
                     )}
                   </div>
                 </div>
