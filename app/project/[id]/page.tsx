@@ -213,7 +213,7 @@ function ProjectPage() {
 
       <div className="flex flex-col gap-6 lg:flex-row">
         {/* Phase rail */}
-        <nav aria-label="Steps" className="lg:w-52 lg:shrink-0 xl:w-56">
+        <nav aria-label="Steps" className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:w-52 lg:shrink-0 lg:self-start lg:overflow-y-auto xl:w-56">
           <ol className="space-y-1">
             <li>
               <button
