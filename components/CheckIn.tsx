@@ -86,13 +86,9 @@ export function CheckIn(props: {
     }
   });
 
+  // Approved: the step header already shows an "Approved" tag, so nothing more is said here
   if (version.approved) {
-    return (
-      <p className="card flex items-center gap-3" style={{ background: "var(--ok-soft)", borderColor: "var(--line)", color: "var(--ok-ink)" }}>
-        <span aria-hidden="true">✓</span>
-        <span>You said Go ahead.{version.chosenDirection && ` You picked direction ${version.chosenDirection}.`} This step is approved.</span>
-      </p>
-    );
+    return version.chosenDirection ? <p className="note px-1">You picked direction {version.chosenDirection}.</p> : null;
   }
   if (version.waitingForNotes) return <WaitingForNotes projectId={props.projectId} notesCount={props.notesCount} onRefresh={props.onRefresh} busy={busy} onGo={props.onGo} note={note} />;
 
